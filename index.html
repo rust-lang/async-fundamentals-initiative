@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>👋 Welcome - {{INITIATIVE_NAME}} initiative</title>
+        <title>👋 Welcome - async fn fundamentals initiative</title>
                 
 
         <!-- Custom HTML head -->
@@ -111,13 +111,13 @@
                         </button>
                                             </div>
 
-                    <h1 class="menu-title">{{INITIATIVE_NAME}} initiative</h1>
+                    <h1 class="menu-title">async fn fundamentals initiative</h1>
 
                     <div class="right-buttons">
                                                 <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                                                                        <a href="https://github.com/rust-lang/{{INITIATIVE_SLUG}}" title="Git repository" aria-label="Git repository">
+                                                                        <a href="https://github.com/rust-lang/async-fn-fundamentals" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                                                 
@@ -146,64 +146,40 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="initiative_name-initiative"><a class="header" href="#initiative_name-initiative">{{INITIATIVE_NAME}} initiative</a></h1>
-<!--
-
- This is the template for creating an initiative in rust-lang. Be sure to go
- through all sections marked with `**FIX ME**`, and make sure that the text is
- correct, and feel free to replace/remove any part that's not relevant to
- your group.
-
- Steps to customize:
-
- * Edit CHARTER.md
- * Replace placeholder text (see below)
- * Remove references to "expermental" and "evaluation" unless you need them
- 
-  All of the text across all of the initial files uses the same group of
- variables to allow for easy search and replace. They are listed below.
-
- Example sed command: `sed -i '' 's/{{INITIATIVE_NAME}}/Inline ASM/g' ./**/*.md`
- *Note* the `-i ''` is important as it is required on some platforms e.g. macOS
-
- * {{INITIATIVE_NAME}} -> The display name of your group e.g. "Inline ASM".
- * {{INITIATIVE_SLUG}} -> The url slug name of your group used for
-   `rust-lang/team` and repo name. e.g. "pg-inline-asm".
- * {{CHAT_PLATFORM}} -> The name of your chat app e.g. "Zulip".
- * {{CHAT_LINK}} -> The hyperlink to your discussions on the chat app
-   e.g. "https://rust-lang.zulipchat.com/#narrow/stream/216763-project-inline-asm".
--->
+                        <h1 id="async-fn-fundamentals-initiative"><a class="header" href="#async-fn-fundamentals-initiative">async fn fundamentals initiative</a></h1>
 <p><img src="https://img.shields.io/badge/status-active-brightgreen.svg" alt="initiative status: active" /></p>
 <h2 id="what-is-this"><a class="header" href="#what-is-this">What is this?</a></h2>
-<p>This page tracks the work of the {{INITIATIVE_NAME}} <a href="https://lang-team.rust-lang.org/initiatives.html">initiative</a>! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the <a href="./CHARTER.html">charter</a>. </p>
+<p>This page tracks the work of the async fn fundamentals <a href="https://lang-team.rust-lang.org/initiatives.html">initiative</a>! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the <a href="./CHARTER.html">charter</a>.</p>
 <h2 id="current-status"><a class="header" href="#current-status">Current status</a></h2>
 <p>The following table lists of the stages of an initiative, along with links to the artifacts that will be produced during that stage.</p>
-<table><thead><tr><th>Stage</th><th>State</th><th>Artifact(s)</th></tr></thead><tbody>
-<tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Proposal</a></td><td>✅</td><td><a href="https://github.com/rust-lang/lang-team/">Proposal issue</a></td></tr>
-<tr><td></td><td></td><td><a href="./CHARTER.html">Charter</a></td></tr>
-<tr><td></td><td></td><td><a href="https://github.com/rust-lang/rust/">Tracking issue</a></td></tr>
-<tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Experimental</a></td><td>🦀</td><td><a href="./evaluation.html">Evaluation</a></td></tr>
-<tr><td></td><td></td><td><a href="./RFC.html">RFC</a></td></tr>
-<tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/development.html">Development</a></td><td>💤</td><td><a href="./explainer.html">Explainer</a></td></tr>
-<tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/feature-complete.html">Feature complete</a></td><td>💤</td><td>Stabilization report</td></tr>
-<tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/stabilized.html">Stabilized</a></td><td>💤</td><td></td></tr>
+<table><thead><tr><th>Subproject</th><th>Issue</th><th>Progress</th><th>State</th><th><a href="https://lang-team.rust-lang.org/initiatives/process/stages.html">Stage</a></th></tr></thead><tbody>
+<tr><td>async fn</td><td><a href="https://github.com/rust-lang/rust/issues/50547">#50547</a></td><td>▰▰▰▰▰▰</td><td>✅</td><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/stabilized.html">Stabilized</a></td></tr>
+<tr><td>static async fn in trait</td><td>–</td><td>▰▱▱▱▱▱</td><td>🦀</td><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Proposal</a></td></tr>
+<tr><td>dyn async fn in trait</td><td>–</td><td>▰▱▱▱▱▱</td><td>🦀</td><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Proposal</a></td></tr>
+<tr><td>async drop</td><td>–</td><td>▰▱▱▱▱▱</td><td>🦀</td><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Proposal</a></td></tr>
+<tr><td>async closures</td><td>–</td><td>▰▱▱▱▱▱</td><td>💤</td><td><a href="https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html">Proposal</a></td></tr>
 </tbody></table>
+<!-- TODO: Fill these in
+[Proposal issue]: (https://github.com/rust-lang/lang-team/)
+[Tracking issue]: https://github.com/rust-lang/rust/
+-->
 <p>Key:</p>
 <ul>
-<li>✅ -- phase complete</li>
-<li>🦀 -- phase in progress</li>
-<li>💤 -- phase not started yet</li>
+<li>✅ – phase complete</li>
+<li>🦀 – phase in progress</li>
+<li>💤 – phase not started yet</li>
 </ul>
 <h2 id="how-can-i-get-involved"><a class="header" href="#how-can-i-get-involved">How Can I Get Involved?</a></h2>
 <ul>
 <li>Check for 'help wanted' issues on this repository!</li>
 <li>If you would like to help with development, please contact the <a href="./charter.html#membership">owner</a> to find out if there are things that need doing.</li>
-<li>If you would like to help with the design, check the list of active <a href="./design-questions/README.html">design questions</a> first. </li>
+<li>If you would like to help with the design, check the list of active <a href="./design-questions/README.html">design questions</a> first.</li>
 <li>If you have questions about the design, you can file an issue, but be sure to check the <a href="./FAQ.html">FAQ</a> or the <a href="./design-questions/README.html">design-questions</a> first to see if there is already something that covers your topic.</li>
 <li>If you are using the feature and would like to provide feedback about your experiences, please [open a &quot;experience report&quot; issue].</li>
 <li>If you are using the feature and would like to report a bug, please open a regular issue.</li>
 </ul>
-<p>We also participate on <a href="%7B%7BCHAT_LINK%7D%7D">{{CHAT_PLATFORM}}</a>, feel free to introduce yourself over there and ask us any questions you have.</p>
+<p>We also participate on <a href="https://rust-lang.zulipchat.com/#narrow/stream/187312-wg-async-foundations">Zulip</a>, feel free to introduce yourself over there and ask us any questions you have.</p>
+<!-- Should there be a dedicated team? -->
 <h2 id="building-documentation"><a class="header" href="#building-documentation">Building Documentation</a></h2>
 <p>This repository is also an mdbook project. You can view and build it using the
 following command.</p>
