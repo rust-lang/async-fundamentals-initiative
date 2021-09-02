@@ -1,13 +1,13 @@
 [book]
-authors = ["{{INITIATIVE_NAME}} Members"]
+authors = ["async fn fundamentals Members"]
 language = "en"
 multilingual = false
 src = "."
-title = "{{INITIATIVE_NAME}} initiative"
+title = "async fn fundamentals initiative"
 
 [output.html]
 no-section-label=true
-git-repository-url="https://github.com/rust-lang/{{INITIATIVE_SLUG}}"
+git-repository-url="https://github.com/rust-lang/async-fn-fundamentals"
 
 [output.html.fold]
 enable = true
