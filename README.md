@@ -37,9 +37,9 @@ The following table lists of the stages of an initiative, along with links to th
 
 Key:
 
-* ✅ -- phase complete
-* 🦀 -- phase in progress
-* 💤 -- phase not started yet
+* ✅ – phase complete
+* 🦀 – phase in progress
+* 💤 – phase not started yet
 
 ## How Can I Get Involved?
 
@@ -54,7 +54,8 @@ We also participate on [Zulip][chat-link], feel free to introduce yourself over 
 
 [open issues]: /issues
 [chat-link]: https://rust-lang.zulipchat.com/#narrow/stream/187312-wg-async-foundations
-[team-toml]: https://github.com/rust-lang/team/blob/master/teams/initiative-async-fn-fundamentals.toml
+<!-- Should there be a dedicated team? -->
+[team-toml]: https://github.com/rust-lang/team/blob/master/teams/wg-async-foundations.toml
 
 ## Building Documentation
 This repository is also an mdbook project. You can view and build it using the
