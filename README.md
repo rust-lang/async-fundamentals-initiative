@@ -15,11 +15,13 @@ The following table lists of the stages of an initiative, along with links to th
 
 | Subproject                    | Issue    | Progress       | State | [Stage]        |
 |-------------------------------|----------|----------------|-------|----------------|
-| async fn                      | #123     | ▰▰▰▰▰▰   | ✅    | [Stabilized]   |
-| static async fn in trait      | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| dyn async fn in trait         | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| async drop                    | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| async closures                | #123     | ▰▱▱▱▱▱   | 💤    | [Proposal]     |
+| async fn                      | [#50547] | ▰▰▰▰▰▰   | ✅    | [Stabilized]   |
+| static async fn in trait      | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| dyn async fn in trait         | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| async drop                    | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| async closures                | –        | ▰▱▱▱▱▱   | 💤    | [Proposal]     |
+
+[#50547]: https://github.com/rust-lang/rust/issues/50547
 
 <!-- TODO: Fill these in
 [Proposal issue]: (https://github.com/rust-lang/lang-team/)
