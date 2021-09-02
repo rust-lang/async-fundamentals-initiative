@@ -13,22 +13,20 @@ This page tracks the work of the async fn fundamentals [initiative]! To learn mo
 
 The following table lists of the stages of an initiative, along with links to the artifacts that will be produced during that stage.
 
-| Stage                                 | State | Artifact(s) |
-| ------------------------------------- | ----- | ----------- |
-| [Proposal]                            | 🦀    | [Proposal issue] |
-|                                       |       | [Charter](./CHARTER.md) |
-|                                       |       | [Tracking issue] |
-| [Experimental]                        | 🦀    | [Evaluation](./evaluation.md) |
-|                                       |       | [RFC](./RFC.md) |
-| [Development]                         | 💤    | [Explainer](./explainer.md) |
-| [Feature complete]                    | 💤    | Stabilization report |
-| [Stabilized]                          | 💤    | |
+| Subproject                    | Issue    | Progress       | State | [Stage]        |
+|-------------------------------|----------|----------------|-------|----------------|
+| async fn                      | #123     | ▰▰▰▰▰▰   | ✅    | [Stabilized]   |
+| static async fn in trait      | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| dyn async fn in trait         | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| async drop                    | #123     | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
+| async closures                | #123     | ▰▱▱▱▱▱   | 💤    | [Proposal]     |
 
 <!-- TODO: Fill these in
 [Proposal issue]: (https://github.com/rust-lang/lang-team/)
 [Tracking issue]: https://github.com/rust-lang/rust/
 -->
 
+[Stage]: https://lang-team.rust-lang.org/initiatives/process/stages.html
 [Proposal]: https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html
 [Experimental]: https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html
 [Development]: https://lang-team.rust-lang.org/initiatives/process/stages/development.html
