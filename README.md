@@ -11,7 +11,7 @@ This page tracks the work of the async fn fundamentals [initiative]! To learn mo
 
 ## Current status
 
-The following table lists of the stages of an initiative, along with links to the artifacts that will be produced during that stage.
+This is an **umbrella initiative** and, as such, it covers a number of subprojects.
 
 | Subproject                    | Issue    | Progress       | State | [Stage]        |
 |-------------------------------|----------|----------------|-------|----------------|
