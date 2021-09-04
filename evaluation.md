@@ -5,4 +5,4 @@ It is not required for all initiatives, only those that begin with a problem sta
 but without a clear picture of the best solution. Often the evaluation will refer to topics
 in the [design-discussions] for more detailed consideration.
 
-[design-discussions]: ./design-discussions.md
+[design-discussions]: ./design-discussions/README.md
