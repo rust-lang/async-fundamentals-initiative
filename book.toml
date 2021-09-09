@@ -14,3 +14,7 @@ site-url="/async-fundamentals-initiative/"
 [output.html.fold]
 enable = true
 level = 0
+
+# TODO: enable once actions are configured
+# [output.linkcheck]
+# optional = true

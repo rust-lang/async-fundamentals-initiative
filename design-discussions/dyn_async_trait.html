@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>💬 Design discussions - async fn fundamentals initiative</title>
+        <title>Dyn async trait - async fn fundamentals initiative</title>
                 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item expanded "><a href="../design-discussions/index.html" class="active">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item expanded "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">impl Trait in traits</a></li><li class="chapter-item expanded "><a href="../design-discussions/dyn_async_trait.html" class="active">Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -120,7 +120,7 @@
                                                                         <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./design-discussions/README.md" title="Suggest an edit" aria-label="Suggest an edit">
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./design-discussions/dyn_async_trait.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                         
@@ -149,24 +149,65 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="design-discussions"><a class="header" href="#design-discussions">Design discussions</a></h1>
-<p>This directory hosts notes on important design discussions along with their resolutions.
-In the table of contents (TODO), you will find the overall status:</p>
+                        <h1 id="dyn-async-trait"><a class="header" href="#dyn-async-trait">Dyn async trait</a></h1>
+<h2 id="impact"><a class="header" href="#impact">Impact</a></h2>
 <ul>
-<li>✅ -- <strong>Settled!</strong> Input only needed if you have identified a fresh consideration that is not covered by the write-up.</li>
-<li>💬 -- <strong>Under active discussion.</strong> Check the write-up, which may contain a list of questions or places where feedback is desired.</li>
-<li>💤 -- <strong>Paused.</strong> Not under active discussion, but we may be updating the write-up from time to time with details.</li>
+<li>Traits that contain <code>async fn</code> or <a href="./impl_trait_in_traits.html">impl trait in traits</a> can still be dyn safe</li>
+<li>Costs like boxing of futures are limited to code that uses <code>dyn Trait</code> and not to all users of the trait</li>
+<li>Reasonable defaults around things like <code>Send + Sync</code> and what kind of boxing is used</li>
+<li>Ability to customize those defaults for individual traits or on a crate-wide or module-wide basis</li>
 </ul>
+<h2 id="requires"><a class="header" href="#requires">Requires</a></h2>
+<ul>
+<li><a href="./dyn_trait.html">dyn trait</a></li>
+</ul>
+<h2 id="design-notes"><a class="header" href="#design-notes">Design notes</a></h2>
+<ul>
+<li>Permit a trait <code>TheTrait</code> containing  <code>async fn</code> or <a href="./impl_trait_in_traits.html">impl trait in traits</a> to be used with <code>dyn TheTrait</code>, at least if other criteria are met.</li>
+<li>Do not require annoying annotations.</li>
+<li>Permit the user to select, for <code>TheTrait</code>, how the futures will be boxed or otherwise represented, which would permit us to use <code>Box</code> or potentially other types like <code>SmallBox</code> etc.</li>
+<li>User should also be able to control whether the resulting futures are assumed to be send.</li>
+</ul>
+<h3 id="older-notes"><a class="header" href="#older-notes">Older notes</a></h3>
+<p>The most basic desugaring of async fn in traits will make the trait not dyn-safe. &quot;Inline&quot; async fn in traits is one way to circumvent that, but it's not suitable for all traits that must be dyn-safe. There are other efficient options:</p>
+<ul>
+<li>Return a <code>Box&lt;dyn Async&lt;...&gt;&gt;</code> -- but then we must decide if it will be <code>Send</code>, right? And we'd like to only do that when using the trait as a <code>dyn Trait</code>. Plus it is not compatible with no-std (it is compatible with alloc).
+<ul>
+<li>This comes down to needing some form of opt-in.</li>
+</ul>
+</li>
+</ul>
+<p>This concern applies equally to other &quot;<code>-&gt; impl Trait</code> in trait&quot; scenarios.</p>
+<p>We have looked at revising how &quot;dyn traits&quot; are handled more generally in the lang team on a number of occasions, but <a href="https://github.com/rust-lang/lang-team/blob/master/design-meeting-minutes/2020-01-13-dyn-trait-and-coherence.md">this meeting</a> seems particularly relevant. In that meeting we were discussing some soundness challenges with the existing dyn trait setup and discussing how some of the directions we might go enabled folks to write their <em>own</em> <code>impl Trait for dyn Trait</code> impls, thus defining for themselves how the mapping from Trait to dyn Trait. This seems like a key piece of the solution.</p>
+<p>One viable route might be:</p>
+<ul>
+<li>Traits using <code>async fn</code> are not, by default, dyn safe.</li>
+<li>You can declare how you want it to be dyn safe:
+<ul>
+<li><code>#[repr(inline)]</code></li>
+<li>or <code>#[derive(dyn_async_boxed)]</code> or some such
+<ul>
+<li>to take an <code>#[async_trait]</code>-style approach</li>
+</ul>
+</li>
+<li>It would be nice if users can declare their own styles. For example, Matthias247 pointed out that the <code>Box</code> used to allocate can be reused in between calls for increased efficiency.</li>
+</ul>
+</li>
+<li>It would also be nice if there's an easy, decent default -- maybe you don't even <em>have</em> to opt-in to it if you are not in <code>no_std</code> land.</li>
+</ul>
+<h2 id="frequently-asked-questions"><a class="header" href="#frequently-asked-questions">Frequently asked questions</a></h2>
+<h3 id="what-are-the-limitations-around-allocation-and-no-std-code"><a class="header" href="#what-are-the-limitations-around-allocation-and-no-std-code">What are the limitations around allocation and no-std code?</a></h3>
+<p>&quot;It's complicated&quot;. A lot of no-std code does have an allocator (it depends on alloc), though it may require fallible allocation, or permit allocation of fixed quantities (e.g., only at startup, or so long as it can be known to be O(1)).</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                                                    <a rel="prev" href="../RFC.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="../design-discussions/impl_trait_in_traits.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-                                                    <a rel="next" href="../design-discussions/static_async_trait.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="../design-discussions/dyn_trait.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -176,11 +217,11 @@ In the table of contents (TODO), you will find the overall status:</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                                    <a rel="prev" href="../RFC.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="../design-discussions/impl_trait_in_traits.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-                                    <a rel="next" href="../design-discussions/static_async_trait.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="../design-discussions/dyn_trait.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                             </nav>
