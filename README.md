@@ -4,10 +4,11 @@
 
 ## What is this?
 
-This page tracks the work of the async fn fundamentals [initiative]! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the [charter].
+This page tracks the work of the async fn fundamentals [initiative], part of the wg-async-foundations [vision process]! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the [charter].
 
 [charter]: ./CHARTER.md
 [initiative]: https://lang-team.rust-lang.org/initiatives.html
+[vision process]: https://rust-lang.github.io/wg-async-foundations/vision.html
 
 ## Current status
 
