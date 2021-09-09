@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Async drop - async fn fundamentals initiative</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="../favicon.svg">
+                        <link rel="shortcut icon" href="../favicon.png">
+                <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+                <link rel="stylesheet" href="../css/print.css" media="print">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="../fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item expanded "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">Dyn trait</a></li><li class="chapter-item expanded "><a href="../design-discussions/async_drop.html" class="active">Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">async fn fundamentals initiative</h1>
+
+                    <div class="right-buttons">
+                                                <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./design-discussions/async_drop.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="async-drop"><a class="header" href="#async-drop">Async drop</a></h1>
+<h2 id="impact"><a class="header" href="#impact">Impact</a></h2>
+<ul>
+<li>Able to create types (database connections etc) that perform async operations on cleanup</li>
+<li>Able to detect when such types are dropped synchronously</li>
+<li>Able to identify the await points that result from async cleanup if needed</li>
+</ul>
+<h2 id="design-notes"><a class="header" href="#design-notes">Design notes</a></h2>
+<p>We can create a <code>AsyncDrop</code> variant that contains an <code>async fn</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl AsyncDrop for MyType {
+    async fn drop(&amp;mut self) {
+        ...
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Like <code>Drop</code>, the <code>AsyncDrop</code> trait must be implemented for all values of its self-type.</p>
+<h3 id="async-drop-glue"><a class="header" href="#async-drop-glue">Async drop glue</a></h3>
+<p>Within async functions, when we drop a value, we will invoke &quot;async drop glue&quot; instead of &quot;drop glue&quot;. &quot;Async drop glue&quot; works in the same basic way as &quot;drop glue&quot;, except that it invokes <code>AsyncDrop</code> where appropriate (and may suspend):</p>
+<ul>
+<li>The async drop glue for a type T first executes the <code>AsyncDrop</code> method
+<ul>
+<li>If <code>T</code> has no <code>AsyncDrop</code> impl, then the glue executes the synchronous <code>Drop</code> impl
+<ul>
+<li>If <code>T</code> has no <code>Drop</code> impl, then this is a no-op</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The async drop glue then recursively &quot;async drops&quot; all fields of T</li>
+</ul>
+<h3 id="requires-inline-fn"><a class="header" href="#requires-inline-fn">Requires inline fn</a></h3>
+<p>Making this work requires inline async fn. This is because Rust presently assumes <em>all</em> types are droppable. Consider a function <code>foo</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo&lt;T&gt;(x: T) {}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Here, we will drop <code>x</code> when <code>foo</code> returns, but we do not know whether <code>T</code> implements <code>AsyncDrop</code> or not, and we won't know until monomorphization. However, to know whether the resulting future for <code>foo(x)</code> is <code>Send</code>, we have to know whether the code that drops <code>x</code> will be send. Using an inline function, we know that <code>T: Send</code> implies that the async drop future for <code>T</code> is <code>Send</code>.</p>
+<p>Another argument in favor of inline async fn is that dropping ought not to create a lot more memory.</p>
+<h3 id="explicit-async-drop"><a class="header" href="#explicit-async-drop">Explicit async drop</a></h3>
+<p>We should have a <code>std::mem::async_drop</code> analogous to <code>std::mem::drop</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn async_drop&lt;T&gt;(x: T) { }
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="implicit-await-points"><a class="header" href="#implicit-await-points">Implicit await points</a></h3>
+<p>When you run async drop glue, there is an implicit await point. Consider this example:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo(dbc: DatabaseConnection) -&gt; io::Result&lt;()&gt; {
+    let data = socket().read().await?;
+    dbc.write(data).await?;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Here, presuming that <code>DatabaseConnection</code> implements <code>AsyncDrop</code>, there are actually a number of async drops occurring:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo(dbc: DatabaseConnection) -&gt; io::Result&lt;()&gt; {
+    let data = match socket().read().await {
+        Ok(v) =&gt; v,
+        Err(e) =&gt; {
+            std::mem::async_drop(dbc).await;
+            return e;
+        }
+    };
+    let () = match dbc.write(data).await? {
+        Ok(()) =&gt; (),
+        Err(e) =&gt; {
+            std::mem::async_drop(dbc).await;
+            return e;
+        }
+    };
+    std::mem::async_drop(dbc).await;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>As this example shows, there are important ergonomic benefits here to implicit async drop, and it also ensures that async and sync code work in analogous ways. However, implicit await points can be a hazard for some applications, where it is important to identify all await points explicitly (for example, authors of embedded applications use await points to reason about what values will be stored in the resulting future vs the stack of the poll function). To further complicate things, async-drop doesn't only execute at the end of a block or an &quot;abrupt&quot; expression like <code>?</code>: async-drop can also execute at the end of every statement, given temporary values.</p>
+<p>The best solution here is unclear. We could have an &quot;allow-by-default&quot; lint encouraging explicit use of <code>async_drop</code>, but as the code above shows, the result may be highly unergonomic (also, imagine how it looks as the number of variables requiring async-drop grows).</p>
+<p>Another option is to target the problem from another angle, for example by adding lints to identify when large values are stored in a future or on the stack, or to allow developers to tag local variables that they expect to be stored on the stack, and have the compiler warn them if this turns out to not be true. Users could then choose how to resolve the problem (for example, by shortening the lifetime of the value so that it is not live across an await).</p>
+<h3 id="preventing-sync-drop"><a class="header" href="#preventing-sync-drop">Preventing sync drop</a></h3>
+<p>It is easy enough to make async-drop be used, but it is currently not possible to prevent sync drop, even from within an async setting. Consider an example such as the following:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo(dbc: DatabaseConnection) -&gt; io::Result&lt;()&gt; {
+    drop(dbc);
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The compiler could however lint against invoking (or defining!) synchronous functions that take ownership of values whose types implement <code>AsyncDrop</code>. This would catch code like the case above. We may have to tune the lint to avoid false warnings. Note that it is important to lint <em>both</em> invocation <em>and</em> definition sites because the synchronous function may be generic (like <code>drop</code>, in fact).</p>
+<p>The question remains: what should code that implements <code>AsyncDrop</code> <em>do</em> if synchronous <code>Drop</code> is invoked? One option is panic, but that is suboptimal, as panic from within a destructor is considered bad practice. Another option is to simply abort. A final option is to have some form of portable &quot;block-on&quot; that would work, but this is effectively the (as yet unsolved) <a href="https://rust-lang.github.io/wg-async-foundations/vision/shiny_future/users_manual.html#bridging-the-sync-and-async-worlds">async-sync-async sandwich problem</a>.</p>
+<p>Preventing this 'properly' would require changing fundamental Rust assumptions (e.g., by introducing the <code>?Drop</code> trait). While such a change would make Rust more expressive, it also carries complexity and composition hazards, and would require thorough exploration. It is also a step that could be taken later (although it would require some form of explicit <code>impl !Drop</code> opt-in by types to avoid semver breakage).</p>
+<h3 id="supporting-both-sync-and-async-drop"><a class="header" href="#supporting-both-sync-and-async-drop">Supporting both sync and async drop</a></h3>
+<p>Final point: it should perhaps be possible to support <em>both</em> sync and async drop. It is not clear though if there are any real use cases for this.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="../design-discussions/dyn_trait.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="../design-discussions/async_closures.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="../design-discussions/dyn_trait.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="../design-discussions/async_closures.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+        
+                <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+        
+    </body>
+</html>

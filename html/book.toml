@@ -1,0 +1,19 @@
+[book]
+authors = ["async fn fundamentals Members"]
+language = "en"
+multilingual = false
+src = "."
+title = "async fn fundamentals initiative"
+
+[output.html]
+no-section-label=true
+git-repository-url="https://github.com/rust-lang/async-fundamentals-initiative"
+edit-url-template="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/{path}"
+site-url="/async-fundamentals-initiative/"
+
+[output.html.fold]
+enable = true
+level = 0
+
+[output.linkcheck]
+optional = true
