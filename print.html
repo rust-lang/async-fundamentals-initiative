@@ -147,10 +147,10 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="async-fn-fundamentals-initiative"><a class="header" href="#async-fn-fundamentals-initiative">async fn fundamentals initiative</a></h1>
+                        <h1 id="async-fundamentals-initiative"><a class="header" href="#async-fundamentals-initiative">async fundamentals initiative</a></h1>
 <p><img src="https://img.shields.io/badge/status-active-brightgreen.svg" alt="initiative status: active" /></p>
 <h2 id="what-is-this"><a class="header" href="#what-is-this">What is this?</a></h2>
-<p>This page tracks the work of the async fn fundamentals <a href="https://lang-team.rust-lang.org/initiatives.html">initiative</a>, part of the wg-async-foundations <a href="https://rust-lang.github.io/wg-async-foundations/vision.html">vision process</a>! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the <a href="./CHARTER.html">charter</a>.</p>
+<p>This page tracks the work of the async fundamentals <a href="https://lang-team.rust-lang.org/initiatives.html">initiative</a>, part of the wg-async-foundations <a href="https://rust-lang.github.io/wg-async-foundations/vision.html">vision process</a>! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the <a href="./CHARTER.html">charter</a>.</p>
 <h2 id="current-status"><a class="header" href="#current-status">Current status</a></h2>
 <p>This is an <strong>umbrella initiative</strong> and, as such, it covers a number of subprojects.</p>
 <table><thead><tr><th>Subproject</th><th>Issue</th><th>Progress</th><th>State</th><th><a href="https://lang-team.rust-lang.org/initiatives/process/stages.html">Stage</a></th></tr></thead><tbody>
@@ -174,8 +174,8 @@
 <ul>
 <li>Check for 'help wanted' issues on this repository!</li>
 <li>If you would like to help with development, please contact the <a href="./charter.html#membership">owner</a> to find out if there are things that need doing.</li>
-<li>If you would like to help with the design, check the list of active <a href="./design-discussions/README.html">design discussions</a> first.</li>
-<li>If you have questions about the design, you can file an issue, but be sure to check the <a href="./FAQ.html">FAQ</a> or the <a href="./design-discussions/README.html">design discussions</a> first to see if there is already something that covers your topic.</li>
+<li>If you would like to help with the design, check the list of active <a href="./design-discussions">design discussions</a> first.</li>
+<li>If you have questions about the design, you can file an issue, but be sure to check the <a href="./FAQ.html">FAQ</a> or the <a href="./design-discussions">design discussions</a> first to see if there is already something that covers your topic.</li>
 <li>If you are using the feature and would like to provide feedback about your experiences, please <a href="https://github.com/rust-lang/async-fundamentals-initiative/issues/new?labels=experience-report&amp;template=experience-report.md">open a &quot;experience report&quot; issue</a>.</li>
 <li>If you are using the feature and would like to report a bug, please open a regular issue.</li>
 </ul>
@@ -510,16 +510,15 @@ trait SomeTrait {
 </li>
 <li>The async drop glue then recursively &quot;async drops&quot; all fields of T</li>
 </ul>
-<h3 id="requires-inline-fn"><a class="header" href="#requires-inline-fn">Requires inline fn</a></h3>
-<p>Making this work requires inline async fn. This is because Rust presently assumes <em>all</em> types are droppable. Consider a function <code>foo</code>:</p>
+<h3 id="auto-traits"><a class="header" href="#auto-traits">Auto traits</a></h3>
+<p>Rust presently assumes <em>all</em> types are droppable. Consider a function <code>foo</code>:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn foo&lt;T&gt;(x: T) {}
 <span class="boring">}
 </span></code></pre></pre>
-<p>Here, we will drop <code>x</code> when <code>foo</code> returns, but we do not know whether <code>T</code> implements <code>AsyncDrop</code> or not, and we won't know until monomorphization. However, to know whether the resulting future for <code>foo(x)</code> is <code>Send</code>, we have to know whether the code that drops <code>x</code> will be send. Using an inline function, we know that <code>T: Send</code> implies that the async drop future for <code>T</code> is <code>Send</code>.</p>
-<p>Another argument in favor of inline async fn is that dropping ought not to create a lot more memory.</p>
+<p>Here, we will drop <code>x</code> when <code>foo</code> returns, but we do not know whether <code>T</code> implements <code>AsyncDrop</code> or not, and we won't know until monomorphization. However, to know whether the resulting future for <code>foo(x)</code> is <code>Send</code>, we have to know whether the code that drops <code>x</code> will be send. So we must come up with a way to know that <code>T: Send</code> implies that the async drop future for <code>T</code> is <code>Send</code>.</p>
 <h3 id="explicit-async-drop"><a class="header" href="#explicit-async-drop">Explicit async drop</a></h3>
 <p>We should have a <code>std::mem::async_drop</code> analogous to <code>std::mem::drop</code>:</p>
 <pre><pre class="playground"><code class="language-rust">

@@ -183,16 +183,15 @@
 </li>
 <li>The async drop glue then recursively &quot;async drops&quot; all fields of T</li>
 </ul>
-<h3 id="requires-inline-fn"><a class="header" href="#requires-inline-fn">Requires inline fn</a></h3>
-<p>Making this work requires inline async fn. This is because Rust presently assumes <em>all</em> types are droppable. Consider a function <code>foo</code>:</p>
+<h3 id="auto-traits"><a class="header" href="#auto-traits">Auto traits</a></h3>
+<p>Rust presently assumes <em>all</em> types are droppable. Consider a function <code>foo</code>:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn foo&lt;T&gt;(x: T) {}
 <span class="boring">}
 </span></code></pre></pre>
-<p>Here, we will drop <code>x</code> when <code>foo</code> returns, but we do not know whether <code>T</code> implements <code>AsyncDrop</code> or not, and we won't know until monomorphization. However, to know whether the resulting future for <code>foo(x)</code> is <code>Send</code>, we have to know whether the code that drops <code>x</code> will be send. Using an inline function, we know that <code>T: Send</code> implies that the async drop future for <code>T</code> is <code>Send</code>.</p>
-<p>Another argument in favor of inline async fn is that dropping ought not to create a lot more memory.</p>
+<p>Here, we will drop <code>x</code> when <code>foo</code> returns, but we do not know whether <code>T</code> implements <code>AsyncDrop</code> or not, and we won't know until monomorphization. However, to know whether the resulting future for <code>foo(x)</code> is <code>Send</code>, we have to know whether the code that drops <code>x</code> will be send. So we must come up with a way to know that <code>T: Send</code> implies that the async drop future for <code>T</code> is <code>Send</code>.</p>
 <h3 id="explicit-async-drop"><a class="header" href="#explicit-async-drop">Explicit async drop</a></h3>
 <p>We should have a <code>std::mem::async_drop</code> analogous to <code>std::mem::drop</code>:</p>
 <pre><pre class="playground"><code class="language-rust">
