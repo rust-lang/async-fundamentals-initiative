@@ -14,6 +14,8 @@ This page tracks the work of the async fundamentals [initiative], part of the wg
 
 This is an **umbrella initiative** and, as such, it covers a number of subprojects.
 
+See the [roadmap](./roadmap.md) for a list of individual milestones and their status.
+
 | Subproject                    | Issue    | Progress       | State | [Stage]        |
 |-------------------------------|----------|----------------|-------|----------------|
 | async fn                      | [#50547] | ▰▰▰▰▰▰   | ✅    | [Stabilized]   |
