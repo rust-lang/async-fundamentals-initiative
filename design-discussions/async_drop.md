@@ -29,17 +29,15 @@ Within async functions, when we drop a value, we will invoke "async drop glue" i
         * If `T` has no `Drop` impl, then this is a no-op
 * The async drop glue then recursively "async drops" all fields of T
 
-### Requires inline fn
+### Auto traits
 
-Making this work requires inline async fn. This is because Rust presently assumes *all* types are droppable. Consider a function `foo`:
+Rust presently assumes *all* types are droppable. Consider a function `foo`:
 
 ```rust
 async fn foo<T>(x: T) {}
 ```
 
-Here, we will drop `x` when `foo` returns, but we do not know whether `T` implements `AsyncDrop` or not, and we won't know until monomorphization. However, to know whether the resulting future for `foo(x)` is `Send`, we have to know whether the code that drops `x` will be send. Using an inline function, we know that `T: Send` implies that the async drop future for `T` is `Send`.
-
-Another argument in favor of inline async fn is that dropping ought not to create a lot more memory.
+Here, we will drop `x` when `foo` returns, but we do not know whether `T` implements `AsyncDrop` or not, and we won't know until monomorphization. However, to know whether the resulting future for `foo(x)` is `Send`, we have to know whether the code that drops `x` will be send. So we must come up with a way to know that `T: Send` implies that the async drop future for `T` is `Send`.
 
 ### Explicit async drop
 
