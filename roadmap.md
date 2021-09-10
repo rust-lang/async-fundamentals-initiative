@@ -1,5 +1,7 @@
 # Async fn fundamentals
 
+This initiative is part of the overal [async vision roadmap](https://rust-lang.github.io/wg-async-foundations/vision/roadmap.html).
+
 ## Impact
 
 * Able to write `async fn` in traits and trait impls
