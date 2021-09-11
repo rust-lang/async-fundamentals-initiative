@@ -86,6 +86,23 @@ The best solution here is unclear. We could have an "allow-by-default" lint enco
 
 Another option is to target the problem from another angle, for example by adding lints to identify when large values are stored in a future or on the stack, or to allow developers to tag local variables that they expect to be stored on the stack, and have the compiler warn them if this turns out to not be true. Users could then choose how to resolve the problem (for example, by shortening the lifetime of the value so that it is not live across an await).
 
+#### Running destructors concurrently
+
+It's often the case that at the end of a function or scope, multiple destructors are run. In general the order (which is the reverse order of initialization) matters, since one local could borrow from another, or there is some other logical dependency between them.
+
+However, in some cases the order might not matter at all. In async, it would be possible to run destructors for multiple locals concurrently. As an example, we could mark the destructors like this:
+
+```rust
+#[concurrent]
+impl AsyncDrop for Foo {
+    async fn drop(&mut self) { ... }
+}
+```
+
+Here, `#[concurrent]` means that `Foo` does not take _logical_ dependencies or dependents with other values, and it is safe to drop concurrently. (The compiler would still enforce memory safety, of course.)
+
+In these cases, however, it's usually enough to impl _synchronous_ Drop and spawn a task for the "real" destructor. That keeps the language simple, though it's less convenient to write.
+
 ### Preventing sync drop
 
 It is easy enough to make async-drop be used, but it is currently not possible to prevent sync drop, even from within an async setting. Consider an example such as the following:
@@ -104,4 +121,4 @@ Preventing this 'properly' would require changing fundamental Rust assumptions (
 
 ### Supporting both sync and async drop
 
-Final point: it should perhaps be possible to support *both* sync and async drop. It is not clear though if there are any real use cases for this.
+It should perhaps be possible to support *both* sync and async drop. It is not clear though if there are any real use cases for this.
