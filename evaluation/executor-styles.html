@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>💤 Dyn trait - async fn fundamentals initiative</title>
+        <title>Executor styles - async fn fundamentals initiative</title>
                 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item expanded "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item expanded "><a href="../design-discussions/dyn_trait.html" class="active">💤 Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../evaluation/executor-styles.html" class="active">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -120,7 +120,7 @@
                                                                         <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./design-discussions/dyn_trait.md" title="Suggest an edit" aria-label="Suggest an edit">
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/executor-styles.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                         
@@ -149,59 +149,17 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="dyn-trait"><a class="header" href="#dyn-trait">Dyn trait</a></h1>
-<h2 id="impact"><a class="header" href="#impact">Impact</a></h2>
-<ul>
-<li>Soundness holes relating to <code>dyn Trait</code> are closed.</li>
-<li>The semver implication of whether a trait is &quot;dyn or not&quot; are clear.</li>
-<li>More kinds of traits are dyn-safe.</li>
-<li>Easily able to have a &quot;dynamically dispatched core&quot; with helper methods.</li>
-<li>Users are able to the &quot;adaptation&quot; from a statically known type (<code>T: Trait</code>) into a <code>dyn Trait</code>.</li>
-</ul>
-<h2 id="design-notes"><a class="header" href="#design-notes">Design notes</a></h2>
-<h3 id="soundness-holes"><a class="header" href="#soundness-holes">Soundness holes</a></h3>
-<p>FIXME-- list various issues here :)</p>
-<h3 id="semver-implications"><a class="header" href="#semver-implications">Semver implications</a></h3>
-<p>Today, the compiler automatically determines whether a trait is &quot;dyn-safe&quot;. This means that otherwise legal additions to the trait (such as new )</p>
-<h3 id="more-kinds-of-traits-are-dyn-safe"><a class="header" href="#more-kinds-of-traits-are-dyn-safe">More kinds of traits are dyn-safe</a></h3>
-<p>Currently dyn-safe traits exclude a lot of functionality, such as generic methods. We may be able to lift some of those restrictions.</p>
-<h3 id="easily-able-to-have-a-dynamically-dispatched-core-with-helper-methods"><a class="header" href="#easily-able-to-have-a-dynamically-dispatched-core-with-helper-methods">Easily able to have a &quot;dynamically dispatched core&quot; with helper methods</a></h3>
-<p>There is a common pattern with e.g. <code>Iterator</code> where there is a dynamically dispatched &quot;core method&quot; (<code>fn next()</code>) and then a variety of combinators and helper methods that use <code>where Self: Sized</code> to side-step dyn-safety checks. These methods often involve generics. We should make this pattern easier and more obvious, and (ideally) make it work better -- e.g., by having those methods <em>also</em> available on <code>dyn Trait</code> receivers (which seems fundamentally possible).</p>
-<h3 id="adaptation"><a class="header" href="#adaptation">Adaptation</a></h3>
-<p>In the case of async Rust, given a trait <code>Foo</code> that contains <code>async fn</code> methods, we wish to be able to have the user write <code>dyn Foo</code> without having to specify the values of the associated types that contain the future types for those methods. Consider the fully desugard example:</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>trait Foo {
-    type Method&lt;..&gt;: Future;
-    fn method() -&gt; Self::Method&lt;..&gt;
-}
-<span class="boring">}
-</span></code></pre></pre>
-<p>Roughly speaking we wish to be able to supply an impl like</p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>impl Foo for dyn Foo {
-    type Method&lt;..&gt; = Box&lt;dyn Future&lt;..&gt;&gt;;
-    fn method() -&gt; Self::Method {
-        // call, via vtable, a shim that will create the `Box`
-        // (or whichever smart pointer is desired)
-    }
-}
-<span class="boring">}
-</span></code></pre></pre>
-<p>Ideally, this would be a general capability that users can use to control the adaptation of &quot;known types&quot; to <code>dyn</code> types for other traits.</p>
+                        <h1 id="executor-styles"><a class="header" href="#executor-styles">Executor styles</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                                                    <a rel="prev" href="../design-discussions/dyn_async_trait.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="../evaluation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-                                                    <a rel="next" href="../design-discussions/async_drop.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="../evaluation/scenarios.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -211,11 +169,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                                    <a rel="prev" href="../design-discussions/dyn_async_trait.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="../evaluation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-                                    <a rel="next" href="../design-discussions/async_drop.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="../evaluation/scenarios.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                             </nav>

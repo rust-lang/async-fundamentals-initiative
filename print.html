@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -254,6 +254,56 @@ It is not required for all initiatives, only those that begin with a problem sta
 but without a clear picture of the best solution. Often the evaluation will refer to topics
 in the <a href="./design-discussions/README.html">design-discussions</a> for more detailed consideration.</p>
 </blockquote>
+<h2 id="goals"><a class="header" href="#goals">Goals</a></h2>
+<p>The goal of the impact is to enable users to write <code>async fn</code> in traits and impls in a natural way. As a simple example, we would like to support the ability to write an <code>async fn</code> in any trait:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Connection {
+    async fn open(&amp;mut self);
+    async fn send(&amp;mut self);
+    async fn close(&amp;mut self);
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Along with the corresponding impl:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Connection for MyConnection {
+    async fn open(&amp;mut self) {
+        ...
+    }
+
+    async fn send(&amp;mut self) {
+        ...
+    }
+
+    async fn close(&amp;mut self) {
+        ...
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The goal in general is that <code>async fn</code> can be used in traits as widely as possible:</p>
+<ul>
+<li>for foundational traits, like reading, writing, and iteration;</li>
+<li>for async closures;</li>
+<li>for async drop, which is built in to the language;</li>
+<li>in <code>dyn</code> values, which introduce some particular complications;</li>
+<li>in libraries, for all the usual reasons one uses traits;</li>
+<li>in ordinary programs, using all manner of executors.</li>
+</ul>
+<h2 id="key-challenges"><a class="header" href="#key-challenges">Key challenges</a></h2>
+<p>There are a few key challenges to overcome in the design:</p>
+<ul>
+<li>Bounding the futures that are returned by <code>Send</code>, <code>'static</code>, or other traits.</li>
+<li>Supporting <code>dyn Trait</code> when <code>Trait</code> has <code>async fn</code>, and giving the user control over some of the tradeoffs involved.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="executor-styles"><a class="header" href="#executor-styles">Executor styles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reference-scenarios"><a class="header" href="#reference-scenarios">Reference scenarios</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="background-logging"><a class="header" href="#background-logging">Background logging</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="implementing-asyncread"><a class="header" href="#implementing-asyncread">Implementing AsyncRead</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-explainer"><a class="header" href="#-explainer">📚 Explainer</a></h1>
 <blockquote>
 <p>The &quot;explainer&quot; is &quot;end-user readable&quot; documentation that explains how to use the feature being deveoped by this initiative.
