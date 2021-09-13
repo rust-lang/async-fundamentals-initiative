@@ -184,11 +184,8 @@ trait AsyncFn: AsyncFnMut {
 <span class="boring">}
 </span></code></pre></pre>
 <p>Some notes:</p>
-<ul>
-<li><code>AsyncFnOnce</code> is really the same as <code>Future</code>/<code>Async</code> -- both represent, effectively, a future that can be driven exactly once.</li>
-<li>The concept of <code>AsyncFn</code> is more reasonable, but it requires storing the state externally to make sense: how else can there be multiple parallel executions.</li>
-<li>Something is a bit off here.</li>
-</ul>
+<p><code>AsyncFnOnce</code> is almost the same as <code>Future</code>/<code>Async</code> -- both represent, effectively, a future that can be driven exactly once. The difference is that your type can distinguish statically between the uncalled state and the persistent state after being called, if you wish, by using separate types for each. This can be useful for situations where an <code>async fn</code> is <code>Send</code> up until the point it is called, at which point it creates inner state that is not <code>Send</code>.</p>
+<p>The concept of <code>AsyncFn</code> is more clear, but it requires storing the state externally to make sense: how else can there be multiple parallel executions.</p>
 
                     </main>
 
