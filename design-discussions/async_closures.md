@@ -35,6 +35,6 @@ trait AsyncFn: AsyncFnMut {
 
 Some notes:
 
-- `AsyncFnOnce` is really the same as `Future`/`Async` -- both represent, effectively, a future that can be driven exactly once.
-- The concept of `AsyncFn` is more reasonable, but it requires storing the state externally to make sense: how else can there be multiple parallel executions.
-- Something is a bit off here.
+`AsyncFnOnce` is almost the same as `Future`/`Async` -- both represent, effectively, a future that can be driven exactly once. The difference is that your type can distinguish statically between the uncalled state and the persistent state after being called, if you wish, by using separate types for each. This can be useful for situations where an `async fn` is `Send` up until the point it is called, at which point it creates inner state that is not `Send`.
+
+The concept of `AsyncFn` is more clear, but it requires storing the state externally to make sense: how else can there be multiple parallel executions.
