@@ -513,6 +513,43 @@ impl AsyncRead for MySocketBuddy {
 </code></pre>
 <p>Frustrating!</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="trait-multiplication"><a class="header" href="#trait-multiplication">Trait multiplication</a></h1>
+<h2 id="status-1"><a class="header" href="#status-1">Status</a></h2>
+<p>Seems unlikely to be adopted, but may be the seed of a better idea</p>
+<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
+<p>Introduce a new form of bound, trait <em>multiplication</em>. One can write <code>T: Iterator * Send</code> and it means <code>T: Iterator&lt;Item: Send&gt; + Send</code> (using the notation from <a href="https://rust-lang.github.io/rfcs/2289-associated-type-bounds.html">RFC 2289</a>). More generally, <code>Foo * Bar</code> means <code>Foo + Bar</code> but also that <code>Foo::Assoc: Bar</code> for each associated type <code>Assoc</code> defined in <code>Foo</code> (including anonymous ones defined by async functions).</p>
+<h2 id="whats-great-about-this-1"><a class="header" href="#whats-great-about-this-1">What's great about this</a></h2>
+<p>The cool thing about this is that it means that <strong>the check whether things are Send occurs exactly when it is needed, and not at the definition site</strong>. This makes async functions in trait behave more analogously with ordinary impls. (<a href="evaluation/design/./implied_send.html#not-analogous-to-async-fn-outside-of-traits">In contrast to implied bounds</a>.)</p>
+<p>With this proposal, the <a href="evaluation/design/../scenarios/background-logging.html">background logging</a> scenario would play out differently depending on the <a href="evaluation/design/../executor-styles.html">executor style</a> being used:</p>
+<ul>
+<li>Thread-local: <code>logs: impl AsyncIterator&lt;Item = String&gt; + 'static</code></li>
+<li>Thread per core: <code>logs: impl AsyncIterator&lt;Item = String&gt; + Send + 'static</code></li>
+<li>Work stealing: <code>logs: impl AsyncIterator&lt;Item = String&gt; * Send + 'static</code></li>
+</ul>
+<p>The key observation here is that <code>+ Send</code> only tells you whether the <em>initial value</em> (here, <code>logs</code>) is <code>Send</code>. The <code>* Send</code> is needed to say &quot;and the futures resulting from this trait are Send&quot;, which is needed in work-stealing sceanrios.</p>
+<h2 id="whats-not-so-great-about-this"><a class="header" href="#whats-not-so-great-about-this">What's not so great about this</a></h2>
+<h3 id="complex"><a class="header" href="#complex">Complex</a></h3>
+<p>The distinction between <code>+</code> and <code>*</code> is subtle but crucial. It's going to be a new thing to learn and it just makes the trait system feel that much more complex overall.</p>
+<h3 id="reptitive-for-multiple-traits"><a class="header" href="#reptitive-for-multiple-traits">Reptitive for multiple traits</a></h3>
+<p>If you had a number of async traits, you would need <code>* Send</code> for each one:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Trait1 {
+    async fn method1(&amp;self);
+}
+
+trait Trait2 {
+    async fn method2(&amp;self);
+}
+
+async fn foo&lt;T&gt;()
+where
+    T: Send * (Trait1 + Trait2)
+{
+
+}
+<span class="boring">}
+</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-explainer"><a class="header" href="#-explainer">📚 Explainer</a></h1>
 <blockquote>
 <p>The &quot;explainer&quot; is &quot;end-user readable&quot; documentation that explains how to use the feature being deveoped by this initiative.
@@ -580,7 +617,7 @@ trait SomeTrait {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="impl-trait-in-traits"><a class="header" href="#impl-trait-in-traits">impl Trait in traits</a></h1>
 <p>This effort is part of the <a href="https://github.com/rust-lang/impl-trait-initiative">impl trait initiative</a>. Some notes are kept here as a summary.</p>
-<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
+<h2 id="summary-2"><a class="header" href="#summary-2">Summary</a></h2>
 <ul>
 <li>Able to write <code>-&gt; impl Trait</code> in traits</li>
 <li>Able to write <code>type Foo&lt;..&gt; = impl Trait</code> in impls (<a href="https://github.com/rust-lang/rust/issues/63063">type alias impl trait</a>, <a href="https://github.com/rust-lang/generic-associated-types-initiative">generic associated types</a>))</li>
