@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../evaluation/executor-styles.html" class="active">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../evaluation/executor-styles.html" class="active">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/challenges/bounding-futures.html">Bounding futures</a></li></ol></li><li class="chapter-item "><a href="../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../evaluation/design/trait_multiplication.html">Trait multiplication</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -149,7 +149,28 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="executor-styles"><a class="header" href="#executor-styles">Executor styles</a></h1>
+                        <h1 id="executor-styles-and-send-bounds"><a class="header" href="#executor-styles-and-send-bounds">Executor styles and Send bounds</a></h1>
+<p>One key aspect of async fn in traits has to do with how to communicate <code>Send</code> bounds needed to spawn tasks. The key question is roughly &quot;what send bounds are required to safely spawn a task?&quot;</p>
+<ul>
+<li>A <strong>single threaded</strong> executor runs all tasks on a single thread. 
+<ul>
+<li>In this scenario, nothing has to be <code>Send</code>.</li>
+<li>Example: <a href="https://docs.rs/tokio/1.11.0/tokio/task/fn.spawn_local.html">tokio::spawn_local</a></li>
+</ul>
+</li>
+<li>A <strong>thread per core</strong> executor selects a thread to run a task when the task is spawned, but never migrates tasks between threads. This can be very efficient because the runtimes never need to communicate across threads except to spawn new tasks. 
+<ul>
+<li>In this scenario, the &quot;initial state&quot; must be <code>Send</code> but not the future once it begins executing.</li>
+<li>Example: <a href="https://docs.rs/glommio/0.5.1/glommio/struct.LocalExecutorBuilder.html#method.spawn">glommio::spawn</a></li>
+</ul>
+</li>
+<li>A <strong>work-stealing</strong> executor can move tasks between threads even mid-execution. 
+<ul>
+<li>In this scenario, the future must be <code>Send</code> at all times (or we have to rule out the ability to have leaks of data out from the future, which we don't have yet).</li>
+<li>Example: <a href="https://docs.rs/glommio/0.5.1/glommio/struct.LocalExecutorBuilder.html#method.spawn">tokio::spawn</a></li>
+</ul>
+</li>
+</ul>
 
                     </main>
 

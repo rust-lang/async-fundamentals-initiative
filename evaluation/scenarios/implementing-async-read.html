@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item expanded "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item expanded "><a href="../../evaluation/scenarios/implementing-async-read.html" class="active">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item expanded "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item expanded "><a href="../../evaluation/scenarios/implementing-async-read.html" class="active">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding-futures.html">Bounding futures</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/design/trait_multiplication.html">Trait multiplication</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -150,6 +150,47 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="implementing-asyncread"><a class="header" href="#implementing-asyncread">Implementing AsyncRead</a></h1>
+<p><code>AsyncRead</code> is being used here as a &quot;stand-in&quot; for some widely used trait that appears in the standard library. The details of the trait are not important.</p>
+<h2 id="self-is-send"><a class="header" href="#self-is-send">Self is send</a></h2>
+<p>In this scenario, the Self type being used to implement is sendable, but the actual future that is created is not.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MySocketBuddy {
+    x: u32
+}
+
+impl AsyncRead for MySocketBuddy {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        let ssh_key = Rc::new(vec![....]);
+        do_some_stuff(ssh_key.clone());
+        something_else(self.x).await;
+    }
+    // ERROR: `ssh_key` is live over an await;
+    //        Self implements Send
+    //        therefore resulting future must implement Send
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="self-is-not-send"><a class="header" href="#self-is-not-send">Self is not send</a></h2>
+<p>In this scenario, the Self type being used to implement is not sendable.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MySocketBuddy {
+    x: u32,
+    ssh_key: Rc&lt;Vec&lt;u8&gt;&gt;,
+}
+
+impl AsyncRead for MySocketBuddy {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        do_some_stuff(self.ssh_key.clone());
+        something_else(self.x).await;
+    }
+    // OK
+}
+<span class="boring">}
+</span></code></pre></pre>
 
                     </main>
 
@@ -159,7 +200,7 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-                                                    <a rel="next" href="../../explainer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="../../evaluation/challenges.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -173,7 +214,7 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-                                    <a rel="next" href="../../explainer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="../../evaluation/challenges.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                             </nav>

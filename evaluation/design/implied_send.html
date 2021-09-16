@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Implied Send - async fn fundamentals initiative</title>
+                
+
+        <!-- Custom HTML head -->
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+                <link rel="icon" href="../../favicon.svg">
+                        <link rel="shortcut icon" href="../../favicon.png">
+                <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+                <link rel="stylesheet" href="../../css/print.css" media="print">
+        
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+                <link rel="stylesheet" href="../../fonts/fonts.css">
+        
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+            </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding-futures.html">Bounding futures</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../evaluation/design/implied_send.html" class="active">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/design/trait_multiplication.html">Trait multiplication</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                                            </div>
+
+                    <h1 class="menu-title">async fn fundamentals initiative</h1>
+
+                    <div class="right-buttons">
+                                                <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/design/implied_send.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="implied-send"><a class="header" href="#implied-send">Implied Send</a></h1>
+<h2 id="status"><a class="header" href="#status">Status</a></h2>
+<p>❌ Rejected. This idea can be quite <a href="https://rustacean-principles.netlify.app/how_rust_empowers/productive.html">productive</a>, but it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/versatile.html">versatile</a> (it rules out important use cases) and it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/supportive.html">supportive</a> (it is confusing).</p>
+<p>(FIXME: I think the principles aren't quite capturing the constriants here! We should adjust.)</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>Targets the <a href="../challenges/bounding-futures.html">bounding futures</a> challenge.</p>
+<p>The core idea of <strong>&quot;implied Send&quot;</strong> is to say that, by default at least, the future that results from an <code>async fn</code> must be <code>Send</code> if the <code>Self</code> type that implements the trait is <code>Send</code>.</p>
+<p>In Chalk terms, you can think of this as a bound like </p>
+<pre><code>if (Implemented(Self: Send)) { 
+    Implemented(Future: Send)
+}
+</code></pre>
+<p>Mathematically, this can be read as <code>Implemented(Self: Send) =&gt; Implemented(Future: Send)</code>. In other words, if you assume that <code>Self: Send</code>, then you can show that <code>Future: Send</code>.</p>
+<h2 id="desugared-semantics"><a class="header" href="#desugared-semantics">Desugared semantics</a></h2>
+<p>If we extended the language with <code>if</code> bounds a la Chalk, then the desugared semantics of &quot;implied send&quot; would be something like this:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncIterator {
+    type Item;
+    type NextFuture: Future&lt;Output = Self::Item&gt;
+                   + if (Self: Send) { Send };
+
+    fn next(&amp;mut self) -&gt; impl Self::NextFuture;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>As a result, when you implement <code>AsyncIterator</code>, the compiler will check that your futures are <code>Send</code> if your input type is assumed to be <code>Send</code>.</p>
+<h2 id="whats-great-about-this"><a class="header" href="#whats-great-about-this">What's great about this</a></h2>
+<p>The cool thing about this is that if you have a bound like <code>T: AsyncIterator + Send</code>, that automatically implies that any futures that may result from calling <code>AsyncIterator</code> methods will also be <code>Send</code>. Therefore, the <a href="../scenarios/background-logging.html">background logging</a> scenario works like this, which is perfect for a <a href="../executor-styles.html">work stealing</a> executor style.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn start_writing_logs(
+    logs: impl AsyncIterator&lt;Item = String&gt; + Send + 'static
+) {
+    ...
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="whats-not-so-great"><a class="header" href="#whats-not-so-great">What's not so great</a></h2>
+<h3 id="negative-reasoning-semver-interactions-how-to-prove"><a class="header" href="#negative-reasoning-semver-interactions-how-to-prove">Negative reasoning: Semver interactions, how to prove</a></h3>
+<p>In this proposal, when one implements an async trait for some concrete type, the compiler would presumably have to first check whether that type implements <code>Send</code>. If not, then it is ok if your futures do not implement <code>Send</code>. That kind of negative reasoning is actually quite tricky -- it has potential semver implications, for example -- although auto traits are more amenable to it than other things, since they already interact with semver in complex ways.</p>
+<p>In fact, if we use the standard approach for proving implication goals, the setup would not work at all. The typical approach to proving an implication goal like <code>P =&gt; Q</code> is to assume <code>P</code> is true and then try to prove <code>Q</code>. But that would mean that we would just wind up assuming that the <code>Self</code> type is <code>Send</code> and trying to use that to prove the resulting <code>Future</code> is <code>Send</code>, not <em>checking</em> whether <code>Self</code> is <code>Send</code> to decide.</p>
+<h3 id="not-analogous-to-async-fn-outside-of-traits"><a class="header" href="#not-analogous-to-async-fn-outside-of-traits">Not analogous to async fn outside of traits</a></h3>
+<p>With inherent async functions, we don't check whether the resulting future is <code>Send</code> right away. Instead, we remember what state it has access to, and then if there is some part of the code that requires a future to be <code>Send</code>, we check <em>then</em>. </p>
+<p>But this &quot;implied send&quot; approach is different: the trait is effectively declaring up front that async functions must be send (if the Self is send, at least), and so you wind up with errors at the <em>impl</em>. This is true regardless of whether the future ever winds up being used in a spawn.</p>
+<p>The concern here is not <em>precisely</em> that the result is too strict (that's covered in the next bullet), but rather that it will be surprising behavior for people. They'll have a hard time understanding why they get errors about <code>Send</code> in some cases but not others.</p>
+<h3 id="stricter-than-is-required-for-non-work-stealing-a-hrefexecutor-styleshtmlexecutor-stylesa"><a class="header" href="#stricter-than-is-required-for-non-work-stealing-a-hrefexecutor-styleshtmlexecutor-stylesa">Stricter than is required for non-work-stealing <a href="../executor-styles.html">executor styles</a></a></h3>
+<p>Building on the previous point, this approach can be stricter than what is required when not using a work stealing <a href="../executor-styles.html">executor style</a>.</p>
+<p>As an example, consider a case where you are coding in a thread-local setting, and you have a struct like the following</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MyCustomIterator {
+    start_index: u32
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now you try to implement <code>AsyncIterator</code>. You know your code is thread-local, so you decide to use some <code>Rc</code> data in the process:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl AsyncIterator for MyCustomIterator {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        let ssh_key = Rc::new(vec![....]);
+        do_some_stuff(ssh_key.clone());
+        something_else(self.start_index).await;
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>But now you get a compilation error:</p>
+<pre><code>error: `read` must be `Send`, since `MyCustomIterator` is `Send`
+</code></pre>
+<p>Frustrating!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                                                    <a rel="prev" href="../../evaluation/design.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+                                                    <a rel="next" href="../../evaluation/design/trait_multiplication.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                                    <a rel="prev" href="../../evaluation/design.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+                                    <a rel="next" href="../../evaluation/design/trait_multiplication.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                            </nav>
+
+        </div>
+
+        
+        
+        
+                <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+        
+                <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+        
+    </body>
+</html>

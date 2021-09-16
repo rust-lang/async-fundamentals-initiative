@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/challenges/bounding-futures.html">Bounding futures</a></li></ol></li><li class="chapter-item "><a href="evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="evaluation/design/trait_multiplication.html">Trait multiplication</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -300,10 +300,219 @@ in the <a href="./design-discussions/README.html">design-discussions</a> for mor
 <li>Bounding the futures that are returned by <code>Send</code>, <code>'static</code>, or other traits.</li>
 <li>Supporting <code>dyn Trait</code> when <code>Trait</code> has <code>async fn</code>, and giving the user control over some of the tradeoffs involved.</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="executor-styles"><a class="header" href="#executor-styles">Executor styles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="executor-styles-and-send-bounds"><a class="header" href="#executor-styles-and-send-bounds">Executor styles and Send bounds</a></h1>
+<p>One key aspect of async fn in traits has to do with how to communicate <code>Send</code> bounds needed to spawn tasks. The key question is roughly &quot;what send bounds are required to safely spawn a task?&quot;</p>
+<ul>
+<li>A <strong>single threaded</strong> executor runs all tasks on a single thread. 
+<ul>
+<li>In this scenario, nothing has to be <code>Send</code>.</li>
+<li>Example: <a href="https://docs.rs/tokio/1.11.0/tokio/task/fn.spawn_local.html">tokio::spawn_local</a></li>
+</ul>
+</li>
+<li>A <strong>thread per core</strong> executor selects a thread to run a task when the task is spawned, but never migrates tasks between threads. This can be very efficient because the runtimes never need to communicate across threads except to spawn new tasks. 
+<ul>
+<li>In this scenario, the &quot;initial state&quot; must be <code>Send</code> but not the future once it begins executing.</li>
+<li>Example: <a href="https://docs.rs/glommio/0.5.1/glommio/struct.LocalExecutorBuilder.html#method.spawn">glommio::spawn</a></li>
+</ul>
+</li>
+<li>A <strong>work-stealing</strong> executor can move tasks between threads even mid-execution. 
+<ul>
+<li>In this scenario, the future must be <code>Send</code> at all times (or we have to rule out the ability to have leaks of data out from the future, which we don't have yet).</li>
+<li>Example: <a href="https://docs.rs/glommio/0.5.1/glommio/struct.LocalExecutorBuilder.html#method.spawn">tokio::spawn</a></li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="reference-scenarios"><a class="header" href="#reference-scenarios">Reference scenarios</a></h1>
+<ul>
+<li><a href="evaluation/./scenarios/background-logging.html">Logging in the background</a></li>
+<li><a href="evaluation/./scenarios/implementing-async-read.html">Implementing AsyncRead</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="background-logging"><a class="header" href="#background-logging">Background logging</a></h1>
+<p>In this scenario, the <code>start_writing_logs</code> function takes an async iterable and spawns out a new task. This task will pull items from the iterator and send them to some server:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncIterator {
+    type Item;
+    async fn next(&amp;mut self) -&gt; Self::Item;
+}
+
+// Starts a task that will write out the logs in the background
+async fn start_writing_logs(
+    logs: impl AsyncIterator&lt;Item = String&gt; + 'static
+) {
+    spawn(async move || {
+        while let Some(log) = logs.next().await {
+            send_to_serve(log).await;
+        }
+    });
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The precise signature and requirements for the <code>spawn</code> function here will depend on what <a href="evaluation/scenarios/../executor-styles.html">kind of executor</a> you are using, so let's consider each case but let's consider each case separately.</p>
+<p>One note: in [tokio] and other existing executors, the <code>spawn</code> function takes a future, not an async closure. We are using a closure here because that is more analogous to the synchronous signature, but also because it enables a distinction between the <em>initial state</em> and the future that runs.</p>
+<h2 id="thread-local-executor"><a class="header" href="#thread-local-executor">Thread-local executor</a></h2>
+<p>This is the easy case. Nothing has to be <code>Send</code>.</p>
+<h2 id="work-stealing-executor"><a class="header" href="#work-stealing-executor">Work-stealing executor</a></h2>
+<p>In this case, the spawn function will require both that the initial closure itself is <code>Send</code> and that the future it returns is <code>Send</code> (so that it can be moved from place to place as code executes).</p>
+<p>We don't have a good way to express this today! The problem is that there is a future that results from calling <code>logs.next()</code>, let's call it <code>F</code>. The future to be <em>spawned</em> has to be sure that <code>F: Send</code>. There isn't a good way to do this today, and even explaining the problem is surprisingly hard. Here is a &quot;desugared version&quot; of the program that shows what is needed:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncIterator {
+    type Item;
+    type NextFuture: Future&lt;Output = Self::Item&gt;;
+
+    fn next(&amp;mut self) -&gt; impl Self::NextFuture;
+}
+
+// Starts a task that will write out the logs in the background
+async fn start_writing_logs&lt;I&gt;(
+    logs: I
+) 
+where
+    I: AsyncIterator&lt;Item = String&gt; + 'static + Send,
+    I::NextFuture: Send,
+{
+    spawn(async move || {
+        while let Some(log) = logs.next().await {
+            send_to_serve(log).await;
+        }
+    });
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>(With <a href="https://rust-lang.github.io/rfcs/2289-associated-type-bounds.html">RFC 2289</a>, you could write <code>logs: impl AsyncIterator&lt;Item = String, NextFuture: Send&gt; + Send</code>, which is more compact, but still awkward.)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="implementing-asyncread"><a class="header" href="#implementing-asyncread">Implementing AsyncRead</a></h1>
+<p><code>AsyncRead</code> is being used here as a &quot;stand-in&quot; for some widely used trait that appears in the standard library. The details of the trait are not important.</p>
+<h2 id="self-is-send"><a class="header" href="#self-is-send">Self is send</a></h2>
+<p>In this scenario, the Self type being used to implement is sendable, but the actual future that is created is not.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MySocketBuddy {
+    x: u32
+}
+
+impl AsyncRead for MySocketBuddy {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        let ssh_key = Rc::new(vec![....]);
+        do_some_stuff(ssh_key.clone());
+        something_else(self.x).await;
+    }
+    // ERROR: `ssh_key` is live over an await;
+    //        Self implements Send
+    //        therefore resulting future must implement Send
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="self-is-not-send"><a class="header" href="#self-is-not-send">Self is not send</a></h2>
+<p>In this scenario, the Self type being used to implement is not sendable.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MySocketBuddy {
+    x: u32,
+    ssh_key: Rc&lt;Vec&lt;u8&gt;&gt;,
+}
+
+impl AsyncRead for MySocketBuddy {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        do_some_stuff(self.ssh_key.clone());
+        something_else(self.x).await;
+    }
+    // OK
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="challenges"><a class="header" href="#challenges">Challenges</a></h1>
+<p>This section describes the <em>challenges</em> that we need to find solutions for.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="bounding-futures"><a class="header" href="#bounding-futures">Bounding futures</a></h1>
+<p>The challenge is to be able to concisely and intuitively bound the <em>futures resulting from async fn calls</em>, as described in the <a href="evaluation/challenges/../scenarios/background-logging.html">Background Logging</a> scenario.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="design-documents"><a class="header" href="#design-documents">Design documents</a></h1>
+<p>This section contains detailed design documents aimed at various challenges.</p>
+<table><thead><tr><th>Document</th><th>Challenges addressed</th><th>Status</th></tr></thead><tbody>
+<tr><td><a href="evaluation/./design/implied_send.html">Implied Send</a></td><td><a href="evaluation/./challenges/bounding-futures.html">Bounding futures</a></td><td>❌</td></tr>
+<tr><td><a href="evaluation/./design/trait_multiplication.html">Trait multiplication</a></td><td><a href="evaluation/./challenges/bounding-futures.html">Bounding futures</a></td><td>🤔</td></tr>
+<tr><td></td><td></td><td></td></tr>
+</tbody></table>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="implied-send"><a class="header" href="#implied-send">Implied Send</a></h1>
+<h2 id="status"><a class="header" href="#status">Status</a></h2>
+<p>❌ Rejected. This idea can be quite <a href="https://rustacean-principles.netlify.app/how_rust_empowers/productive.html">productive</a>, but it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/versatile.html">versatile</a> (it rules out important use cases) and it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/supportive.html">supportive</a> (it is confusing).</p>
+<p>(FIXME: I think the principles aren't quite capturing the constriants here! We should adjust.)</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>Targets the <a href="evaluation/design/../challenges/bounding-futures.html">bounding futures</a> challenge.</p>
+<p>The core idea of <strong>&quot;implied Send&quot;</strong> is to say that, by default at least, the future that results from an <code>async fn</code> must be <code>Send</code> if the <code>Self</code> type that implements the trait is <code>Send</code>.</p>
+<p>In Chalk terms, you can think of this as a bound like </p>
+<pre><code>if (Implemented(Self: Send)) { 
+    Implemented(Future: Send)
+}
+</code></pre>
+<p>Mathematically, this can be read as <code>Implemented(Self: Send) =&gt; Implemented(Future: Send)</code>. In other words, if you assume that <code>Self: Send</code>, then you can show that <code>Future: Send</code>.</p>
+<h2 id="desugared-semantics"><a class="header" href="#desugared-semantics">Desugared semantics</a></h2>
+<p>If we extended the language with <code>if</code> bounds a la Chalk, then the desugared semantics of &quot;implied send&quot; would be something like this:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncIterator {
+    type Item;
+    type NextFuture: Future&lt;Output = Self::Item&gt;
+                   + if (Self: Send) { Send };
+
+    fn next(&amp;mut self) -&gt; impl Self::NextFuture;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>As a result, when you implement <code>AsyncIterator</code>, the compiler will check that your futures are <code>Send</code> if your input type is assumed to be <code>Send</code>.</p>
+<h2 id="whats-great-about-this"><a class="header" href="#whats-great-about-this">What's great about this</a></h2>
+<p>The cool thing about this is that if you have a bound like <code>T: AsyncIterator + Send</code>, that automatically implies that any futures that may result from calling <code>AsyncIterator</code> methods will also be <code>Send</code>. Therefore, the <a href="evaluation/design/../scenarios/background-logging.html">background logging</a> scenario works like this, which is perfect for a <a href="evaluation/design/../executor-styles.html">work stealing</a> executor style.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn start_writing_logs(
+    logs: impl AsyncIterator&lt;Item = String&gt; + Send + 'static
+) {
+    ...
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="whats-not-so-great"><a class="header" href="#whats-not-so-great">What's not so great</a></h2>
+<h3 id="negative-reasoning-semver-interactions-how-to-prove"><a class="header" href="#negative-reasoning-semver-interactions-how-to-prove">Negative reasoning: Semver interactions, how to prove</a></h3>
+<p>In this proposal, when one implements an async trait for some concrete type, the compiler would presumably have to first check whether that type implements <code>Send</code>. If not, then it is ok if your futures do not implement <code>Send</code>. That kind of negative reasoning is actually quite tricky -- it has potential semver implications, for example -- although auto traits are more amenable to it than other things, since they already interact with semver in complex ways.</p>
+<p>In fact, if we use the standard approach for proving implication goals, the setup would not work at all. The typical approach to proving an implication goal like <code>P =&gt; Q</code> is to assume <code>P</code> is true and then try to prove <code>Q</code>. But that would mean that we would just wind up assuming that the <code>Self</code> type is <code>Send</code> and trying to use that to prove the resulting <code>Future</code> is <code>Send</code>, not <em>checking</em> whether <code>Self</code> is <code>Send</code> to decide.</p>
+<h3 id="not-analogous-to-async-fn-outside-of-traits"><a class="header" href="#not-analogous-to-async-fn-outside-of-traits">Not analogous to async fn outside of traits</a></h3>
+<p>With inherent async functions, we don't check whether the resulting future is <code>Send</code> right away. Instead, we remember what state it has access to, and then if there is some part of the code that requires a future to be <code>Send</code>, we check <em>then</em>. </p>
+<p>But this &quot;implied send&quot; approach is different: the trait is effectively declaring up front that async functions must be send (if the Self is send, at least), and so you wind up with errors at the <em>impl</em>. This is true regardless of whether the future ever winds up being used in a spawn.</p>
+<p>The concern here is not <em>precisely</em> that the result is too strict (that's covered in the next bullet), but rather that it will be surprising behavior for people. They'll have a hard time understanding why they get errors about <code>Send</code> in some cases but not others.</p>
+<h3 id="stricter-than-is-required-for-non-work-stealing-a-hrefevaluationdesignexecutor-styleshtmlexecutor-stylesa"><a class="header" href="#stricter-than-is-required-for-non-work-stealing-a-hrefevaluationdesignexecutor-styleshtmlexecutor-stylesa">Stricter than is required for non-work-stealing <a href="evaluation/design/../executor-styles.html">executor styles</a></a></h3>
+<p>Building on the previous point, this approach can be stricter than what is required when not using a work stealing <a href="evaluation/design/../executor-styles.html">executor style</a>.</p>
+<p>As an example, consider a case where you are coding in a thread-local setting, and you have a struct like the following</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct MyCustomIterator {
+    start_index: u32
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now you try to implement <code>AsyncIterator</code>. You know your code is thread-local, so you decide to use some <code>Rc</code> data in the process:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl AsyncIterator for MyCustomIterator {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; io::Result&lt;usize&gt; {
+        let ssh_key = Rc::new(vec![....]);
+        do_some_stuff(ssh_key.clone());
+        something_else(self.start_index).await;
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>But now you get a compilation error:</p>
+<pre><code>error: `read` must be `Send`, since `MyCustomIterator` is `Send`
+</code></pre>
+<p>Frustrating!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="trait-multiplication"><a class="header" href="#trait-multiplication">Trait multiplication</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-explainer"><a class="header" href="#-explainer">📚 Explainer</a></h1>
 <blockquote>
 <p>The &quot;explainer&quot; is &quot;end-user readable&quot; documentation that explains how to use the feature being deveoped by this initiative.
@@ -371,7 +580,7 @@ trait SomeTrait {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="impl-trait-in-traits"><a class="header" href="#impl-trait-in-traits">impl Trait in traits</a></h1>
 <p>This effort is part of the <a href="https://github.com/rust-lang/impl-trait-initiative">impl trait initiative</a>. Some notes are kept here as a summary.</p>
-<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
 <ul>
 <li>Able to write <code>-&gt; impl Trait</code> in traits</li>
 <li>Able to write <code>type Foo&lt;..&gt; = impl Trait</code> in impls (<a href="https://github.com/rust-lang/rust/issues/63063">type alias impl trait</a>, <a href="https://github.com/rust-lang/generic-associated-types-initiative">generic associated types</a>))</li>
