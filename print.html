@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="evaluation/challenges/dyn_traits.html">Dyn traits</a></li></ol></li><li class="chapter-item "><a href="evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="evaluation/evaluation/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="evaluation/design/inline_async_fn.html">Inline async fn</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="evaluation/evaluation/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -255,6 +255,7 @@ but without a clear picture of the best solution. Often the evaluation will refe
 in the <a href="./design-discussions/README.html">design-discussions</a> for more detailed consideration.</p>
 </blockquote>
 <h2 id="goals"><a class="header" href="#goals">Goals</a></h2>
+<h3 id="write-async-fn-in-traits-impls"><a class="header" href="#write-async-fn-in-traits-impls">Write async fn in traits, impls</a></h3>
 <p>The goal of the impact is to enable users to write <code>async fn</code> in traits and impls in a natural way. As a simple example, we would like to support the ability to write an <code>async fn</code> in any trait:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
@@ -294,12 +295,17 @@ in the <a href="./design-discussions/README.html">design-discussions</a> for mor
 <li>in libraries, for all the usual reasons one uses traits;</li>
 <li>in ordinary programs, using all manner of executors.</li>
 </ul>
-<h2 id="key-challenges"><a class="header" href="#key-challenges">Key challenges</a></h2>
-<p>There are a few key challenges to overcome in the design:</p>
-<ul>
-<li>Bounding the futures that are returned by <code>Send</code>, <code>'static</code>, or other traits.</li>
-<li>Supporting <code>dyn Trait</code> when <code>Trait</code> has <code>async fn</code>, and giving the user control over some of the tradeoffs involved.</li>
-</ul>
+<h3 id="support-async-drop"><a class="header" href="#support-async-drop">Support async drop</a></h3>
+<p>One particular trait worth discussing is the <code>Drop</code> trait. We would like to support &quot;async drop&quot;, which means the ability to await things during drop:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncDrop {
+    async fn drop(&amp;mut self);
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Like <code>Drop</code>, the <code>AsyncDrop</code> trait would be </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="executor-styles-and-send-bounds"><a class="header" href="#executor-styles-and-send-bounds">Executor styles and Send bounds</a></h1>
 <p>One key aspect of async fn in traits has to do with how to communicate <code>Send</code> bounds needed to spawn tasks. The key question is roughly &quot;what send bounds are required to safely spawn a task?&quot;</p>
 <ul>
@@ -507,12 +513,51 @@ trait Trait {
 </ul>
 </li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="bounding-async-drop"><a class="header" href="#bounding-async-drop">Bounding async drop</a></h1>
+<p>As a special case of the <a href="evaluation/challenges/./bounding_futures.html">bounding futures</a> problem, we must consider <code>AsyncDrop</code>.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo&lt;T&gt;(t: T) {
+    runtime::sleep(22).await;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The type of <code>foo(t)</code> is going to be a future type like <code>FooFuture&lt;T&gt;</code>. This type will also include the types of all futures that get awaited (e.g., the return value of <code>runtime::sleep(22)</code> in this case). But in the case of <code>T</code>, we don't yet know what <code>T</code> is, and if it should happen to implement <code>AsyncDrop</code>, then there is an <a href="evaluation/challenges/./implicit_await_with_async_drop.html">&quot;implicit await&quot;</a> of that future. We have to ensure that the contents of that future are taken into account when we determine if <code>FooFuture&lt;T&gt;: Send</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="guaranteeing-async-drop"><a class="header" href="#guaranteeing-async-drop">Guaranteeing async drop</a></h1>
+<p>One challenge with <code>AsyncDrop</code> is that we have no guarantee that it will be used. For any type <code>MyStruct</code> that implements <code>AsyncDrop</code>, it is always possible in Rust today to drop an instance of <code>MyStruct</code> in synchronous code. In that case, we cannot run the async drop. What should we do?</p>
+<p>Obvious alternatives:</p>
+<ul>
+<li>Panic or abort</li>
+<li>Use some form of &quot;block on&quot; or other default executor to execute the asynchronous await</li>
+<li>Extend Rust in some way to prevent this condition.</li>
+</ul>
+<p>We can also mitigate this danger through lints (e.g., dropping value which implements AsyncDrop).</p>
+<p>Some types may implement both synchronous and asynchronous drop.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="implicit-await-with-async-drop"><a class="header" href="#implicit-await-with-async-drop">Implicit await with async drop</a></h1>
+<p>Consider this code:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn foo(input: &amp;QueryInput) -&gt; anyhow::Result&lt;()&gt; {
+    let db = DatabaseHandle::connect().await;
+    let query = assemble_query(&amp;input)?;
+    let results = db.perform_query(query).await;
+    while let Some(result) = results.next().await? {
+        ...
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now let us assume that <code>DatabaseHandle</code> implements <code>AsyncDrop</code> to close the connection. There are numerous points here where <code>db</code> could be dropped (e.g., each use of <code>?</code>). At each of those points, there is effectively an implicit <code>await</code> similar to <code>AsyncDrop::async_drop(db).await</code>. It seems clear that users should not be required to manually write those things, but it is also a weakening of the existing <code>.await</code> contract (that all blocking points are visible).</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="design-documents"><a class="header" href="#design-documents">Design documents</a></h1>
 <p>This section contains detailed design documents aimed at various challenges.</p>
 <table><thead><tr><th>Document</th><th>Challenges addressed</th><th>Status</th></tr></thead><tbody>
 <tr><td><a href="evaluation/./design/implied_send.html">Implied Send</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a></td><td>❌</td></tr>
 <tr><td><a href="evaluation/./design/trait_multiplication.html">Trait multiplication</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a></td><td>🤔</td></tr>
 <tr><td><a href="evaluation/./design/inline_async_fn.html">Inline async fn</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a>, <a href="evaluation/./challenges/dyn_traits.html">Dyn traits</a> (partially)</td><td>🤔</td></tr>
+<tr><td><a href="evaluation/./design/custom_dyn_impls.html">Custom dyn impls</a></td><td><a href="evaluation/./challenges/dyn_traits.html">Dyn traits</a></td><td>🤔</td></tr>
+<tr><td>[Auto traits consider AsyncDrop]</td><td>[Bounding drop]</td><td>🤔</td></tr>
 </tbody></table>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="implied-send"><a class="header" href="#implied-send">Implied Send</a></h1>
 <h2 id="status"><a class="header" href="#status">Status</a></h2>
@@ -592,7 +637,8 @@ trait Trait {
 <p>Frustrating!</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="trait-multiplication"><a class="header" href="#trait-multiplication">Trait multiplication</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="inline-async-fn"><a class="header" href="#inline-async-fn">Inline async fn</a></h1>
-<p>This is a write-up of an idea for how we could compile async fn in a way that is more compatible with dyn trait. The idea has some pros and cons, but is worth cataloging.</p>
+<h2 id="status-1"><a class="header" href="#status-1">Status</a></h2>
+<p>Seems unlikely to be adopted, but may be the seed of a better idea</p>
 <h2 id="status-quo"><a class="header" href="#status-quo">Status quo</a></h2>
 <p>Until now, the only way to make an &quot;async trait&quot; be dyn-safe was to use a manual poll method. The <a href="https://docs.rs/futures/0.3.15/futures/io/trait.AsyncRead.html"><code>AsyncRead</code></a> trait in futures, for example, is as follows:</p>
 <pre><pre class="playground"><code class="language-rust">
@@ -718,6 +764,35 @@ trait AsyncRead {
 <p>Basically this compiles to a <code>poll_read</code> that just tweaks dispatches to another <code>poll_read</code> with some derefs.</p>
 <h3 id="can-you-implement-both-asyncread-and-asyncwrite-for-the-same-type-with-this-technique"><a class="header" href="#can-you-implement-both-asyncread-and-asyncwrite-for-the-same-type-with-this-technique">Can you implement both AsyncRead and AsyncWrite for the same type with this technique?</a></h3>
 <p>You can, but you can't simultaneously read and write from the same value. You would need a split-like API. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="custom-dyn-impls"><a class="header" href="#custom-dyn-impls">Custom dyn impls</a></h1>
+<p>As described in <a href="evaluation/design/../challenges/dyn_traits.html">dyn traits</a>, <code>dyn Trait</code> types cannot include the types of each future without defeating their purpose; but outside of a <code>dyn</code> context, we <em>want</em> those associated types to have unique values for each impl. Threading this needle requires extending Rust so that the value of an associated type can be different for a <code>dyn Trait</code> and for the underlying impl.</p>
+<h2 id="how-it-works-today"><a class="header" href="#how-it-works-today">How it works today</a></h2>
+<p>Conceptually, today, there is a kind of &quot;generated impl&quot; for each trait. This impl implements each method by indirecting through the vtable, and it takes the value of associated types from the dyn type:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Foo {
+    type Bar;
+
+    fn method(&amp;self);
+}
+
+impl&lt;B&gt; Foo for dyn Foo&lt;Bar = B&gt; {
+    type Bar = B;
+
+    fn method(&amp;self) {
+        let f: fn(&amp;Self) = get_method_from_vtable(self)
+        f(self)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note that there are some known problems here, such as <a href="https://github.com/rust-lang/lang-team/blob/master/design-meeting-minutes/2020-01-13-dyn-trait-and-coherence.md">soundness holes in the coherence check</a>.</p>
+<h2 id="rough-proposal"><a class="header" href="#rough-proposal">Rough proposal</a></h2>
+<p>What we would like is the ability for this &quot;dyn&quot; impl to diverge more from the underlying impl. For example:</p>
+<p>XXX to be continued</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="auto-traits-consider-async-drop"><a class="header" href="#auto-traits-consider-async-drop">Auto traits consider async drop</a></h1>
+<p>One way to solve the <a href="evaluation/design/../challenges/bounding_async_drop.html">bounding async drop</a> challenge is to require that, if a type <code>X</code> implements <code>AsyncDrop</code>, then <code>X: Send</code> only if the type of its async drop future is also <code>Send</code>. The drop trait is already integrated quite deeply into the language, so adding a rule like this would not be particularly challenging.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-explainer"><a class="header" href="#-explainer">📚 Explainer</a></h1>
 <blockquote>
 <p>The &quot;explainer&quot; is &quot;end-user readable&quot; documentation that explains how to use the feature being deveoped by this initiative.
