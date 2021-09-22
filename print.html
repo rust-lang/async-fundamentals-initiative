@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/challenges/bounding-futures.html">Bounding futures</a></li></ol></li><li class="chapter-item "><a href="evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="evaluation/design/trait_multiplication.html">Trait multiplication</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">👋 Welcome</a></li><li class="chapter-item "><a href="CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="roadmap.html">🛣 Roadmap</a></li><li class="chapter-item "><a href="evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="evaluation/challenges/dyn_traits.html">Dyn traits</a></li></ol></li><li class="chapter-item "><a href="evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="evaluation/evaluation/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="evaluation/design/inline_async_fn.html">Inline async fn</a></li></ol></li></ol></li><li class="chapter-item "><a href="explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -429,19 +429,97 @@ impl AsyncRead for MySocketBuddy {
 <p>This section describes the <em>challenges</em> that we need to find solutions for.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="bounding-futures"><a class="header" href="#bounding-futures">Bounding futures</a></h1>
 <p>The challenge is to be able to concisely and intuitively bound the <em>futures resulting from async fn calls</em>, as described in the <a href="evaluation/challenges/../scenarios/background-logging.html">Background Logging</a> scenario.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dyn-traits"><a class="header" href="#dyn-traits">Dyn traits</a></h1>
+<p>Supporting <code>dyn Trait</code> when <code>Trait</code> contains an <code>async fn</code> is challenging:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Trait {
+    async fn foo(&amp;self);
+}
+
+impl Trait for TypeA {
+    async fn foo(&amp;self);
+}
+
+impl Trait for TypeB { ... }
+<span class="boring">}
+</span></code></pre></pre>
+<p>Consider the desugared form of this trait:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Trait {
+    type Foo&lt;'s&gt;: Future&lt;Output = ()&gt; + 's;
+
+    fn foo(&amp;self) -&gt; Self::Foo&lt;'_&gt;;
+}
+
+impl Trait for TypeA {
+    type Foo&lt;'s&gt; = impl Future&lt;Output = ()&gt; + 's;
+
+    fn foo(&amp;self) -&gt; Self::Foo&lt;'_&gt; {
+        async move { ... } // has some unique future type F_A
+    }
+}
+
+impl Trait for TypeB { ... }
+<span class="boring">}
+</span></code></pre></pre>
+<p>The primary challenge to using <code>dyn Trait</code> in today's Rust is that <strong><code>dyn Trait</code> today must list the values of all associated types</strong>. This means you would have to write <code>dyn for&lt;'s&gt; Trait&lt;Foo&lt;'s&gt; = XXX&gt;</code> where <code>XXX</code> is the future type defined by the impl, such as <code>F_A</code>. This is not only verbose (or impossible), it also uniquely ties the <code>dyn Trait</code> to a particular impl, defeating the whole point of <code>dyn Trait</code>.</p>
+<p>For this reason, the <code>async_trait</code> crate models all futures as <code>Box&lt;dyn Future&lt;...&gt;&gt;</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+trait Trait {
+    async fn foo(&amp;self);
+}
+
+// desugars to
+
+trait Trait {
+    fn foo(&amp;self) -&gt; Box&lt;dyn Future&lt;Output = ()&gt; + Send + '_&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>This compiles, but it has downsides:</p>
+<ul>
+<li>Allocation is required, <em>even when not using dyn Trait</em>.</li>
+<li>The user must state up front whether <code>Box&lt;dyn Future...&gt;</code> is <code>Send</code> or not.
+<ul>
+<li>In <code>async_trait</code>, this is declared by writing <code>#[async_future(?Send)]</code> if desired.</li>
+</ul>
+</li>
+</ul>
+<h2 id="desiderata"><a class="header" href="#desiderata">Desiderata</a></h2>
+<p>Here are some of the general constraints:</p>
+<ul>
+<li>The ability to use <code>async fn</code> in a trait without allocation</li>
+<li>When using a <code>dyn Trait</code>, the type of the future must be the same for all impls
+<ul>
+<li>This implies a <code>Box</code> or other pointer indirection, or something like <a href="evaluation/challenges/../design/inline_async_fn.html">inline async fn</a>.</li>
+</ul>
+</li>
+<li>It would be nice if it were possible to use <code>dyn Trait</code> in an embedded context (without access to <code>Box</code>)
+<ul>
+<li>This will not be possible &quot;in general&quot;, but it could be possible for particular traits, such as <code>AsyncIterator</code></li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="design-documents"><a class="header" href="#design-documents">Design documents</a></h1>
 <p>This section contains detailed design documents aimed at various challenges.</p>
 <table><thead><tr><th>Document</th><th>Challenges addressed</th><th>Status</th></tr></thead><tbody>
-<tr><td><a href="evaluation/./design/implied_send.html">Implied Send</a></td><td><a href="evaluation/./challenges/bounding-futures.html">Bounding futures</a></td><td>❌</td></tr>
-<tr><td><a href="evaluation/./design/trait_multiplication.html">Trait multiplication</a></td><td><a href="evaluation/./challenges/bounding-futures.html">Bounding futures</a></td><td>🤔</td></tr>
-<tr><td></td><td></td><td></td></tr>
+<tr><td><a href="evaluation/./design/implied_send.html">Implied Send</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a></td><td>❌</td></tr>
+<tr><td><a href="evaluation/./design/trait_multiplication.html">Trait multiplication</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a></td><td>🤔</td></tr>
+<tr><td><a href="evaluation/./design/inline_async_fn.html">Inline async fn</a></td><td><a href="evaluation/./challenges/bounding_futures.html">Bounding futures</a>, <a href="evaluation/./challenges/dyn_traits.html">Dyn traits</a> (partially)</td><td>🤔</td></tr>
 </tbody></table>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="implied-send"><a class="header" href="#implied-send">Implied Send</a></h1>
 <h2 id="status"><a class="header" href="#status">Status</a></h2>
 <p>❌ Rejected. This idea can be quite <a href="https://rustacean-principles.netlify.app/how_rust_empowers/productive.html">productive</a>, but it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/versatile.html">versatile</a> (it rules out important use cases) and it is not <a href="https://rustacean-principles.netlify.app/how_rust_empowers/supportive.html">supportive</a> (it is confusing).</p>
 <p>(FIXME: I think the principles aren't quite capturing the constriants here! We should adjust.)</p>
 <h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
-<p>Targets the <a href="evaluation/design/../challenges/bounding-futures.html">bounding futures</a> challenge.</p>
+<p>Targets the <a href="evaluation/design/../challenges/bounding_futures.html">bounding futures</a> challenge.</p>
 <p>The core idea of <strong>&quot;implied Send&quot;</strong> is to say that, by default at least, the future that results from an <code>async fn</code> must be <code>Send</code> if the <code>Self</code> type that implements the trait is <code>Send</code>.</p>
 <p>In Chalk terms, you can think of this as a bound like </p>
 <pre><code>if (Implemented(Self: Send)) { 
@@ -513,43 +591,133 @@ impl AsyncRead for MySocketBuddy {
 </code></pre>
 <p>Frustrating!</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="trait-multiplication"><a class="header" href="#trait-multiplication">Trait multiplication</a></h1>
-<h2 id="status-1"><a class="header" href="#status-1">Status</a></h2>
-<p>Seems unlikely to be adopted, but may be the seed of a better idea</p>
-<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
-<p>Introduce a new form of bound, trait <em>multiplication</em>. One can write <code>T: Iterator * Send</code> and it means <code>T: Iterator&lt;Item: Send&gt; + Send</code> (using the notation from <a href="https://rust-lang.github.io/rfcs/2289-associated-type-bounds.html">RFC 2289</a>). More generally, <code>Foo * Bar</code> means <code>Foo + Bar</code> but also that <code>Foo::Assoc: Bar</code> for each associated type <code>Assoc</code> defined in <code>Foo</code> (including anonymous ones defined by async functions).</p>
-<h2 id="whats-great-about-this-1"><a class="header" href="#whats-great-about-this-1">What's great about this</a></h2>
-<p>The cool thing about this is that it means that <strong>the check whether things are Send occurs exactly when it is needed, and not at the definition site</strong>. This makes async functions in trait behave more analogously with ordinary impls. (<a href="evaluation/design/./implied_send.html#not-analogous-to-async-fn-outside-of-traits">In contrast to implied bounds</a>.)</p>
-<p>With this proposal, the <a href="evaluation/design/../scenarios/background-logging.html">background logging</a> scenario would play out differently depending on the <a href="evaluation/design/../executor-styles.html">executor style</a> being used:</p>
-<ul>
-<li>Thread-local: <code>logs: impl AsyncIterator&lt;Item = String&gt; + 'static</code></li>
-<li>Thread per core: <code>logs: impl AsyncIterator&lt;Item = String&gt; + Send + 'static</code></li>
-<li>Work stealing: <code>logs: impl AsyncIterator&lt;Item = String&gt; * Send + 'static</code></li>
-</ul>
-<p>The key observation here is that <code>+ Send</code> only tells you whether the <em>initial value</em> (here, <code>logs</code>) is <code>Send</code>. The <code>* Send</code> is needed to say &quot;and the futures resulting from this trait are Send&quot;, which is needed in work-stealing sceanrios.</p>
-<h2 id="whats-not-so-great-about-this"><a class="header" href="#whats-not-so-great-about-this">What's not so great about this</a></h2>
-<h3 id="complex"><a class="header" href="#complex">Complex</a></h3>
-<p>The distinction between <code>+</code> and <code>*</code> is subtle but crucial. It's going to be a new thing to learn and it just makes the trait system feel that much more complex overall.</p>
-<h3 id="reptitive-for-multiple-traits"><a class="header" href="#reptitive-for-multiple-traits">Reptitive for multiple traits</a></h3>
-<p>If you had a number of async traits, you would need <code>* Send</code> for each one:</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="inline-async-fn"><a class="header" href="#inline-async-fn">Inline async fn</a></h1>
+<p>This is a write-up of an idea for how we could compile async fn in a way that is more compatible with dyn trait. The idea has some pros and cons, but is worth cataloging.</p>
+<h2 id="status-quo"><a class="header" href="#status-quo">Status quo</a></h2>
+<p>Until now, the only way to make an &quot;async trait&quot; be dyn-safe was to use a manual poll method. The <a href="https://docs.rs/futures/0.3.15/futures/io/trait.AsyncRead.html"><code>AsyncRead</code></a> trait in futures, for example, is as follows:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>trait Trait1 {
-    async fn method1(&amp;self);
-}
+</span>pub trait AsyncRead {
+    fn poll_read(
+        self: Pin&lt;&amp;mut Self&gt;, 
+        cx: &amp;mut Context&lt;'_&gt;, 
+        buf: &amp;mut [u8]
+    ) -&gt; Poll&lt;Result&lt;usize, Error&gt;&gt;;
 
-trait Trait2 {
-    async fn method2(&amp;self);
-}
-
-async fn foo&lt;T&gt;()
-where
-    T: Send * (Trait1 + Trait2)
-{
-
+    unsafe fn initializer(&amp;self) -&gt; Initializer { ... }
+    
+    fn poll_read_vectored(
+        self: Pin&lt;&amp;mut Self&gt;, 
+        cx: &amp;mut Context&lt;'_&gt;, 
+        bufs: &amp;mut [IoSliceMut&lt;'_&gt;]
+    ) -&gt; Poll&lt;Result&lt;usize, Error&gt;&gt; { ... }
 }
 <span class="boring">}
 </span></code></pre></pre>
+<p>Implementing these traits is a significant hurdle, as it requires the use of <code>Pin</code>. It also means that people cannot leverage <code>.await</code> syntax or other niceties that they are accustomed to. (See <a href="https://rust-lang.github.io/wg-async-foundations/vision/status_quo/alan_hates_writing_a_stream.html">Alan hates writing a stream</a> for a narrative description.)</p>
+<p>It would be nice if we could rework those traits to use <code>async fn</code>. Today that is only possible using the <code>async_trait</code> procedural macro:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+pub trait AsyncRead {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; Result&lt;usize, Error&gt;;
+
+    async fn poll_read_vectored(&amp;mut self, bufs: &amp;mut [IoSliceMut&lt;'_&gt;]) -&gt; Result&lt;usize, Error&gt;;
+
+    unsafe fn initializer(&amp;self) -&gt; Initializer { ... }
+    
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Unfortunately, using async-trait has some downsides (see <a href="https://rust-lang.github.io/wg-async-foundations/vision/status_quo/alan_needs_async_in_traits.html">Alan needs async in traits</a>). Most notably, the traits are rewritten to return a <code>Box&lt;dyn Future&gt;</code>. For many purposes, this is fine, but in the case of foundational traits like <code>AsyncRead</code>, <code>AsyncDrop</code>, <code>AsyncWrite</code>, it is a significant hurdle:</p>
+<ul>
+<li>These traits should be included in libcore and available to the no-std ecosystem, like <code>Read</code> and <code>Write</code>.</li>
+<li>These traits are often on the performance &quot;hot path&quot; and forcing a memory allocation there could be significant for some applications.</li>
+</ul>
+<p>There are some other problems with the poll-based design. For example, the buffer supplied to <code>poll_read</code> can change in between invocations (and indeed existing adapters take advantage of this sometimes). This means that the traits cannot be used for <a href="https://github.com/rust-lang/wg-async-foundations/pull/207">zero copy</a>, although this is not the only hurdle.</p>
+<h3 id="for-drop-especially-the-state-must-be-embedded-within-the-self-type"><a class="header" href="#for-drop-especially-the-state-must-be-embedded-within-the-self-type">For drop especially, the state must be embedded within the self type</a></h3>
+<p>If we want to have an async version of drop, it is really important that it does not return a separate future, but only makes use of state embedded within the type. This is because we might have a <code>Box&lt;dyn Future&gt;</code> or some other type that implements <code>AsyncDrop</code>, but where we don't know the concrete type. We are going to want to be able to drop those, which implies that they will live on the stack, which implies that we have to know the contents of the resulting future to know if it is <code>Send</code>. </p>
+<h2 id="problem-returning-a-future"><a class="header" href="#problem-returning-a-future">Problem: returning a future</a></h2>
+<p>The fundamental problem that makes <code>async fn</code> not dyn-safe (and the reason that allocation is required) is that every implementation of <code>AsyncRead</code> requires different amounts of state. The future that is returned is basically an enumeration with fields for each value that may be live across an <code>await</code> point, and naturally that will vary per implementation. This means that code which doesn't know the precise type that it is working with cannot predict how much space that type will require. One solution is certainly boxing, which sidesteps the problem by returning a pointer to memory in the heap.</p>
+<p>Using poll methods, as the existing traits do, sidesteps this in a different way: the poll methods basically require that any state that the <code>AsyncRead</code> impl requires across invocations of <code>poll</code> must be present within the <code>self</code> field itself. This is a perfectly valid solution for many applications, but figuring out that state and tracking it efficiently is tedious for users.</p>
+<h2 id="proposal-inline-futures"><a class="header" href="#proposal-inline-futures">Proposal: &quot;inline&quot; futures</a></h2>
+<p>The idea is to allow users to opt-in to &quot;inline futures&quot;. Users would write a <code>repr</code> attribute on traits that contain <code>async fn</code> methods (the attribute):</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[repr(inline_async)]
+trait AsyncRead {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; Result&lt;usize, Error&gt;;
+    
+    ...
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The choice of <code>repr</code> is significant here:</p>
+<ul>
+<li>Like repr on a struct, this is meant to be used for things that affect how the code is compiled and its efficiency, but which don't affect the &quot;mental model&quot; of how the trait works.</li>
+<li>Like repr on a struct, using repr may imply some limitations on the things you can do with the trait in order to achieve those benefits.</li>
+</ul>
+<p>When a trait is as <code>repr(inline_async)</code>, the state for all of its async functions will be added into the type that implements the trait (this attribute could potentially also be used per method). This does imply some key limitations:</p>
+<ul>
+<li><code>repr(inline_async)</code> traits can only be implemented on structs or enums defined in the current crate. This allows the compiler to append those fields into the layout of that struct or enum. </li>
+<li><code>repr(inline_async)</code> traits can only contain <code>async fn</code> with <code>&amp;mut self</code> methods.</li>
+</ul>
+<h2 id="desugaring"><a class="header" href="#desugaring">Desugaring</a></h2>
+<p>The desugaring for an <code>inline_async</code> function is different. Rather than an <code>async fn</code> becoming a type that returns an <code>impl Future</code>, the <code>async fn</code> always returns a value of a fixed type. This is a kind of variant on <a href="https://github.com/rust-lang/rust/issues/72302"><code>Future::PollFn</code></a>, which will simply invoke the <code>poll_read</code> function each time it is called. What we want is <em>something</em> like this, although this doesn't quite work (and relies on unstable features Niko doesn't love):</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait AsyncRead {
+    // Standard async fn desugaring, with a twist:
+    fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; Future::PollFn&lt;
+        typeof(&lt;Self as AsyncRead&gt;::poll_read)
+    &gt;;
+
+    // 
+    fn poll_read(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;'_&gt;) -&gt; Poll&lt;Result&lt;usize, Error&gt;&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Basically the <code>read</code> method would</p>
+<ul>
+<li>initialize the state of the future and then</li>
+<li>construct a <a href="https://github.com/rust-lang/rust/issues/72302"><code>Future::PollFn</code></a>-like struct that contains a pointer to the <code>poll_read</code> function. </li>
+</ul>
+<h2 id="faq"><a class="header" href="#faq">FAQ</a></h2>
+<h3 id="whats-wrong-with-that-desugaring"><a class="header" href="#whats-wrong-with-that-desugaring">What's wrong with that desugaring?</a></h3>
+<p>The desugaring is pretty close. It has the nice property that, when invoked with a known type, the <code>Future::PollFn</code> dispatches statically the poll function, so there is no dynamic dispatch or loss of efficiency.</p>
+<p>However, it also has a problem. The return type is still dependent on <code>Self</code>, so per our <em>existing</em> dyn Rules, that doesn't work. </p>
+<p>It should be possible to extend our dyn Rules, though. All that is needed is a bit of &quot;adaptation glue&quot; in the code that is included in the vtable so that it will convert from a <code>Future::PollFn</code> for some fixed <code>T</code> to one that uses a <code>fn</code> pointer. That seems eminently doable, but I'm not sure if it can be expressed in the language today. </p>
+<p>Pursuing this road might lead to a fundamental extension in dyn safety, which would be nice!</p>
+<h3 id="what-state-is-added-precisely-to-the-struct"><a class="header" href="#what-state-is-added-precisely-to-the-struct">What state is added precisely to the struct?</a></h3>
+<ul>
+<li>An integer recording the await point where the future is blocked</li>
+<li>Fields for any data that outlives the await</li>
+</ul>
+<h3 id="what-if-i-dont-want-lots-of-state-added-to-my-struct"><a class="header" href="#what-if-i-dont-want-lots-of-state-added-to-my-struct">What if I don't want lots of state added to my struct?</a></h3>
+<p>We could limit the use of variables live across an await.</p>
+<h3 id="could-we-extend-this-to-other-traits"><a class="header" href="#could-we-extend-this-to-other-traits">Could we extend this to other traits?</a></h3>
+<p>e.g., simulacrum mentioned <code>-&gt; impl Iterator</code> in a (dyn-safe) trait. Seems plausible.</p>
+<h3 id="why-do-you-only-permit-mut-self-methods"><a class="header" href="#why-do-you-only-permit-mut-self-methods">Why do you only permit <code>&amp;mut self</code> methods?</a></h3>
+<p>Since the state for the future is stored inline in the struct, we can only have one active future at a time. Using <code>&amp;mut self</code> ensures that the poll function is only in use by one future at a time, since that future would be holding an <code>&amp;mut</code> reference to the receiver.</p>
+<h3 id="we-would-like-to-implement-asyncread-for-all-mut-impl-asyncread-how-can-we-enable-that"><a class="header" href="#we-would-like-to-implement-asyncread-for-all-mut-impl-asyncread-how-can-we-enable-that">We would like to implement <code>AsyncRead</code> for all <code>&amp;mut impl AsyncRead</code>, how can we enable that?</a></h3>
+<p>I think this <em>should</em> be possible. The trick is that the poll function would just dispatch to another poll function. We might be able to support it by detecting the pattern of the <code>async fn</code> directly awaiting something reachable from self and supporting that for arbitrary types:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;T: AsyncRead&gt; AsyncRead for &amp;mut T {
+    async fn read(&amp;mut self, buf: &amp;mut [u8]) -&gt; Result&lt;usize, Error&gt; {
+        T::read(self, buf).await
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Basically this compiles to a <code>poll_read</code> that just tweaks dispatches to another <code>poll_read</code> with some derefs.</p>
+<h3 id="can-you-implement-both-asyncread-and-asyncwrite-for-the-same-type-with-this-technique"><a class="header" href="#can-you-implement-both-asyncread-and-asyncwrite-for-the-same-type-with-this-technique">Can you implement both AsyncRead and AsyncWrite for the same type with this technique?</a></h3>
+<p>You can, but you can't simultaneously read and write from the same value. You would need a split-like API. </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-explainer"><a class="header" href="#-explainer">📚 Explainer</a></h1>
 <blockquote>
 <p>The &quot;explainer&quot; is &quot;end-user readable&quot; documentation that explains how to use the feature being deveoped by this initiative.
@@ -617,7 +785,7 @@ trait SomeTrait {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="impl-trait-in-traits"><a class="header" href="#impl-trait-in-traits">impl Trait in traits</a></h1>
 <p>This effort is part of the <a href="https://github.com/rust-lang/impl-trait-initiative">impl trait initiative</a>. Some notes are kept here as a summary.</p>
-<h2 id="summary-2"><a class="header" href="#summary-2">Summary</a></h2>
+<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
 <ul>
 <li>Able to write <code>-&gt; impl Trait</code> in traits</li>
 <li>Able to write <code>type Foo&lt;..&gt; = impl Trait</code> in impls (<a href="https://github.com/rust-lang/rust/issues/63063">type alias impl trait</a>, <a href="https://github.com/rust-lang/generic-associated-types-initiative">generic associated types</a>))</li>

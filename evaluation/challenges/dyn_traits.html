@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Background logging - async fn fundamentals initiative</title>
+        <title>Dyn traits - async fn fundamentals initiative</title>
                 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item expanded "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../evaluation/scenarios/background-logging.html" class="active">Background logging</a></li><li class="chapter-item "><a href="../../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../../evaluation/challenges/dyn_traits.html">Dyn traits</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/evaluation/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../../evaluation/design/inline_async_fn.html">Inline async fn</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item expanded "><a href="../../evaluation/challenges/dyn_traits.html" class="active">Dyn traits</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/evaluation/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../../evaluation/design/inline_async_fn.html">Inline async fn</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -120,7 +120,7 @@
                                                                         <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/scenarios/background-logging.md" title="Suggest an edit" aria-label="Suggest an edit">
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/challenges/dyn_traits.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                         
@@ -149,72 +149,94 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="background-logging"><a class="header" href="#background-logging">Background logging</a></h1>
-<p>In this scenario, the <code>start_writing_logs</code> function takes an async iterable and spawns out a new task. This task will pull items from the iterator and send them to some server:</p>
+                        <h1 id="dyn-traits"><a class="header" href="#dyn-traits">Dyn traits</a></h1>
+<p>Supporting <code>dyn Trait</code> when <code>Trait</code> contains an <code>async fn</code> is challenging:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>trait AsyncIterator {
-    type Item;
-    async fn next(&amp;mut self) -&gt; Self::Item;
+</span>trait Trait {
+    async fn foo(&amp;self);
 }
 
-// Starts a task that will write out the logs in the background
-async fn start_writing_logs(
-    logs: impl AsyncIterator&lt;Item = String&gt; + 'static
-) {
-    spawn(async move || {
-        while let Some(log) = logs.next().await {
-            send_to_serve(log).await;
-        }
-    });
+impl Trait for TypeA {
+    async fn foo(&amp;self);
 }
+
+impl Trait for TypeB { ... }
 <span class="boring">}
 </span></code></pre></pre>
-<p>The precise signature and requirements for the <code>spawn</code> function here will depend on what <a href="../executor-styles.html">kind of executor</a> you are using, so let's consider each case but let's consider each case separately.</p>
-<p>One note: in [tokio] and other existing executors, the <code>spawn</code> function takes a future, not an async closure. We are using a closure here because that is more analogous to the synchronous signature, but also because it enables a distinction between the <em>initial state</em> and the future that runs.</p>
-<h2 id="thread-local-executor"><a class="header" href="#thread-local-executor">Thread-local executor</a></h2>
-<p>This is the easy case. Nothing has to be <code>Send</code>.</p>
-<h2 id="work-stealing-executor"><a class="header" href="#work-stealing-executor">Work-stealing executor</a></h2>
-<p>In this case, the spawn function will require both that the initial closure itself is <code>Send</code> and that the future it returns is <code>Send</code> (so that it can be moved from place to place as code executes).</p>
-<p>We don't have a good way to express this today! The problem is that there is a future that results from calling <code>logs.next()</code>, let's call it <code>F</code>. The future to be <em>spawned</em> has to be sure that <code>F: Send</code>. There isn't a good way to do this today, and even explaining the problem is surprisingly hard. Here is a &quot;desugared version&quot; of the program that shows what is needed:</p>
+<p>Consider the desugared form of this trait:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>trait AsyncIterator {
-    type Item;
-    type NextFuture: Future&lt;Output = Self::Item&gt;;
+</span>trait Trait {
+    type Foo&lt;'s&gt;: Future&lt;Output = ()&gt; + 's;
 
-    fn next(&amp;mut self) -&gt; impl Self::NextFuture;
+    fn foo(&amp;self) -&gt; Self::Foo&lt;'_&gt;;
 }
 
-// Starts a task that will write out the logs in the background
-async fn start_writing_logs&lt;I&gt;(
-    logs: I
-) 
-where
-    I: AsyncIterator&lt;Item = String&gt; + 'static + Send,
-    I::NextFuture: Send,
-{
-    spawn(async move || {
-        while let Some(log) = logs.next().await {
-            send_to_serve(log).await;
-        }
-    });
+impl Trait for TypeA {
+    type Foo&lt;'s&gt; = impl Future&lt;Output = ()&gt; + 's;
+
+    fn foo(&amp;self) -&gt; Self::Foo&lt;'_&gt; {
+        async move { ... } // has some unique future type F_A
+    }
+}
+
+impl Trait for TypeB { ... }
+<span class="boring">}
+</span></code></pre></pre>
+<p>The primary challenge to using <code>dyn Trait</code> in today's Rust is that <strong><code>dyn Trait</code> today must list the values of all associated types</strong>. This means you would have to write <code>dyn for&lt;'s&gt; Trait&lt;Foo&lt;'s&gt; = XXX&gt;</code> where <code>XXX</code> is the future type defined by the impl, such as <code>F_A</code>. This is not only verbose (or impossible), it also uniquely ties the <code>dyn Trait</code> to a particular impl, defeating the whole point of <code>dyn Trait</code>.</p>
+<p>For this reason, the <code>async_trait</code> crate models all futures as <code>Box&lt;dyn Future&lt;...&gt;&gt;</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+trait Trait {
+    async fn foo(&amp;self);
+}
+
+// desugars to
+
+trait Trait {
+    fn foo(&amp;self) -&gt; Box&lt;dyn Future&lt;Output = ()&gt; + Send + '_&gt;;
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>(With <a href="https://rust-lang.github.io/rfcs/2289-associated-type-bounds.html">RFC 2289</a>, you could write <code>logs: impl AsyncIterator&lt;Item = String, NextFuture: Send&gt; + Send</code>, which is more compact, but still awkward.)</p>
+<p>This compiles, but it has downsides:</p>
+<ul>
+<li>Allocation is required, <em>even when not using dyn Trait</em>.</li>
+<li>The user must state up front whether <code>Box&lt;dyn Future...&gt;</code> is <code>Send</code> or not.
+<ul>
+<li>In <code>async_trait</code>, this is declared by writing <code>#[async_future(?Send)]</code> if desired.</li>
+</ul>
+</li>
+</ul>
+<h2 id="desiderata"><a class="header" href="#desiderata">Desiderata</a></h2>
+<p>Here are some of the general constraints:</p>
+<ul>
+<li>The ability to use <code>async fn</code> in a trait without allocation</li>
+<li>When using a <code>dyn Trait</code>, the type of the future must be the same for all impls
+<ul>
+<li>This implies a <code>Box</code> or other pointer indirection, or something like <a href="../design/inline_async_fn.html">inline async fn</a>.</li>
+</ul>
+</li>
+<li>It would be nice if it were possible to use <code>dyn Trait</code> in an embedded context (without access to <code>Box</code>)
+<ul>
+<li>This will not be possible &quot;in general&quot;, but it could be possible for particular traits, such as <code>AsyncIterator</code></li>
+</ul>
+</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                                                    <a rel="prev" href="../../evaluation/scenarios.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="../../evaluation/challenges/bounding_futures.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-                                                    <a rel="next" href="../../evaluation/scenarios/implementing-async-read.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="../../evaluation/design.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -224,11 +246,11 @@ where
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                                    <a rel="prev" href="../../evaluation/scenarios.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="../../evaluation/challenges/bounding_futures.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-                                    <a rel="next" href="../../evaluation/scenarios/implementing-async-read.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="../../evaluation/design.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                             </nav>
