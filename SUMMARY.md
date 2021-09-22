@@ -16,7 +16,7 @@
     - [Implicit await with async drop](./evaluation/challenges/implicit_await_with_async_drop.md)
   - [Design documents](./evaluation/design.md)
     - [Implied Send](./evaluation/design/implied_send.md)
-    - [Trait multiplication](./evaluation/evaluation/trait_multiplication.md)
+    - [Trait multiplication](./evaluation/design/trait_multiplication.md)
     - [Inline async fn](./evaluation/design/inline_async_fn.md)
     - [Custom dyn impls](./evaluation/design/custom_dyn_impls.md)
     - [Auto traits consider AsyncDrop](./evaluation/design/auto_traits_consider_async_drop.md)
