@@ -1,6 +1,8 @@
 # Inline async fn
 
-This is a write-up of an idea for how we could compile async fn in a way that is more compatible with dyn trait. The idea has some pros and cons, but is worth cataloging.
+## Status
+
+Seems unlikely to be adopted, but may be the seed of a better idea
 
 ## Status quo
 

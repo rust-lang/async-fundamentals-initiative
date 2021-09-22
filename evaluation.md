@@ -9,6 +9,8 @@ in the [design-discussions] for more detailed consideration.
 
 ## Goals
 
+### Write async fn in traits, impls
+
 The goal of the impact is to enable users to write `async fn` in traits and impls in a natural way. As a simple example, we would like to support the ability to write an `async fn` in any trait:
 
 ```rust
@@ -46,10 +48,14 @@ The goal in general is that `async fn` can be used in traits as widely as possib
 * in libraries, for all the usual reasons one uses traits;
 * in ordinary programs, using all manner of executors.
 
-## Key challenges
+### Support async drop
 
-There are a few key challenges to overcome in the design:
+One particular trait worth discussing is the `Drop` trait. We would like to support "async drop", which means the ability to await things during drop:
 
-* Bounding the futures that are returned by `Send`, `'static`, or other traits.
-* Supporting `dyn Trait` when `Trait` has `async fn`, and giving the user control over some of the tradeoffs involved.
+```rust
+trait AsyncDrop {
+    async fn drop(&mut self);
+}
+```
 
+Like `Drop`, the `AsyncDrop` trait would be 
