@@ -8,7 +8,7 @@
 
 ## Summary
 
-Targets the [bounding futures](../challenges/bounding-futures.md) challenge.
+Targets the [bounding futures](../challenges/bounding_futures.md) challenge.
 
 The core idea of **"implied Send"** is to say that, by default at least, the future that results from an `async fn` must be `Send` if the `Self` type that implements the trait is `Send`.
 
