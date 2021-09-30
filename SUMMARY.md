@@ -23,6 +23,7 @@
     - [Custom dyn impls](./evaluation/design/custom_dyn_impls.md)
     - [Auto traits consider AsyncDrop](./evaluation/design/auto_traits_consider_async_drop.md)
     - [Simple names](./evaluation/design/simple_names.md)
+    - [Bound items](./evaluation/design/bound_items.md)
 - [📚 Explainer](./explainer.md)
 - [✨ RFC](./RFC.md)
 - [💬 Design discussions](./design-discussions/README.md)
