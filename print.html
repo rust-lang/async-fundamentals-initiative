@@ -193,25 +193,41 @@ following command.</p>
  initiative.
 -->
 <p>This initiative is part of the wg-async-foundations <a href="https://rust-lang.github.io/wg-async-foundations/vision.html">vision process</a>.</p>
-<ul>
-<li>Able to write <code>async fn</code> in traits and trait impls
-<ul>
-<li>Able to easily declare that <code>T: Trait + Send</code> where &quot;every async fn in <code>Trait</code> returns a <code>Send</code> future&quot;</li>
-<li>Traits that use <code>async fn</code> can still be <a href="./design-discussions/dyn_async_trait.html">dyn safe</a> though some tuning may be required</li>
-<li>Async functions in traits desugar to <a href="./design-discussions/impl_trait_in_traits.html">impl Trait in traits</a></li>
-</ul>
-</li>
-<li>Able to write <a href="./design-discussions/async_drop.html">&quot;async fn drop&quot;</a> to declare that the destructor may await</li>
-<li>Support for <a href="./design-discussions/async_closures.html">async closures</a></li>
-</ul>
 <h2 id="proposal"><a class="header" href="#proposal">Proposal</a></h2>
-<p>TODO</p>
-<!--
-Copy and paste the proposal into here.
-
-Feel free to move some elements, like design questions that came up,
-into the approriate section.
--->
+<p><code>async fn</code> exists today, but does not integrate well with many core language features like traits, closures, and destructors. We would like to make it so that you can write async code just like any other Rust code.</p>
+<h2 id="goals"><a class="header" href="#goals">Goals</a></h2>
+<h3 id="able-to-write-async-fn-in-traits-and-trait-impls"><a class="header" href="#able-to-write-async-fn-in-traits-and-trait-impls">Able to write <code>async fn</code> in traits and trait impls</a></h3>
+<p>The goal in general is that <code>async fn</code> can be used in traits as widely as possible:</p>
+<ul>
+<li>for foundational traits, like reading, writing, and iteration;</li>
+<li>for async closures;</li>
+<li>for async drop, which is built in to the language;</li>
+<li>in <code>dyn</code> values, which introduce some particular complications;</li>
+<li>in libraries, for all the usual reasons one uses traits;</li>
+<li>in ordinary programs, using all manner of executors.</li>
+</ul>
+<h4 id="key-outcomes"><a class="header" href="#key-outcomes">Key outcomes</a></h4>
+<ul>
+<li><a href="./design-discussions/static_async_trait.html">Async functions in traits</a> desugar to <a href="./design-discussions/impl_trait_in_traits.html">impl Trait in traits</a></li>
+<li>Traits that use <code>async fn</code> must still be <a href="./design-discussions/dyn_async_trait.html">dyn safe</a> though some tuning may be required</li>
+<li>Return futures must easily be <a href="./evaluation/challenges/bounding_futures.html">bound by <code>Send</code></a></li>
+</ul>
+<h3 id="support-async-drop"><a class="header" href="#support-async-drop">Support async drop</a></h3>
+<p>Users should be able to write <a href="./design-discussions/async_drop.html">&quot;async fn drop&quot;</a> to declare that the destructor may await.</p>
+<h4 id="key-outcomes-1"><a class="header" href="#key-outcomes-1">Key outcomes</a></h4>
+<ul>
+<li>Types can perform async operations on cleanup, like closing database connections</li>
+<li>There's a way to detect and handle async drop types that are dropped synchronously</li>
+<li>Await points that result from async cleanup can be identified, if needed</li>
+</ul>
+<h3 id="support-async-closures"><a class="header" href="#support-async-closures">Support async closures</a></h3>
+<p>Support <a href="./design-discussions/async_closures.html">async closures</a> and <code>AsyncFn</code>, <code>AsyncFnMut</code>, <code>AsyncFnOnce</code> traits.</p>
+<h4 id="key-outcomes-2"><a class="header" href="#key-outcomes-2">Key outcomes</a></h4>
+<ul>
+<li>Async closures work like ordinary closures but can await values</li>
+<li>Traits analogous to <code>Fn</code>, <code>FnMut</code>, <code>FnOnce</code> exist for async</li>
+<li>Reconcile async blocks and async closures</li>
+</ul>
 <h2 id="membership"><a class="header" href="#membership">Membership</a></h2>
 <table><thead><tr><th>Role</th><th>Github</th></tr></thead><tbody>
 <tr><td><a href="https://lang-team.rust-lang.org/initiatives/process/roles/owner.html">Owner</a></td><td><a href="https://github.com/tmandry">tmandry</a></td></tr>
@@ -329,7 +345,7 @@ It is not required for all initiatives, only those that begin with a problem sta
 but without a clear picture of the best solution. Often the evaluation will refer to topics
 in the <a href="./design-discussions/README.html">design-discussions</a> for more detailed consideration.</p>
 </blockquote>
-<h2 id="goals"><a class="header" href="#goals">Goals</a></h2>
+<h2 id="goals-1"><a class="header" href="#goals-1">Goals</a></h2>
 <h3 id="write-async-fn-in-traits-impls"><a class="header" href="#write-async-fn-in-traits-impls">Write async fn in traits, impls</a></h3>
 <p>The goal of the impact is to enable users to write <code>async fn</code> in traits and impls in a natural way. As a simple example, we would like to support the ability to write an <code>async fn</code> in any trait:</p>
 <pre><pre class="playground"><code class="language-rust">
@@ -370,7 +386,7 @@ in the <a href="./design-discussions/README.html">design-discussions</a> for mor
 <li>in libraries, for all the usual reasons one uses traits;</li>
 <li>in ordinary programs, using all manner of executors.</li>
 </ul>
-<h3 id="support-async-drop"><a class="header" href="#support-async-drop">Support async drop</a></h3>
+<h3 id="support-async-drop-1"><a class="header" href="#support-async-drop-1">Support async drop</a></h3>
 <p>One particular trait worth discussing is the <code>Drop</code> trait. We would like to support &quot;async drop&quot;, which means the ability to await things during drop:</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
