@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Implicit await with async drop - async fn fundamentals initiative</title>
+        <title>Bound items - async fn fundamentals initiative</title>
                 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../roadmap/mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item expanded "><a href="../../evaluation/challenges/implicit_await_with_async_drop.html" class="active">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item "><a href="../../evaluation/design/bound_items.html">Bound items</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../roadmap/mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="../../evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item expanded "><a href="../../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item expanded "><a href="../../evaluation/design/bound_items.html" class="active">Bound items</a></li></ol></li></ol></li><li class="chapter-item "><a href="../../explainer.html">📚 Explainer</a></li><li class="chapter-item "><a href="../../RFC.html">✨ RFC</a></li><li class="chapter-item "><a href="../../design-discussions/index.html">💬 Design discussions</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../design-discussions/static_async_trait.html">💬 Static async trait</a></li><li class="chapter-item "><a href="../../design-discussions/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../../design-discussions/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../../design-discussions/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../../design-discussions/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../../FAQ.html">😕 FAQ</a></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -120,7 +120,7 @@
                                                                         <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/challenges/implicit_await_with_async_drop.md" title="Suggest an edit" aria-label="Suggest an edit">
+                                                                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./evaluation/design/bound_items.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                         
@@ -149,32 +149,97 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="implicit-await-with-async-drop"><a class="header" href="#implicit-await-with-async-drop">Implicit await with async drop</a></h1>
-<p>Consider this code:</p>
+                        <h1 id="bound-items"><a class="header" href="#bound-items">Bound Items</a></h1>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>Targets the <a href="../challenges/bounding-futures.html">bounding futures</a> challenge.</p>
+<p>This is a series of smaller changes (see detailed design), with the goal of allowing the end user to name the bound described in the challenge text in this way (i'll let the code speak for itself):</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>async fn foo(input: &amp;QueryInput) -&gt; anyhow::Result&lt;()&gt; {
-    let db = DatabaseHandle::connect().await;
-    let query = assemble_query(&amp;input)?;
-    let results = db.perform_query(query).await;
-    while let Some(result) = results.next().await? {
-        ...
-    }
+</span>pub trait AsyncIterator {
+    type Item;
+    async fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt;;
+}
+
+pub async fn start_writing_logs&lt;F&gt;(
+    logs: F
+) where IsThreadSafeIterator&lt;F&gt;, F: 'static {  // IsThreadSafeIterator is defined below
+    todo!()
+}
+
+pub bound IsThreadSafeAsyncIterator&lt;T&gt; {
+    T: AsyncIterator + Send,
+    // Add a `fn` keyword here to refer to the type of associated function.
+    &lt;T as AsyncIterator&gt;::fn next: SimpleFnOnceWithSendOutput,
+    // Use `*` to refer to potentially long list of all associated functions.
+    // this is useful in certain cases.
+    &lt;T as AsyncIterator&gt;::fn *: SimpleFnOnceWithSendOutput,
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h2>
+<p>I'm not good at naming things, and all names and identifiers are subject to bikeshedding.</p>
+<ul>
+<li>
+<p>Bound Item(Language construct). Allow user to name a combination of bounds. No <code>Self</code> allowed here.
+Could replace the <code>trait_alias</code> language feature. Improve ergonomics of many existing code if used
+properly.</p>
+<p>I'm hesitant on which of <code>PascalCase</code>, <code>snake_case</code>, or <code>UPPER_CASE</code> should be used for this naming though.</p>
+</li>
+<li>
+<p>Syntax for refering to the type of a associated item in path. Currently using <code>fn</code> keyword. Can expand to
+<code>const</code> and <code>type</code> keywords if needed. Turbofish might be involved if the assoc item is generic.</p>
+</li>
+<li>
+<p><code>SimpleFnOnce</code> trait (Language item). A function can only accept one set of arguments,
+so all functions and closures shall implement this, while user-defined callable types doesn't
+have to. This is used for reasoning about the output parameters of associated functions.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait SimpleFnOnce: FnOnce&lt;Self::Arg&gt; {
+    type Arg;
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now let us assume that <code>DatabaseHandle</code> implements <code>AsyncDrop</code> to close the connection. There are numerous points here where <code>db</code> could be dropped (e.g., each use of <code>?</code>). At each of those points, there is effectively an implicit <code>await</code> similar to <code>AsyncDrop::async_drop(db).await</code>. It seems clear that users should not be required to manually write those things, but it is also a weakening of the existing <code>.await</code> contract (that all blocking points are visible).</p>
+</li>
+<li>
+<p><code>SimpleFnOnceWithSendOutput</code> trait (Lib construct or user-defined).</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait SimpleFnOnceWithSendOutput : SimpleFnOnce where
+    Self::Output: Send
+{}
+
+impl&lt;T&gt; SimpleFnOnceWithSendOutput for T where T:SimpleFnOnce, T::Output: Send {}
+<span class="boring">}
+</span></code></pre></pre>
+</li>
+</ul>
+<h2 id="whats-great-about-this"><a class="header" href="#whats-great-about-this">What's great about this</a></h2>
+<ul>
+<li>Absolutely minimal type system changes.</li>
+<li>Quite easy to learn. (Name it and use the name)</li>
+<li>Easy to write library documentation, and give examples.</li>
+</ul>
+<h2 id="whats-not-so-great"><a class="header" href="#whats-not-so-great">What's not so great</a></h2>
+<ul>
+<li>New syntax item constructs. Three parsers (rustc, ra, syn) needs to change to support this.</li>
+<li>Very verbose code writing style. Many more lines of code.</li>
+<li>Will become part of library API in many cases.</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                                                    <a rel="prev" href="../../evaluation/challenges/guaranteeing_async_drop.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                                    <a rel="prev" href="../../evaluation/design/simple_names.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
-                                                    <a rel="next" href="../../evaluation/design.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                                    <a rel="next" href="../../explainer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -184,11 +249,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                                    <a rel="prev" href="../../evaluation/challenges/guaranteeing_async_drop.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                    <a rel="prev" href="../../evaluation/design/simple_names.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
-                                    <a rel="next" href="../../evaluation/design.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                    <a rel="next" href="../../explainer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                             </nav>
