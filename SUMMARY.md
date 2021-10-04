@@ -1,6 +1,8 @@
 # Summary
 
 - [👋 Welcome](./README.md)
+- [✏️ Updates](./updates.md)
+  - [2021-Oct](./updates/2021-oct.md)
 - [📜 Charter](./CHARTER.md)
 - [🛣 Roadmap](./roadmap.md)
   - [MVP: Static async fn in traits](./roadmap/mvp.md)
