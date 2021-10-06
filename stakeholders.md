@@ -35,9 +35,17 @@ We need feedback from people using Rust in production to ensure that our designs
 * Help ensure that it works for you
 * A t-shirt!
 
+### Goals of the stakeholder program
+
+The goal of the stakeholder program is to make Rust's design process even more inclusive. We have observed that existing mechanisms like the RFC process or issue threads are often not a very good fit for certain categories of users, such as production users or the maintainers of large libraries folks, as they are not able to keep up with the discussion. As a result, they don't participate, and we wind up depriving ourselves of valuable feedback. The stakeholder program looks to supplement those mechanisms with direct contact.
+
+Another goal is to get more testing: one problem we have observed is that features are often developed and deployed on nightly, but production users don't really want to try them out until they hit stable! We would like to get some commitment from people to give things a try so that we have a better chance of finding problems before stabilization.
+
+We want to emphasize that we welcome design feedback from **all Rust users**, regardless of whether you are a named stakeholder or not. If you're using async Rust, or have read through the designs and have a question or idea for improvement, please feel free to [open an issue](https://github.com/rust-lang/async-fundamentals-initiative/issues/new/choose) and tell us about it!
+
 ### Number of stakeholder representatives
 
-We are looking for 3-5 covering various points in the design space, e.g.
+We are selecting a small number of stakeholders covering various points in the design space, e.g.
 
 * Web services author
 * Embedded Rust
@@ -46,4 +54,4 @@ We are looking for 3-5 covering various points in the design space, e.g.
 * High-performance computing
 * Operating systems
 
-If you have thoughts or suggestions for good stakeholders, we'd be keen to hear them.
+If you have thoughts or suggestions for good stakeholders, or you think that you yourself might be a good fit, please reach out to tmandry or nikomatsakis!
