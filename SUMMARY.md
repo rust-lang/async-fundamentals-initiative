@@ -30,6 +30,7 @@
     - [With clauses](./evaluation/design/with_clauses.md)
 - [📚 Explainer](./explainer.md)
 - [✨ RFC](./RFC.md)
+  - [Static async fn in traits](./RFC/static_async_fn_in_traits.md)
 - [💬 Design discussions](./design-discussions/README.md)
   - [💬 Static async trait](./design-discussions/static_async_trait.md)
   - [💬 impl Trait in traits](./design-discussions/impl_trait_in_traits.md)
