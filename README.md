@@ -16,15 +16,16 @@ This is an **umbrella initiative** and, as such, it covers a number of subprojec
 
 See the [roadmap](./roadmap.md) for a list of individual milestones and their status.
 
-| Subproject                    | Issue    | Progress       | State | [Stage]        |
-|-------------------------------|----------|----------------|-------|----------------|
-| async fn                      | [#50547] | ▰▰▰▰▰▰   | ✅    | [Stabilized]   |
-| static async fn in trait      | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| dyn async fn in trait         | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| async drop                    | –        | ▰▱▱▱▱▱   | 🦀    | [Proposal]     |
-| async closures                | –        | ▰▱▱▱▱▱   | 💤    | [Proposal]     |
+| Subproject                    | Issue    | Progress     | State | [Stage]        |
+|-------------------------------|----------|--------------|-------|----------------|
+| async fn                      | [#50547] | ▰▰▰▰▰  | ✅    | [Stabilized]   |
+| static async fn in trait    | [RFC#3185] | ▰▰▱▱▱  | 🦀    | [Experimental] |
+| dyn async fn in trait         | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
+| async drop                    | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
+| async closures                | –        | ▰▱▱▱▱  | 💤    | [Proposal]     |
 
 [#50547]: https://github.com/rust-lang/rust/issues/50547
+[RFC#3185]: https://github.com/rust-lang/rfcs/pull/3185
 
 <!-- TODO: Fill these in
 [Proposal issue]: (https://github.com/rust-lang/lang-team/)
@@ -33,7 +34,7 @@ See the [roadmap](./roadmap.md) for a list of individual milestones and their st
 
 [Stage]: https://lang-team.rust-lang.org/initiatives/process/stages.html
 [Proposal]: https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html
-[Experimental]: https://lang-team.rust-lang.org/initiatives/process/stages/proposal.html
+[Experimental]: https://lang-team.rust-lang.org/initiatives/process/stages/experimental.html
 [Development]: https://lang-team.rust-lang.org/initiatives/process/stages/development.html
 [Feature complete]: https://lang-team.rust-lang.org/initiatives/process/stages/feature-complete.html
 [Stabilized]: https://lang-team.rust-lang.org/initiatives/process/stages/stabilized.html
