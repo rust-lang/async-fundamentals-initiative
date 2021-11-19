@@ -141,8 +141,8 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="async-fundamentals-stage-1-explainer"><a class="header" href="#async-fundamentals-stage-1-explainer">Async Fundamentals Stage 1 Explainer</a></h1>
-<p>This document describes <strong>Stage 1</strong> of the &quot;Async Fundamentals&quot; plans. Our eventual goal is to make it so that, in short, wherever you write <code>fn</code>, you can also write <code>async fn</code> and have things work as transparently as possible. This includes in traits, even special traits like <code>Drop</code>. </p>
-<p>Now that I've got you all excited, let me bring you back down to earth: That is our goal, but Stage 1 does not achieve it. However, we do believe that Stage 1 does enable async functions in traits in such a way that everything is possible, though it may not be easy. </p>
+<p>This document describes <strong>Stage 1</strong> of the &quot;Async Fundamentals&quot; plans. Our eventual goal is to make it so that, in short, wherever you write <code>fn</code>, you can also write <code>async fn</code> and have things work as transparently as possible. This includes in traits, even special traits like <code>Drop</code>.</p>
+<p>Now that I've got you all excited, let me bring you back down to earth: That is our goal, but Stage 1 does not achieve it. However, we do believe that Stage 1 does enable async functions in traits in such a way that everything is possible, though it may not be easy.</p>
 <p>The hope is that by having a stage 1 where stable Rust exposes the core functionality needed for async traits, we can get more data about how async traits will be used in practice. That can guide us as we try to resolve some of the (rather sticky) design questions that block making things more ergonomic. =)</p>
 <h2 id="review-how-async-fn-works"><a class="header" href="#review-how-async-fn-works">Review: how async fn works</a></h2>
 <p>When you write an async function in Rust:</p>
@@ -215,7 +215,7 @@
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>async fn process_request&lt;P&gt;(
-    mut provider: impl P,
+    mut provider: P,
     request: Request,
 ) where
     P: HttpRequestProvider,
@@ -336,8 +336,8 @@ where
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>your_runtime::spawn(async move { 
-    process_request(MyProvider::new(), some_request); 
+</span>your_runtime::spawn(async move {
+    process_request(MyProvider::new(), some_request);
 })
 <span class="boring">}
 </span></code></pre></pre>
@@ -365,7 +365,7 @@ trait HttpRequestProvider { .. }
 // A struct to represent a trait object:
 struct DynHttpRequestProvider&lt;'me&gt; { .. }
 
-impl&lt;'me&gt; HttpRequestProvider for DynHttpRequestProvider&lt;'me&gt; 
+impl&lt;'me&gt; HttpRequestProvider for DynHttpRequestProvider&lt;'me&gt;
 { .. }
 <span class="boring">}
 </span></code></pre></pre>
@@ -527,7 +527,7 @@ trait MyOp {
 trait WidgetStream {
     fn request(&amp;mut self, r: impl Iterator&lt;Item = String&gt;);
     //                            ^^^^^^^^ the macro will look for DynIterator
-} 
+}
 <span class="boring">}
 </span></code></pre></pre>
 <p>You can use <code>use dyner::std::prelude::*</code> to get all the same traits as are present in the std prelude, along with their <code>Dyn</code> equivalents.</p>
