@@ -1,8 +1,8 @@
 # Async Fundamentals Stage 1 Explainer
 
-This document describes **Stage 1** of the "Async Fundamentals" plans. Our eventual goal is to make it so that, in short, wherever you write `fn`, you can also write `async fn` and have things work as transparently as possible. This includes in traits, even special traits like `Drop`. 
+This document describes **Stage 1** of the "Async Fundamentals" plans. Our eventual goal is to make it so that, in short, wherever you write `fn`, you can also write `async fn` and have things work as transparently as possible. This includes in traits, even special traits like `Drop`.
 
-Now that I've got you all excited, let me bring you back down to earth: That is our goal, but Stage 1 does not achieve it. However, we do believe that Stage 1 does enable async functions in traits in such a way that everything is possible, though it may not be easy. 
+Now that I've got you all excited, let me bring you back down to earth: That is our goal, but Stage 1 does not achieve it. However, we do believe that Stage 1 does enable async functions in traits in such a way that everything is possible, though it may not be easy.
 
 The hope is that by having a stage 1 where stable Rust exposes the core functionality needed for async traits, we can get more data about how async traits will be used in practice. That can guide us as we try to resolve some of the (rather sticky) design questions that block making things more ergonomic. =)
 
@@ -75,7 +75,7 @@ Naturally you could also write the above example using explicit generics as well
 
 ```rust
 async fn process_request<P>(
-    mut provider: impl P,
+    mut provider: P,
     request: Request,
 ) where
     P: HttpRequestProvider,
@@ -196,8 +196,8 @@ async fn process_request(
 This is because nothing *in this function* was required to be `Send`. The problems only arise when you have a call to `spawn` or some other function that imposes a `Send` bound -- and even then, there may be no issue. For example, invoking `process_request` on a known type doesn't require any sort of where clauses:
 
 ```rust
-your_runtime::spawn(async move { 
-    process_request(MyProvider::new(), some_request); 
+your_runtime::spawn(async move {
+    process_request(MyProvider::new(), some_request);
 })
 ```
 
@@ -227,7 +227,7 @@ trait HttpRequestProvider { .. }
 // A struct to represent a trait object:
 struct DynHttpRequestProvider<'me> { .. }
 
-impl<'me> HttpRequestProvider for DynHttpRequestProvider<'me> 
+impl<'me> HttpRequestProvider for DynHttpRequestProvider<'me>
 { .. }
 ```
 
@@ -391,7 +391,7 @@ use dyner::std::iter::{Iterator, DynIterator};
 trait WidgetStream {
     fn request(&mut self, r: impl Iterator<Item = String>);
     //                            ^^^^^^^^ the macro will look for DynIterator
-} 
+}
 ```
 
 You can use `use dyner::std::prelude::*` to get all the same traits as are present in the std prelude, along with their `Dyn` equivalents.
