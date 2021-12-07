@@ -19,13 +19,13 @@ See the [roadmap](./roadmap.md) for a list of individual milestones and their st
 | Subproject                    | Issue    | Progress     | State | [Stage]        |
 |-------------------------------|----------|--------------|-------|----------------|
 | async fn                      | [#50547] | ▰▰▰▰▰  | ✅    | [Stabilized]   |
-| static async fn in trait    | [RFC#3185] | ▰▰▱▱▱  | 🦀    | [Development] |
+| static async fn in trait      | [#91611] | ▰▰▱▱▱  | 🦀    | [Development] |
 | dyn async fn in trait         | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
 | async drop                    | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
 | async closures                | –        | ▰▱▱▱▱  | 💤    | [Proposal]     |
 
 [#50547]: https://github.com/rust-lang/rust/issues/50547
-[RFC#3185]: https://github.com/rust-lang/rfcs/pull/3185
+[#91611]: https://github.com/rust-lang/rust/issues/91611
 
 <!-- TODO: Fill these in
 [Proposal issue]: (https://github.com/rust-lang/lang-team/)
