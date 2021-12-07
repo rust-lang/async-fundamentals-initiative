@@ -19,7 +19,7 @@ See the [roadmap](./roadmap.md) for a list of individual milestones and their st
 | Subproject                    | Issue    | Progress     | State | [Stage]        |
 |-------------------------------|----------|--------------|-------|----------------|
 | async fn                      | [#50547] | ▰▰▰▰▰  | ✅    | [Stabilized]   |
-| static async fn in trait    | [RFC#3185] | ▰▰▱▱▱  | 🦀    | [Experimental] |
+| static async fn in trait    | [RFC#3185] | ▰▰▱▱▱  | 🦀    | [Development] |
 | dyn async fn in trait         | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
 | async drop                    | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
 | async closures                | –        | ▰▱▱▱▱  | 💤    | [Proposal]     |
