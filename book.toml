@@ -18,3 +18,13 @@ level = 0
 # TODO: enable once actions are configured
 # [output.linkcheck]
 # optional = true
+
+[output.html.redirect]
+"/roadmap/mvp.html" = "/roadmap/static_async_trait_mvp.html"
+"/design-discussions/index.html" = "/roadmap.html"
+"/design-discussions/static_async_trait.html" = "/roadmap/static_async_trait.html"
+"/design-discussions/impl_trait_in_traits.html" = "/roadmap/impl_trait_in_traits.html"
+"/design-discussions/dyn_async_trait.html" = "/roadmap/dyn_async_trait.html"
+"/design-discussions/dyn_trait.html" = "/roadmap/dyn_trait.html"
+"/design-discussions/async_drop.html" = "/roadmap/async_drop.html"
+"/design-discussions/async_closures.html" = "/roadmap/async_closures.html"

@@ -1,6 +1,6 @@
 # Async fn fundamentals
 
-This initiative is part of the overal [async vision roadmap](https://rust-lang.github.io/wg-async-foundations/vision/roadmap.html).
+This initiative is part of the overall [async vision roadmap](https://rust-lang.github.io/wg-async-foundations/vision/roadmap.html).
 
 ## Impact
 
@@ -28,6 +28,15 @@ This initiative is part of the overal [async vision roadmap](https://rust-lang.g
 | [Feature complete] for [impl Trait in traits] | 💤 |
 | [Feature complete] for [async drop] | 💤 |
 | [Feature complete] for [async closures] | 💤 |
+
+## Design discussions
+
+This directory hosts notes on important design discussions along with their resolutions.
+In the table of contents, you will find the overall status:
+
+* ✅ -- **Settled!** Input only needed if you have identified a fresh consideration that is not covered by the write-up.
+* 💬 -- **Under active discussion.** Check the write-up, which may contain a list of questions or places where feedback is desired.
+* 💤 -- **Paused.** Not under active discussion, but we may be updating the write-up from time to time with details.
 
 [nikomatsakis]: https://github.com/nikomatsakis/
 [oli-obk]: https://github.com/oli-obk/
