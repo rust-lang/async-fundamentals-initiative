@@ -5,6 +5,7 @@
   - [2021-Oct](./updates/2021-oct.md)
 - [📜 Charter](./CHARTER.md)
 - [👪 Stakeholders](./stakeholders.md)
+  - [2021-Nov](./stakeholders/2021-nov.md)
 - [🛣 Roadmap](./roadmap.md)
   - [MVP: Static async fn in traits](./roadmap/mvp.md)
 - [🔬 Evaluation](./evaluation.md)
