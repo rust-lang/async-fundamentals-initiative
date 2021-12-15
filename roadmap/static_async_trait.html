@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Phase 3 - async fn fundamentals initiative</title>
+        <title>💬 Static async trait - async fn fundamentals initiative</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../updates.html">✏️ Updates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../updates/2021-oct.html">2021-Oct</a></li></ol></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../stakeholders.html">👪 Stakeholders</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../stakeholders/2021-nov.html">2021-Nov</a></li></ol></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait.html">💬 Static async trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait_mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../roadmap/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../roadmap/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../roadmap/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../roadmap/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../roadmap/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item "><a href="../evaluation/design/bound_items.html">Bound items</a></li><li class="chapter-item "><a href="../evaluation/design/with_clauses.html">With clauses</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../explainer.html">📚 Explainer</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/phase_1.html">Phase 1</a></li><li class="chapter-item "><a href="../explainer/phase_1_narrative.html">Phase 1 narrative</a></li><li class="chapter-item "><a href="../explainer/phase_2.html">Phase 2</a></li><li class="chapter-item expanded "><a href="../explainer/phase_3.html" class="active">Phase 3</a></li></ol></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../RFC/static_async_fn_in_traits.html">Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../updates.html">✏️ Updates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../updates/2021-oct.html">2021-Oct</a></li></ol></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../stakeholders.html">👪 Stakeholders</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../stakeholders/2021-nov.html">2021-Nov</a></li></ol></li><li class="chapter-item expanded "><a href="../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../roadmap/static_async_trait.html" class="active">💬 Static async trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait_mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../roadmap/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../roadmap/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../roadmap/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../roadmap/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../roadmap/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li></ol></li><li class="chapter-item "><a href="../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item "><a href="../evaluation/design/bound_items.html">Bound items</a></li><li class="chapter-item "><a href="../evaluation/design/with_clauses.html">With clauses</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/phase_1.html">Phase 1</a></li><li class="chapter-item "><a href="../explainer/phase_1_narrative.html">Phase 1 narrative</a></li><li class="chapter-item "><a href="../explainer/phase_2.html">Phase 2</a></li><li class="chapter-item "><a href="../explainer/phase_3.html">Phase 3</a></li></ol></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../RFC/static_async_fn_in_traits.html">Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -113,7 +113,7 @@
                         <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./explainer/phase_3.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./roadmap/static_async_trait.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                     </div>
@@ -140,17 +140,59 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="phase-3"><a class="header" href="#phase-3">Phase 3</a></h1>
-<p>TODO</p>
+                        <h1 id="static-async-fn-in-traits"><a class="header" href="#static-async-fn-in-traits">Static async fn in traits</a></h1>
+<h2 id="impact"><a class="header" href="#impact">Impact</a></h2>
+<ul>
+<li>Able to write <code>async fn</code> in traits and impls and use them in statically dispatched contexts</li>
+<li>Able to easily declare that <code>T: Trait + Send</code> where &quot;every async fn in <code>Trait</code> returns a <code>Send</code> future&quot;</li>
+</ul>
+<h2 id="design-notes"><a class="header" href="#design-notes">Design notes</a></h2>
+<p>Support async fn syntax in traits.</p>
+<p>The core idea is that it desugars into <a href="./impl_trait_in_traits.html">impl trait in traits</a>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait SomeTrait {
+    async fn foo(&amp;mut self);
+}
+
+// becomes:
+
+trait SomeTrait {
+    fn foo&lt;(&amp;mut self) -&gt; impl Future&lt;Output = ()&gt; + '_;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Naturally it should also work in an impl:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl SomeTrait for someType {
+    async fn foo(&amp;mut self);
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>For async functions in traits to be useful, it is important that traits containing <code>async fn</code> be dyn-safe, which introduces a number of challenges that we have to overcome.</p>
+<h2 id="frequently-asked-questions"><a class="header" href="#frequently-asked-questions">Frequently asked questions</a></h2>
+<h3 id="can-users-easily-bound-those-gats-with-send-maybe-even-in-the-trait-definition"><a class="header" href="#can-users-easily-bound-those-gats-with-send-maybe-even-in-the-trait-definition">Can users easily bound those GATs with <code>Send</code>, maybe even in the trait definition?</a></h3>
+<ul>
+<li>People are likely to want to say &quot;I want every future produced by this trait to be Send&quot;, and right now that is quite tedious.</li>
+<li>We need a way to do this.</li>
+<li>This applies equally to other &quot;<code>-&gt; impl Trait</code> in trait&quot; scenarios.</li>
+</ul>
+<h3 id="what-about-dyn-traits"><a class="header" href="#what-about-dyn-traits">What about &quot;dyn&quot; traits?</a></h3>
+<ul>
+<li>See the sections on &quot;inline&quot; and &quot;dyn&quot; async fn in traits below!</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../explainer/phase_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../roadmap.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../RFC.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../roadmap/static_async_trait_mvp.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -159,10 +201,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../explainer/phase_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../roadmap.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../RFC.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../roadmap/static_async_trait_mvp.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
