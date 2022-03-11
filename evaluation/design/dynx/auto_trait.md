@@ -1,0 +1,4 @@
+# With auto traits
+
+
+We plan to address this in a follow-up RFC. The core idea is to build on the notation that one would use to express that you wish to have an async fn return a `Send`. As an example, one might write `AsyncIterator<next: Send>` to indicate that `next()` returns a `Send` future; when we generate the vtable for a `dyn AsyncIterator<next: Send>`, we can ensure that the bounds for `next` are applied to its return type, so that it would return a `dynx Future + Send` (and not just a `dynx Future`). We have also been exploring a more convenient shorthand for declaring "all the futures returned by methods in trait should be `Send`", but to avoid bikeshedding we'll avoid talking more about that in this document!
