@@ -2,6 +2,8 @@
 
 ![initiative status: active](https://img.shields.io/badge/status-active-brightgreen.svg)
 
+{{#include ./badges.md}}
+
 ## What is this?
 
 This page tracks the work of the async fundamentals [initiative], part of the wg-async-foundations [vision process]! To learn more about what we are trying to do, and to find out the people who are doing it, take a look at the [charter].
@@ -16,13 +18,16 @@ This is an **umbrella initiative** and, as such, it covers a number of subprojec
 
 See the [roadmap](./roadmap.md) for a list of individual milestones and their status.
 
-| Subproject                    | Issue    | Progress     | State | [Stage]        |
+| Subproject                    | Issue    | Progress     | State | Status        |
 |-------------------------------|----------|--------------|-------|----------------|
-| async fn                      | [#50547] | ▰▰▰▰▰  | ✅    | [Stabilized]   |
-| static async fn in trait      | [#91611] | ▰▰▱▱▱  | 🦀    | [Development] |
-| dyn async fn in trait         | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
-| async drop                    | –        | ▰▱▱▱▱  | 🦀    | [Proposal]     |
-| async closures                | –        | ▰▱▱▱▱  | 💤    | [Proposal]     |
+| async fn                      | [#50547] | ▰▰▰▰▰  | ✅    | ![stable][]   |
+| [static async fn in trait]      | [#91611] | ▰▰▱▱▱  | 🦀    | ![accepted rfc][] |
+| [dyn async fn in trait]         | –        | ▰▱▱▱▱  | 🦀    | ![planning rfc][] |
+| async drop                    | –        | ▰▱▱▱▱  | 🦀    | ![not started][]     |
+| async closures                | –        | ▰▱▱▱▱  | 💤    | ![not started][]     |
+
+[static async fn in trait]: explainer/async_fn_in_traits.md
+[dyn async fn in trait]: explainer/dyn_async_fn_in_traits.md
 
 [#50547]: https://github.com/rust-lang/rust/issues/50547
 [#91611]: https://github.com/rust-lang/rust/issues/91611

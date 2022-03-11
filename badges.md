@@ -1,3 +1,4 @@
+[not started]: https://img.shields.io/badge/status-not%20started-informational
 [planning rfc]: https://img.shields.io/badge/status-draft%20rfc-informational
 [accepted rfc]: https://img.shields.io/badge/status-accepted%20rfc-informational
 [needs decision]: https://img.shields.io/badge/status-needs%20decision-informational
