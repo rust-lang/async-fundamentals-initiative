@@ -115,7 +115,7 @@ struct FutureVtable<O> {
     ///
     /// Unsafe condition: Expects the output from `IntoRawPointer::into_raw`
     /// which must not have already been freed.
-    poll_fn: unsafe fn(*mut (), cx: &mut Context<'_>) -> Ready<()>,
+    poll_fn: unsafe fn(*mut (), cx: &mut Context<'_>) -> Ready<O>,
     
     /// Frees the memory for the pointer to future.
     ///
