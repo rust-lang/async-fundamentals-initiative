@@ -1,5 +1,7 @@
 # Async Fundamentals Mini Vision Doc
 
+> **WARNING:** This is an **archived** document, preserved for historical purposes. Go to the [explainer](../explainer.md) to see the most up-to-date material.
+
 Grace and Alan are working at BoggleyCorp, developing a network service using async I/O in Rust. Internally, they use a trait to manage http requests, which allows them to easily change to different sorts of providers:
 
 ```rust

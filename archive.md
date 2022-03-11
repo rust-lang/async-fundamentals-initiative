@@ -1,0 +1,1 @@
+The "archive" stores older documents that are preserved for historical purposes but which have been updated with newer designs etc.
