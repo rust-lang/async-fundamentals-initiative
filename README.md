@@ -27,7 +27,7 @@ See the [roadmap](./roadmap.md) for a list of individual milestones and their st
 | async closures                | –        | ▰▱▱▱▱  | 💤    | ![not started][]     |
 
 [static async fn in trait]: explainer/async_fn_in_traits.md
-[dyn async fn in trait]: explainer/dyn_async_fn_in_traits.md
+[dyn async fn in trait]: explainer/async_fn_in_dyn_trait.md
 
 [#50547]: https://github.com/rust-lang/rust/issues/50547
 [#91611]: https://github.com/rust-lang/rust/issues/91611
