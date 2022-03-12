@@ -44,7 +44,7 @@
     - [Dynx trait](./evaluation/design/dynx.md)
       - [Creation](./evaluation/design/dynx/creation.md)
       - [With auto traits](./evaluation/design/dynx/auto_trait.md)
-      - [Sealed traits](./evaluation/design/dynx/sealed_traitsmd)
+      - [Sealed traits](./evaluation/design/dynx/sealed_traits.md)
 - [📚 Explainer](./explainer.md)
   - [Async fn in traits](./explainer/async_fn_in_traits.md)
   - [Async fn in dyn trait](./explainer/async_fn_in_dyn_trait.md)
