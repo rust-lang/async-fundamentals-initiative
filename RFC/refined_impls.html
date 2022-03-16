@@ -1,0 +1,512 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Refined trait impls - async fn fundamentals initiative</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../updates.html">✏️ Updates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../updates/2021-oct.html">2021-Oct</a></li></ol></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item "><a href="../stakeholders.html">👪 Stakeholders</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../stakeholders/2021-nov.html">2021-Nov</a></li></ol></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait.html">💬 Static async trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait_mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../roadmap/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../roadmap/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../roadmap/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../roadmap/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../roadmap/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn.html">Dyn</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/dyn/embedded-consume.html">Embedded system consuming general purpose libraries</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/inner-loop.html">Performance-sensitive inner loop with dynamic dispatch</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/taking-ownership.html">Taking ownership of the receiver</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/async-drop.html">Async drop</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/embedded-async-drop.html">Embedded async drop</a></li></ol></li></ol></li><li class="chapter-item "><a href="../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item "><a href="../evaluation/design/bound_items.html">Bound items</a></li><li class="chapter-item "><a href="../evaluation/design/with_clauses.html">With clauses</a></li><li class="chapter-item "><a href="../evaluation/design/dynx.html">Dynx trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/dynx/creation.html">Creation</a></li><li class="chapter-item "><a href="../evaluation/design/dynx/auto_trait.html">With auto traits</a></li><li class="chapter-item "><a href="../evaluation/design/dynx/sealed_traits.html">Sealed traits</a></li></ol></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_traits.html">Async fn in traits</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait.html">Async fn in dyn trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/how_it_feels.html">How it feels to use</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/avoiding_allocation.html">Using dyn without allocation</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/how_it_works.html">How it works</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/hardcoding_box.html">Hardcoding box</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/generalizing_from_box_to_dynx.html">Generalizing from box to dynx</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/identity_shim_functions.html">Identity shim functions</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/unresolved.html">Unresolved questions</a></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer/user_facing_summary.html">Appendix: Summary of user-facing extensions</a></li><li class="chapter-item "><a href="../explainer/implementation_plan.html">Appendix: Implementation plan</a></li><li class="chapter-item "><a href="../explainer/inline_async_iter_adapter.html">Appendix: Inline async iter adapter</a></li></ol></li><li class="chapter-item expanded "><a href="../RFC.html">✨ RFC</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../RFC/static_async_fn_in_traits.html">Static async fn in traits</a></li><li class="chapter-item expanded "><a href="../RFC/refined_impls.html" class="active">Refined trait impls</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li><li class="chapter-item "><a href="../archive.html">Archive</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../archive/2021-phase_1.html">2021: Phase 1</a></li><li class="chapter-item "><a href="../archive/2021-phase_1_narrative.html">2021: Phase 1 narrative</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">async fn fundamentals initiative</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./RFC/refined_impls.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="refined-trait-implementations"><a class="header" href="#refined-trait-implementations">Refined trait implementations</a></h1>
+<ul>
+<li>Feature Name: (fill me in with a unique ident, <code>refined_impls</code>)</li>
+<li>Start Date: (fill me in with today's date, YYYY-MM-DD)</li>
+<li>RFC PR: <a href="https://github.com/rust-lang/rfcs/pull/0000">rust-lang/rfcs#0000</a></li>
+<li>Rust Issue: <a href="https://github.com/rust-lang/rust/issues/0000">rust-lang/rust#0000</a></li>
+</ul>
+<h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
+<p>This RFC generalizes the <a href="https://rust-lang.github.io/rfcs/2316-safe-unsafe-trait-methods.html"><code>safe_unsafe_trait_methods</code> RFC</a>, allowing implementations of traits to add type information about the API of their methods and constants which then become part of the API for that type. Specifically, lifetimes and where clauses are allowed to extend beyond what the trait provides.</p>
+<h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
+<p><a href="https://rust-lang.github.io/rfcs/2316-safe-unsafe-trait-methods.html">RFC 2316</a> introduced the notion of <em>safe implementations</em> of unsafe trait methods. This allows code that knows it is calling a safe implementation of an unsafe trait method to do so without using an unsafe block. In other words, this works today:</p>
+<pre><pre class="playground"><code class="language-rust">trait Foo {
+    unsafe fn foo(&amp;self);
+}
+
+struct Bar;
+impl Foo for Bar {
+    fn foo(&amp;self) {
+        println!(&quot;No unsafe in this impl!&quot;)
+    }
+}
+
+fn main() {
+    // Call Bar::foo without using an unsafe block.
+    let bar = Bar;
+    bar.foo();
+}
+</code></pre></pre>
+<p>Unsafe is not the only area where we allow impl signatures to be &quot;more specific&quot; than the trait they're implementing. Unfortunately, we do not handle these cases consistently today:</p>
+<h3 id="associated-types"><a class="header" href="#associated-types">Associated types</a></h3>
+<p>Associated types are a case where an impl is <em>required</em> to be &quot;more specific&quot; by specifying a concrete type.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct OnlyZero;
+
+impl Iterator for OnlyZero {
+    type Item = usize;
+    fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt; {
+        Some(0)
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>This concrete type is fully transparent to any code that can use the impl. Calling code is allowed to rely on the fact that <code>&lt;OnlyZero as Iterator&gt;::Item = usize</code>.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut iter = OnlyZero;
+assert_eq!(0usize, iter.next().unwrap());
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="types-in-method-signatures"><a class="header" href="#types-in-method-signatures">Types in method signatures</a></h3>
+<p>We also allow method signatures to be more specific than the trait they implement.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Log {
+    fn log_all(iter: impl ExactSizeIterator);
+}
+
+struct OrderedLogger;
+
+impl Log for OrderedLogger {
+    // Don't need the exact size here; any iterator will do.
+    fn log_all(iter: impl Iterator) { ... }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p><strong>Unlike with <code>unsafe</code> and associated types, however, calling code <em>cannot</em> rely on the relaxed requirements on the <code>log_all</code> method implementation.</strong></p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let odds = (1..50).filter(|n| *n % 2 == 1);
+    OrderedLogger::log_all(odds)
+    // ERROR:              ^^^^ the trait `ExactSizeIterator` is not implemented
+}
+</code></pre></pre>
+<p>This is a papercut: In order to make this API available to users the <code>OrderedLogger</code> type would have to bypass the <code>Log</code> trait entirely and provide an inherent method instead. Simply changing <code>impl Log for OrderedLogger</code> to <code>impl OrderedLogger</code> in the example above is enough to make this code compile, but it would no longer implement the trait.</p>
+<p>The purpose of this RFC is to fix the inconsistency in the language and add flexibility by removing this papercut. Finally, it establishes a policy to prevent such inconsistencies in the future.</p>
+<h1 id="guide-level-explanation"><a class="header" href="#guide-level-explanation">Guide-level explanation</a></h1>
+<p>When implementing a trait, you can use function signatures that <em>refine</em> those in the trait by being more specific. For example,</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Error {
+    fn description(&amp;self) -&gt; &amp;str;
+}
+
+impl Error for MyError {
+    fn description(&amp;self) -&gt; &amp;'static str {
+        &quot;My Error Message&quot;
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Here, the error description for <code>MyError</code> does not depend on the value of <code>MyError</code>. The <code>impl</code> includes this information by adding a <code>'static</code> lifetime to the return type.</p>
+<p>Code that knows it is dealing with a <code>MyError</code> can then make use of this information. For example,</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn attempt_with_status() -&gt; &amp;'static str {
+    match do_something() {
+        Ok(_) =&gt; &quot;Success!&quot;,
+        Err(e @ MyError) =&gt; e.description(),
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>This can be useful when using impl Trait in argument or return position.<sup class="footnote-reference"><a href="#rpitit">1</a></sup></p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Iterable {
+    fn iter(&amp;self) -&gt; impl Iterator;
+}
+
+impl&lt;T&gt; Iterable for MyVec&lt;T&gt; {
+    fn iter(&amp;self) -&gt; impl Iterator + ExactSizeIterator { ... }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note that when using impl Trait in argument position, the function signature is considered to be &quot;more specific&quot; as bounds are <em>removed</em>, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Sink {
+    fn consume(&amp;mut self, input: impl Iterator + ExactSizeIterator);
+}
+
+impl Sink for SimpleSink {
+    fn consume(&amp;mut self, input: impl Iterator) { ... }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Finally, methods marked <code>unsafe</code> in traits can be implemented as safe APIs, allowing code to call them without using <code>unsafe</code> blocks.</p>
+<div class="footnote-definition" id="rpitit"><sup class="footnote-definition-label">1</sup>
+<p>At the time of writing, return position impl Trait is not allowed in traits. The guide text written here is only for the purpose of illustrating how we would document this feature if it were allowed.</p>
+</div>
+<h1 id="reference-level-explanation"><a class="header" href="#reference-level-explanation">Reference-level explanation</a></h1>
+<blockquote>
+<p>This is the technical portion of the RFC. Explain the design in sufficient detail that:</p>
+<ul>
+<li>Its interaction with other features is clear.</li>
+<li>It is reasonably clear how the feature would be implemented.</li>
+<li>Corner cases are dissected by example.</li>
+</ul>
+<p>The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.</p>
+</blockquote>
+<h2 id="trait-implementations"><a class="header" href="#trait-implementations">Trait implementations</a></h2>
+<p>The following text should be added after <a href="https://doc.rust-lang.org/nightly/reference/items/implementations.html#trait-implementations">this paragraph</a> from the Rust reference:</p>
+<blockquote>
+<p>A trait implementation must define all non-default associated items declared by the implemented trait, may redefine default associated items defined by the implemented trait, and cannot define any other items.</p>
+</blockquote>
+<p>Each associated item defined in the implementation meet the following conditions.</p>
+<p><strong>Associated consts</strong></p>
+<ul>
+<li>Must be a subtype of the type in the corresponding trait item.</li>
+</ul>
+<p><strong>Associated types</strong></p>
+<ul>
+<li>Associated type values must satisfy all bounds on the trait item.</li>
+<li>Each where clause must be implied by the where clauses on the trait itself and/or the associated type in the trait definition, where &quot;implied&quot; is limited to supertrait and outlives relations. <em>This would be expanded to all <a href="https://rust-lang.github.io/rfcs/2089-implied-bounds.html">implied bounds</a> when that feature is enabled.</em></li>
+</ul>
+<p><strong>Associated functions</strong></p>
+<ul>
+<li>Must return any subtype of the return type in the trait definition.</li>
+<li>Each argument must accept any supertype of the corresponding argument type in the trait definition.</li>
+<li>Each where clause must be implied by the where clauses on the trait itself and/or the associated function in the trait definition, where &quot;implied&quot; is limited to supertrait and outlives relations. <em>This would be expanded to all <a href="https://rust-lang.github.io/rfcs/2089-implied-bounds.html">implied bounds</a> when that feature is enabled.</em></li>
+<li>Must not be marked <code>unsafe</code> unless the trait definition is also marked <code>unsafe</code>.</li>
+</ul>
+<p>When an item in an impl meets these conditions, we say it is a valid refinement of the trait item.</p>
+<h3 id="using-refined-implementations"><a class="header" href="#using-refined-implementations">Using refined implementations</a></h3>
+<p>Refined APIs are available anywhere knowledge of the impl being used is available. If the compiler can deduce a particular impl is being used, its API is available for use by the caller. This includes UFCS calls like <code>&lt;MyType as Trait&gt;::foo()</code>.</p>
+<h3 id="older-editions"><a class="header" href="#older-editions">Older editions</a></h3>
+<p>For historical reasons, not all kinds of refinement are automatically supported in older editions.</p>
+<table><thead><tr><th>Item kind</th><th>Feature</th><th>Edition</th></tr></thead><tbody>
+<tr><td>Type</td><td>-</td><td>All editions</td></tr>
+<tr><td>Method</td><td>Unsafe</td><td>All editions</td></tr>
+<tr><td>Method</td><td>Const<sup class="footnote-reference"><a href="#future">2</a></sup></td><td>All editions</td></tr>
+<tr><td>Method</td><td>impl Trait in return position<sup class="footnote-reference"><a href="#future">2</a></sup></td><td>All editions</td></tr>
+<tr><td>Method</td><td>Lifetimes</td><td>2024 and newer</td></tr>
+<tr><td>Method</td><td>Where clauses</td><td>2024 and newer</td></tr>
+<tr><td>Method</td><td>impl Trait in argument position</td><td>2024 and newer</td></tr>
+<tr><td>Const</td><td>Lifetimes</td><td>2024 and newer</td></tr>
+<tr><td>Const</td><td>Where clauses</td><td>2024 and newer</td></tr>
+</tbody></table>
+<div class="footnote-definition" id="future"><sup class="footnote-definition-label">2</sup>
+<p>This feature is not accepted at the time of writing the RFC; it is included here for demonstration purposes.</p>
+</div>
+<p>You can opt in to the new behavior in older editions with a <code>#[refine]</code> attribute on the associated item.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Error for MyError {
+    #[refine]
+    fn description(&amp;self) -&gt; &amp;'static str {
+        &quot;My Error Message&quot;
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>This enables refining all features in the table above.</p>
+<h2 id="transitioning-away-from-the-current-behavior"><a class="header" href="#transitioning-away-from-the-current-behavior">Transitioning away from the current behavior</a></h2>
+<p>Because we allow writing impls that look refined, but are <a href="#types-in-method-signatures">not usable</a> as such, we need a strategy for transitioning off of this behavior. This can be done in two parts.</p>
+<h3 id="lint-against-unmarked-refined-impls"><a class="header" href="#lint-against-unmarked-refined-impls">Lint against unmarked refined impls</a></h3>
+<p>After this RFC is merged, we should warn when a user writes an impl that looks refined and suggest that they copy the exact API of the trait they are implementing. Once this feature stabilizes, we can also suggest using the <code>#[refine]</code> attribute.</p>
+<h3 id="automatic-migration-for-the-next-edition"><a class="header" href="#automatic-migration-for-the-next-edition">Automatic migration for the next edition</a></h3>
+<p>Because refinement will be the default behavior for the next edition, we should rewrite users' code to preserve its semantics over edition migrations. That means we will replace trait implementations that look refined with the original API of the trait items being implemented.</p>
+<h2 id="preventing-future-ambiguity"><a class="header" href="#preventing-future-ambiguity">Preventing future ambiguity</a></h2>
+<p>This RFC establishes a policy that anytime the signature of an associated item in a trait implementation is <em>allowed to differ</em> from the signature in the trait, the information in that signature should be usable by code that uses the implementation.</p>
+<p>This RFC specifically does not specify that new language features involving traits <em>should</em> allow refined impls wherever possible. The language could choose not to accept more specific implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.</p>
+<h2 id="interaction-with-other-features"><a class="header" href="#interaction-with-other-features">Interaction with other features</a></h2>
+<h3 id="implied-bounds"><a class="header" href="#implied-bounds">Implied bounds</a></h3>
+<p>When <a href="https://rust-lang.github.io/rfcs/2089-implied-bounds.html">implied bounds</a> is stabilized, the rules for valid refinements will be modified according to the italicized text above.</p>
+<h3 id="specialization"><a class="header" href="#specialization">Specialization</a></h3>
+<p><a href="https://rust-lang.github.io/rfcs/1210-impl-specialization.html">Specialization</a> allows trait impls to overlap. Whenever two trait impls overlap, one must take precedence according to the rules laid out in the specialization RFC. Each item in the impl taking precedence must be a valid refinement of the corresponding item in the overlapping impl.</p>
+<h1 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h1>
+<blockquote>
+<p>Why should we <em>not</em> do this?</p>
+</blockquote>
+<h2 id="accidental-stabilization"><a class="header" href="#accidental-stabilization">Accidental stabilization</a></h2>
+<p>For library authors, it is possible for this feature to create situations where a more refined API is <em>accidentally</em> stabilized. Before stabilizing, we will need to gain some experience with the feature to determine if it is a good idea to allow refined impls without annotations.</p>
+<h2 id="complexity"><a class="header" href="#complexity">Complexity</a></h2>
+<p>Overall, we argue that this RFC reduces complexity by improving the consistency and flexibility of the language. However, this RFC proposes several things that can be considered added complexity to the language:</p>
+<h3 id="adding-text-to-the-rust-reference"><a class="header" href="#adding-text-to-the-rust-reference">Adding text to the Rust reference</a></h3>
+<p>Part of the reason that text is being added to the reference is that the reference doesn't specify what makes an item in a trait implementation valid. The current behavior of allowing certain kinds of divergence and &quot;ignoring&quot; some of them is not specified anywhere, and would probably be just as verbose to describe.</p>
+<h3 id="types-are-allowed-to-have-different-apis-for-the-same-trait"><a class="header" href="#types-are-allowed-to-have-different-apis-for-the-same-trait">Types are allowed to have different APIs for the same trait</a></h3>
+<p>It is possible for a user to form an impression of a trait API by seeing its use in one type, then be surprised to find that that usage does not generalize to all implementations of the trait.</p>
+<p>It's rarely obvious, however, that a <em>trait</em> API is being used at a call site as opposed to an inherent API (which can be completely different from one type to the next). The one place it is obvious is in generic functions, which will typically only have access to the original trait API.</p>
+<h1 id="rationale-and-alternatives"><a class="header" href="#rationale-and-alternatives">Rationale and alternatives</a></h1>
+<blockquote>
+<ul>
+<li>Why is this design the best in the space of possible designs?</li>
+<li>What other designs have been considered and what is the rationale for not choosing them?</li>
+<li>What is the impact of not doing this?</li>
+</ul>
+</blockquote>
+<p>This RFC attempts to be minimal in terms of its scope while accomplishing its stated goal to improve the consistency of Rust. It aims to do so in a way that makes Rust easier to learn and easier to use.</p>
+<h2 id="do-nothing"><a class="header" href="#do-nothing">Do nothing</a></h2>
+<p>Doing nothing preserves the status quo, which as shown in the <a href="#motivation">Motivation</a> section, is confusing and inconsistent. Allowing users to write function signatures that aren't actually visible to calling code violates the principle of least surprise. It would be better to begin a transition out of this state sooner than later to make future edition migrations less disruptive.</p>
+<h2 id="require-implementations-to-use-exactly-the-same-api-as-the-trait"><a class="header" href="#require-implementations-to-use-exactly-the-same-api-as-the-trait">Require implementations to use exactly the same API as the trait</a></h2>
+<p>We could reduce the potential for confusion by disallowing &quot;dormant refinements&quot; with a warning in the current edition, as this RFC proposes, and an error in future editions. This approach is more conservative than the one in this RFC. However, it leaves Rust in a state of allowing some kinds of refinement (like safe impls of <code>unsafe</code> methods) but not others, without a clear reason for doing so.</p>
+<p>While we could postpone the question of whether to allow this indefinitely, we argue that allowing such refinements will make Rust easier to learn and easier to use.</p>
+<h2 id="allow-refine-at-levels-other-than-impl-items"><a class="header" href="#allow-refine-at-levels-other-than-impl-items">Allow <code>#[refine]</code> at levels other than impl items</a></h2>
+<p>We could allow <code>#[refine]</code> on individual aspects of a function signature like the return type, where clauses, or argument types. This would allow users to scope refinement more narrowly and make sure that they aren't refining other aspects of that function signature. However, it seems unlikely that API refinement would be such a footgun that such narrowly scoping is needed.</p>
+<p>Going in the other direction, we could allow <code>#[refine]</code> on the impl itself. This would remove repetition in cases where an impl refines many items at once. It seems unlikely that this would be desired frequently enough to justify it.</p>
+<h1 id="prior-art"><a class="header" href="#prior-art">Prior art</a></h1>
+<blockquote>
+<p>Discuss prior art, both the good and the bad, in relation to this proposal.
+A few examples of what this can include are:</p>
+<ul>
+<li>For language, library, cargo, tools, and compiler proposals: Does this feature exist in other programming languages and what experience have their community had?</li>
+<li>For community proposals: Is this done by some other community and what were their experiences with it?</li>
+<li>For other teams: What lessons can we learn from what other communities have done here?</li>
+<li>Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.</li>
+</ul>
+<p>This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture.
+If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.</p>
+<p>Note that while precedent set by other languages is some motivation, it does not on its own motivate an RFC.
+Please also take into consideration that rust sometimes intentionally diverges from common language features.</p>
+</blockquote>
+<h3 id="java-covariant-return-types"><a class="header" href="#java-covariant-return-types">Java covariant return types</a></h3>
+<p>If you override a method in Java, the return type can be any subtype of the original type. When invoking the method on that type, you see the subtype.</p>
+<h3 id="auto-traits"><a class="header" href="#auto-traits">Auto traits</a></h3>
+<p>One piece of related prior art here is the <a href="https://rust-lang.github.io/rfcs/1522-conservative-impl-trait.html#oibit-transparency">leakage of auto traits</a> for return position <code>impl Trait</code>. Today it is possible for library authors to stabilize the auto traits of their return types without realizing it. Unlike in this proposal, there is no syntax corresponding to the stabilized API surface.</p>
+<h1 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved questions</a></h1>
+<blockquote>
+<ul>
+<li>What parts of the design do you expect to resolve through the RFC process before this gets merged?</li>
+<li>What parts of the design do you expect to resolve through the implementation of this feature before stabilization?</li>
+<li>What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?</li>
+</ul>
+</blockquote>
+<h2 id="should-refine-be-required-in-future-editions"><a class="header" href="#should-refine-be-required-in-future-editions">Should <code>#[refine]</code> be required in future editions?</a></h2>
+<p>As discussed in <a href="#drawbacks">Drawbacks</a>, this feature could lead to library authors accidentally publishing refined APIs that they did not mean to stabilize. We could prevent that by requiring the <code>#[refine]</code> attribute on any refined item inside an implementation.</p>
+<p>It would help to do an analysis of how frequently &quot;dormant refinements&quot; occur on crates.io today, and of a sample of those, how many look accidental versus an extended API that a crate author might have meant to expose.</p>
+<p>If we decide to require the <code>#[refine]</code> annotation in future editions for all refinements, the only edition change would be that the lint in earlier editions becomes a hard error in future editions.</p>
+<p>Alternatively, we may even want to require annotations for more subtle features, like lifetimes, while not requiring them for &quot;louder&quot; things like <code>impl Trait</code> in return position.</p>
+<h1 id="future-possibilities"><a class="header" href="#future-possibilities">Future possibilities</a></h1>
+<blockquote>
+<p>Think about what the natural extension and evolution of your proposal would
+be and how it would affect the language and project as a whole in a holistic
+way. Try to use this section as a tool to more fully consider all possible
+interactions with the project and language in your proposal.
+Also consider how this all fits into the roadmap for the project
+and of the relevant sub-team.</p>
+<p>This is also a good place to &quot;dump ideas&quot;, if they are out of scope for the
+RFC you are writing but otherwise related.</p>
+<p>If you have tried and cannot think of any future possibilities,
+you may simply state that you cannot think of anything.</p>
+<p>Note that having something written down in the future-possibilities section
+is not a reason to accept the current or a future RFC; such notes should be
+in the section on motivation or rationale in this or subsequent RFCs.
+The section merely provides additional information.</p>
+</blockquote>
+<h2 id="return-position-impl-trait-in-traits"><a class="header" href="#return-position-impl-trait-in-traits">Return position <code>impl Trait</code> in traits</a></h2>
+<p>One motivating use case for refined impls is return position impl trait in traits, which is not yet an accepted Rust feature. You can find more details about this feature in an <a href="https://github.com/rust-lang/rfcs/pull/3193">earlier RFC</a>. Its use is demonstrated in an <a href="#guide-level-explanation">example</a> at the beginning of this RFC.</p>
+<p>This RFC is intended to stand alone, but it also works well with that proposal.</p>
+<h3 id="equivalence-to-associated-types"><a class="header" href="#equivalence-to-associated-types">Equivalence to associated types</a></h3>
+<p>One of the appealing aspects of this feature is that it can be desugared to a function returning an associated type.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait Foo {
+    fn get_state(&amp;self) -&gt; impl Debug;
+}
+
+// Desugars to something like this:
+trait Foo {
+    type Foo = impl Debug;
+    fn get_state(&amp;self) -&gt; Self::Foo;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>If a trait used associated types, implementers would be able to specify concrete values for those types and let their users depend on it.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Foo for () {
+    type Foo = String;
+    fn get_state(&amp;self) -&gt; Self::Foo { &quot;empty state&quot;.to_string() }
+}
+
+let _: String = ().foo();
+<span class="boring">}
+</span></code></pre></pre>
+<p>With refinement impls, we can say that this desugaring is equivalent because return position impl trait would give the exact same flexibility as associated types.</p>
+<h2 id="replacing-concrete-types-with-argument-position-impl-trait"><a class="header" href="#replacing-concrete-types-with-argument-position-impl-trait">Replacing concrete types with argument-position <code>impl Trait</code></a></h2>
+<p>This RFC allows implementers to replace return-position <code>impl Trait</code> with a concrete type. Conversely, sometimes it is desirable to <em>generalize</em> an argument from a concrete type to <code>impl Trait</code> or a new generic parameter.</p>
+<p>Adding generic parameters to a trait function is not allowed by this proposal, whether the parameters are named or implicit. In principle it could work for both, as long as named parameters are defaulted. Implementing this may introduce complexity to the compiler, however.</p>
+<p>We leave the question of whether to allow this out of scope for this RFC.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../RFC/static_async_fn_in_traits.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../FAQ.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../RFC/static_async_fn_in_traits.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../FAQ.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
