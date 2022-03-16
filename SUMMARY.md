@@ -60,6 +60,7 @@
   - [Appendix: Inline async iter adapter](./explainer/inline_async_iter_adapter.md)
 - [✨ RFC](./RFC.md)
   - [Static async fn in traits](./RFC/static_async_fn_in_traits.md)
+  - [Refined trait impls](./RFC/refined_impls.md)
 - [😕 FAQ](./FAQ.md)
 - [Archive](./archive.md)
   - [2021: Phase 1](./archive/2021-phase_1.md)
