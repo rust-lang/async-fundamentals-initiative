@@ -3056,7 +3056,7 @@ impl&lt;T&gt; Iterable for MyVec&lt;T&gt; {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Note that when using impl Trait in argument position, the function signature is considered to be &quot;more specific&quot; as bounds are <em>removed</em>, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way.</p>
+<p>Note that when using impl Trait in argument position, the function signature is considered to be &quot;more specific&quot; as bounds are <em>removed</em>, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -3108,7 +3108,18 @@ impl Sink for SimpleSink {
 <p>When an item in an impl meets these conditions, we say it is a valid refinement of the trait item.</p>
 <h3 id="using-refined-implementations"><a class="header" href="#using-refined-implementations">Using refined implementations</a></h3>
 <p>Refined APIs are available anywhere knowledge of the impl being used is available. If the compiler can deduce a particular impl is being used, its API is available for use by the caller. This includes UFCS calls like <code>&lt;MyType as Trait&gt;::foo()</code>.</p>
-<h3 id="older-editions"><a class="header" href="#older-editions">Older editions</a></h3>
+<h2 id="transitioning-away-from-the-current-behavior"><a class="header" href="#transitioning-away-from-the-current-behavior">Transitioning away from the current behavior</a></h2>
+<p>Because we allow writing impls that look refined, but are <a href="RFC/refined_impls.html#types-in-method-signatures">not usable</a> as such, landing this feature means we are auto-stabilizing new ecosystem API surface. There are two ways of dealing with this:</p>
+<h3 id="do-nothing"><a class="header" href="#do-nothing">Do nothing</a></h3>
+<p>Assume that public types want to expose the APIs they actually wrote in their implementations, and allow using those APIs immediately.</p>
+<h3 id="soft-transition"><a class="header" href="#soft-transition">Soft transition</a></h3>
+<p>Be conservative and require library authors to opt in to refined APIs. This can be done in two parts.</p>
+<h4 id="lint-against-unmarked-refined-impls"><a class="header" href="#lint-against-unmarked-refined-impls">Lint against unmarked refined impls</a></h4>
+<p>After this RFC is merged, we should warn when a user writes an impl that looks refined and suggest that they copy the exact API of the trait they are implementing. Once this feature stabilizes, we can should add and suggest using <code>#[refine]</code> attribute to mark that an impl is intentionally refined.</p>
+<h4 id="automatic-migration-for-the-next-edition"><a class="header" href="#automatic-migration-for-the-next-edition">Automatic migration for the next edition</a></h4>
+<p>Because refinement will be the default behavior for the next edition, we should rewrite users' code to preserve its semantics over edition migrations. That means we will replace trait implementations that look refined with the original API of the trait items being implemented.</p>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<p>The following text should be added to document the difference in editions.</p>
 <p>For historical reasons, not all kinds of refinement are automatically supported in older editions.</p>
 <table><thead><tr><th>Item kind</th><th>Feature</th><th>Edition</th></tr></thead><tbody>
 <tr><td>Type</td><td>-</td><td>All editions</td></tr>
@@ -3137,12 +3148,6 @@ impl Sink for SimpleSink {
 <span class="boring">}
 </span></code></pre></pre>
 <p>This enables refining all features in the table above.</p>
-<h2 id="transitioning-away-from-the-current-behavior"><a class="header" href="#transitioning-away-from-the-current-behavior">Transitioning away from the current behavior</a></h2>
-<p>Because we allow writing impls that look refined, but are <a href="RFC/refined_impls.html#types-in-method-signatures">not usable</a> as such, we need a strategy for transitioning off of this behavior. This can be done in two parts.</p>
-<h3 id="lint-against-unmarked-refined-impls"><a class="header" href="#lint-against-unmarked-refined-impls">Lint against unmarked refined impls</a></h3>
-<p>After this RFC is merged, we should warn when a user writes an impl that looks refined and suggest that they copy the exact API of the trait they are implementing. Once this feature stabilizes, we can also suggest using the <code>#[refine]</code> attribute.</p>
-<h3 id="automatic-migration-for-the-next-edition"><a class="header" href="#automatic-migration-for-the-next-edition">Automatic migration for the next edition</a></h3>
-<p>Because refinement will be the default behavior for the next edition, we should rewrite users' code to preserve its semantics over edition migrations. That means we will replace trait implementations that look refined with the original API of the trait items being implemented.</p>
 <h2 id="preventing-future-ambiguity"><a class="header" href="#preventing-future-ambiguity">Preventing future ambiguity</a></h2>
 <p>This RFC establishes a policy that anytime the signature of an associated item in a trait implementation is <em>allowed to differ</em> from the signature in the trait, the information in that signature should be usable by code that uses the implementation.</p>
 <p>This RFC specifically does not specify that new language features involving traits <em>should</em> allow refined impls wherever possible. The language could choose not to accept more specific implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.</p>
@@ -3173,7 +3178,7 @@ impl Sink for SimpleSink {
 </ul>
 </blockquote>
 <p>This RFC attempts to be minimal in terms of its scope while accomplishing its stated goal to improve the consistency of Rust. It aims to do so in a way that makes Rust easier to learn and easier to use.</p>
-<h2 id="do-nothing"><a class="header" href="#do-nothing">Do nothing</a></h2>
+<h2 id="do-nothing-1"><a class="header" href="#do-nothing-1">Do nothing</a></h2>
 <p>Doing nothing preserves the status quo, which as shown in the <a href="RFC/refined_impls.html#motivation">Motivation</a> section, is confusing and inconsistent. Allowing users to write function signatures that aren't actually visible to calling code violates the principle of least surprise. It would be better to begin a transition out of this state sooner than later to make future edition migrations less disruptive.</p>
 <h2 id="require-implementations-to-use-exactly-the-same-api-as-the-trait"><a class="header" href="#require-implementations-to-use-exactly-the-same-api-as-the-trait">Require implementations to use exactly the same API as the trait</a></h2>
 <p>We could reduce the potential for confusion by disallowing &quot;dormant refinements&quot; with a warning in the current edition, as this RFC proposes, and an error in future editions. This approach is more conservative than the one in this RFC. However, it leaves Rust in a state of allowing some kinds of refinement (like safe impls of <code>unsafe</code> methods) but not others, without a clear reason for doing so.</p>
@@ -3208,11 +3213,15 @@ Please also take into consideration that rust sometimes intentionally diverges f
 <li>What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?</li>
 </ul>
 </blockquote>
+<h2 id="do-we-need-a-soft-transition"><a class="header" href="#do-we-need-a-soft-transition">Do we need a soft transition?</a></h2>
+<p>In &quot;Transitioning away from the current behavior&quot; we describe two possible paths: immediate stabilization of any API the compiler accepts that happens to look refined today, and doing a soft transition.</p>
+<p>While a soft transition is the more conservative approach, it also isn't obvious that it's necessary.</p>
+<p>It would help to do an analysis of how frequently &quot;dormant refinements&quot; occur on crates.io today, and of a sample of those, how many look accidental versus an extended API that a crate author might have meant to expose.</p>
 <h2 id="should-refine-be-required-in-future-editions"><a class="header" href="#should-refine-be-required-in-future-editions">Should <code>#[refine]</code> be required in future editions?</a></h2>
 <p>As discussed in <a href="RFC/refined_impls.html#drawbacks">Drawbacks</a>, this feature could lead to library authors accidentally publishing refined APIs that they did not mean to stabilize. We could prevent that by requiring the <code>#[refine]</code> attribute on any refined item inside an implementation.</p>
-<p>It would help to do an analysis of how frequently &quot;dormant refinements&quot; occur on crates.io today, and of a sample of those, how many look accidental versus an extended API that a crate author might have meant to expose.</p>
 <p>If we decide to require the <code>#[refine]</code> annotation in future editions for all refinements, the only edition change would be that the lint in earlier editions becomes a hard error in future editions.</p>
 <p>Alternatively, we may even want to require annotations for more subtle features, like lifetimes, while not requiring them for &quot;louder&quot; things like <code>impl Trait</code> in return position.</p>
+<p>This question would also benefit from the analysis described in the previous section.</p>
 <h1 id="future-possibilities-1"><a class="header" href="#future-possibilities-1">Future possibilities</a></h1>
 <blockquote>
 <p>Think about what the natural extension and evolution of your proposal would
@@ -3262,10 +3271,35 @@ let _: String = ().foo();
 <span class="boring">}
 </span></code></pre></pre>
 <p>With refinement impls, we can say that this desugaring is equivalent because return position impl trait would give the exact same flexibility as associated types.</p>
-<h2 id="replacing-concrete-types-with-argument-position-impl-trait"><a class="header" href="#replacing-concrete-types-with-argument-position-impl-trait">Replacing concrete types with argument-position <code>impl Trait</code></a></h2>
+<h2 id="adding-generic-parameters"><a class="header" href="#adding-generic-parameters">Adding generic parameters</a></h2>
 <p>This RFC allows implementers to replace return-position <code>impl Trait</code> with a concrete type. Conversely, sometimes it is desirable to <em>generalize</em> an argument from a concrete type to <code>impl Trait</code> or a new generic parameter.</p>
-<p>Adding generic parameters to a trait function is not allowed by this proposal, whether the parameters are named or implicit. In principle it could work for both, as long as named parameters are defaulted. Implementing this may introduce complexity to the compiler, however.</p>
-<p>We leave the question of whether to allow this out of scope for this RFC.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn one_a(input: String) {}
+fn one_b(input: impl Display) {}
+<span class="boring">}
+</span></code></pre></pre>
+<p>More generally, one way to refine an interface is to generalize it by introducing new generics. For instance, here are some more pairs of &quot;unrefined&quot; APIs <code>a</code> and refined versions of them <code>b</code>.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn two_a(input: String) {}
+fn two_b&lt;T: Debug = String&gt;(input: T) {}
+
+fn three_a&lt;'a&gt;(&amp;'a i32, &amp;'a i32) {}
+fn three_b&lt;'a, 'b&gt;(&amp;'a i32, &amp;'b i32) {}
+<span class="boring">}
+</span></code></pre></pre>
+<p>It might also be desirable to turn an elided lifetime into a lifetime parameter so it can be named:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn four_a(&amp;self) -&gt; &amp;str {}
+fn four_b&lt;'a&gt;(&amp;'a self) -&gt; &amp;'a str {}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Adding generic parameters to a trait function is not allowed by this proposal, whether the parameters are named or created implicitly via argument-position <code>impl Trait</code>. In principle it could work for both cases, as long as named parameters are defaulted. Implementing this may introduce complexity to the compiler, however. We leave the question of whether this should be allowed out of scope for this RFC.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="-frequently-asked-questions"><a class="header" href="#-frequently-asked-questions">😕 Frequently asked questions</a></h1>
 <blockquote>
 <p>This page lists frequently asked questions about the design. It often redirects to the other pages on the site.</p>
