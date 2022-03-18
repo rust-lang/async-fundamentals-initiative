@@ -2,7 +2,7 @@
 
 ![planning rfc][]
 
-{{#include ../../badges.md}}
+{{#include ../badges.md}}
 
 This Appendix demonstrates how the inline async iterator adapter works.
 
@@ -12,7 +12,7 @@ pub struct InlineAsyncIterator<'me, T: AsyncIterator> {
     future: MaybeUninit<T::next<'me>>,
 }
 
-impl<T> AsyncIterator for InlineAsyncIterator<T> 
+impl<T> AsyncIterator for InlineAsyncIterator<T>
 where
     T: AsyncIterator,
 {
@@ -28,7 +28,7 @@ where
     }
 }
 
-pub struct InlineFuture<'me, F> 
+pub struct InlineFuture<'me, F>
 where
     F: Future
 {
@@ -45,7 +45,7 @@ impl<'me, F> InlineFuture<'me, F> {
     }
 }
 
-impl<'me, F> Future for InlineFuture<'me, F> 
+impl<'me, F> Future for InlineFuture<'me, F>
 where
     F: Future,
 {

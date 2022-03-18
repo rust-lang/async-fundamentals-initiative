@@ -2,4 +2,4 @@
 
 ![planning rfc][]
 
-{{#include ../../badges.md}}
+{{#include ../badges.md}}

@@ -2,7 +2,7 @@
 
 ![planning rfc][]
 
-{{#include ../../badges.md}}
+{{#include ../badges.md}}
 
 This is a brief summary of the user-facing changes.
 
