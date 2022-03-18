@@ -193,7 +193,29 @@ When an item in an impl meets these conditions, we say it is a valid refinement 
 
 Refined APIs are available anywhere knowledge of the impl being used is available. If the compiler can deduce a particular impl is being used, its API is available for use by the caller. This includes UFCS calls like `<MyType as Trait>::foo()`.
 
-### Older editions
+## Transitioning away from the current behavior
+
+Because we allow writing impls that look refined, but are [not usable][not-usable] as such, landing this feature means we are auto-stabilizing new ecosystem API surface. There are two ways of dealing with this:
+
+### Do nothing
+
+Assume that public types want to expose the APIs they actually wrote in their implementations, and allow using those APIs immediately.
+
+### Soft transition
+
+Be conservative and require library authors to opt in to refined APIs. This can be done in two parts.
+
+#### Lint against unmarked refined impls
+
+After this RFC is merged, we should warn when a user writes an impl that looks refined and suggest that they copy the exact API of the trait they are implementing. Once this feature stabilizes, we can should add and suggest using `#[refine]` attribute to mark that an impl is intentionally refined.
+
+#### Automatic migration for the next edition
+
+Because refinement will be the default behavior for the next edition, we should rewrite users' code to preserve its semantics over edition migrations. That means we will replace trait implementations that look refined with the original API of the trait items being implemented.
+
+#### Documentation
+
+The following text should be added to document the difference in editions.
 
 For historical reasons, not all kinds of refinement are automatically supported in older editions.
 
@@ -223,18 +245,6 @@ impl Error for MyError {
 ```
 
 This enables refining all features in the table above.
-
-## Transitioning away from the current behavior
-
-Because we allow writing impls that look refined, but are [not usable][not-usable] as such, we need a strategy for transitioning off of this behavior. This can be done in two parts.
-
-### Lint against unmarked refined impls
-
-After this RFC is merged, we should warn when a user writes an impl that looks refined and suggest that they copy the exact API of the trait they are implementing. Once this feature stabilizes, we can also suggest using the `#[refine]` attribute.
-
-### Automatic migration for the next edition
-
-Because refinement will be the default behavior for the next edition, we should rewrite users' code to preserve its semantics over edition migrations. That means we will replace trait implementations that look refined with the original API of the trait items being implemented.
 
 ## Preventing future ambiguity
 
@@ -336,15 +346,23 @@ One piece of related prior art here is the [leakage of auto traits][auto-leakage
 > - What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
 > - What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
 
+## Do we need a soft transition?
+
+In "Transitioning away from the current behavior" we describe two possible paths: immediate stabilization of any API the compiler accepts that happens to look refined today, and doing a soft transition.
+
+While a soft transition is the more conservative approach, it also isn't obvious that it's necessary.
+
+It would help to do an analysis of how frequently "dormant refinements" occur on crates.io today, and of a sample of those, how many look accidental versus an extended API that a crate author might have meant to expose.
+
 ## Should `#[refine]` be required in future editions?
 
 As discussed in [Drawbacks], this feature could lead to library authors accidentally publishing refined APIs that they did not mean to stabilize. We could prevent that by requiring the `#[refine]` attribute on any refined item inside an implementation.
 
-It would help to do an analysis of how frequently "dormant refinements" occur on crates.io today, and of a sample of those, how many look accidental versus an extended API that a crate author might have meant to expose.
-
 If we decide to require the `#[refine]` annotation in future editions for all refinements, the only edition change would be that the lint in earlier editions becomes a hard error in future editions.
 
 Alternatively, we may even want to require annotations for more subtle features, like lifetimes, while not requiring them for "louder" things like `impl Trait` in return position.
+
+This question would also benefit from the analysis described in the previous section.
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
