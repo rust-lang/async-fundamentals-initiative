@@ -420,10 +420,30 @@ let _: String = ().foo();
 
 With refinement impls, we can say that this desugaring is equivalent because return position impl trait would give the exact same flexibility as associated types.
 
-## Replacing concrete types with argument-position `impl Trait`
+## Adding generic parameters
 
 This RFC allows implementers to replace return-position `impl Trait` with a concrete type. Conversely, sometimes it is desirable to *generalize* an argument from a concrete type to `impl Trait` or a new generic parameter.
 
-Adding generic parameters to a trait function is not allowed by this proposal, whether the parameters are named or implicit. In principle it could work for both, as long as named parameters are defaulted. Implementing this may introduce complexity to the compiler, however.
+```rust
+fn one_a(input: String) {}
+fn one_b(input: impl Display) {}
+```
 
-We leave the question of whether to allow this out of scope for this RFC.
+More generally, one way to refine an interface is to generalize it by introducing new generics. For instance, here are some more pairs of "unrefined" APIs `a` and refined versions of them `b`.
+
+```rust
+fn two_a(input: String) {}
+fn two_b<T: Debug = String>(input: T) {}
+
+fn three_a<'a>(&'a i32, &'a i32) {}
+fn three_b<'a, 'b>(&'a i32, &'b i32) {}
+```
+
+It might also be desirable to turn an elided lifetime into a lifetime parameter so it can be named:
+
+```rust
+fn four_a(&self) -> &str {}
+fn four_b<'a>(&'a self) -> &'a str {}
+```
+
+Adding generic parameters to a trait function is not allowed by this proposal, whether the parameters are named or created implicitly via argument-position `impl Trait`. In principle it could work for both cases, as long as named parameters are defaulted. Implementing this may introduce complexity to the compiler, however. We leave the question of whether this should be allowed out of scope for this RFC.
