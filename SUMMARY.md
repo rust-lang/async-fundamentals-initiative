@@ -55,6 +55,7 @@
       - [Generalizing from box to dynx](./explainer/async_fn_in_dyn_trait/generalizing_from_box_to_dynx.md)
       - [Identity shim functions](./explainer/async_fn_in_dyn_trait/identity_shim_functions.md)
       - [Unresolved questions](./explainer/async_fn_in_dyn_trait/unresolved.md)
+    - [Future possibilities](./explainer/async_fn_in_dyn_trait/future_possibilities.md)
   - [Appendix: Summary of user-facing extensions](./explainer/user_facing_summary.md)
   - [Appendix: Implementation plan](./explainer/implementation_plan.md)
   - [Appendix: Inline async iter adapter](./explainer/inline_async_iter_adapter.md)
