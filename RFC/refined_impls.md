@@ -134,7 +134,7 @@ impl<T> Iterable for MyVec<T> {
 }
 ```
 
-Note that when using impl Trait in argument position, the function signature is considered to be "more specific" as bounds are _removed_, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way.
+Note that when using impl Trait in argument position, the function signature is considered to be "more specific" as bounds are _removed_, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.
 
 ```rust
 trait Sink {
