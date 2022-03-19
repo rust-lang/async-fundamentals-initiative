@@ -6,7 +6,7 @@
 
 There are some interesting details that are yet to be resolved, and they become important indeed in the "feel" of the overall design. Covering those details however would make this document too long, so we're going to split it into parts. Nonetheless, for completeness, this section lists out some of those "questions yet to come".
 
-## Which values that can be converted into a dynx struct?
+## Which values can be converted into a dynx struct?
 
 In the previous section, we showed how a `#[dyn(identity)]` function must return "something that can be converted into a dynx struct", and we showed that a case of returning a `Pin<Box<impl Future, A>>` type. But what are the general rules for constructing a `dynx` struct? You're asking the right question, but that's a part of the design we haven't bottomed out yet. See [this design document](../../evaluation/design/dynx/creation.md) for more details.
 
