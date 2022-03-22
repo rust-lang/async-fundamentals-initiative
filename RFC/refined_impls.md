@@ -270,6 +270,18 @@ These features mostly don't interact. However, it's worth noting that currently 
 
 [87479]: https://github.com/rust-lang/rust/issues/87479
 
+### `const` polymorphism
+
+We may want to allow implementations to add `const` to their methods. This raises the question of whether we want *provided* methods of the trait to also become `const`. For example:
+
+```rust
+impl Iterator for Foo {
+    const fn next(&mut self) -> ...
+}
+```
+
+Should the `nth` method also be considered `const fn`?
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
