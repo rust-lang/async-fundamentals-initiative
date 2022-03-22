@@ -264,6 +264,12 @@ When [implied bounds] is stabilized, the rules for valid refinements will be mod
 
 [specialization]: https://rust-lang.github.io/rfcs/1210-impl-specialization.html
 
+### Generic associated types
+
+These features mostly don't interact. However, it's worth noting that currently generic associated types [require extra bounds][87479] on the trait definition if it is likely they will be needed by implementations. This feature would allow implementations that don't need those bounds to elide them and remove that requirement on their types' interface.
+
+[87479]: https://github.com/rust-lang/rust/issues/87479
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
