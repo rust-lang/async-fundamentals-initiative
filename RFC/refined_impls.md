@@ -63,7 +63,7 @@ assert_eq!(0usize, iter.next().unwrap());
 ### Types in method signatures
 [not-usable]: #types-in-method-signatures
 
-We also allow method signatures to be more specific than the trait they implement.
+We also allow method signatures to differ from the trait they implement.
 
 ```rust
 trait Log {
@@ -134,7 +134,7 @@ impl<T> Iterable for MyVec<T> {
 }
 ```
 
-Note that when using impl Trait in argument position, the function signature is considered to be "more specific" as bounds are _removed_, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.
+Note that when using impl Trait in argument position, the function signature is refined as bounds are _removed_, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.
 
 ```rust
 trait Sink {
@@ -250,7 +250,7 @@ This enables refining all features in the table above.
 
 This RFC establishes a policy that anytime the signature of an associated item in a trait implementation is *allowed to differ* from the signature in the trait, the information in that signature should be usable by code that uses the implementation.
 
-This RFC specifically does not specify that new language features involving traits *should* allow refined impls wherever possible. The language could choose not to accept more specific implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.
+This RFC specifically does not specify that new language features involving traits *should* allow refined impls wherever possible. The language could choose not to accept refined implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.
 
 ## Interaction with other features
 
