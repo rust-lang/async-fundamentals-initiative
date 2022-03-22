@@ -193,7 +193,7 @@ assert_eq!(0usize, iter.next().unwrap());
 <span class="boring">}
 </span></code></pre></pre>
 <h3 id="types-in-method-signatures"><a class="header" href="#types-in-method-signatures">Types in method signatures</a></h3>
-<p>We also allow method signatures to be more specific than the trait they implement.</p>
+<p>We also allow method signatures to differ from the trait they implement.</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -260,7 +260,7 @@ impl&lt;T&gt; Iterable for MyVec&lt;T&gt; {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Note that when using impl Trait in argument position, the function signature is considered to be &quot;more specific&quot; as bounds are <em>removed</em>, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.</p>
+<p>Note that when using impl Trait in argument position, the function signature is refined as bounds are <em>removed</em>, meaning this specific impl can accept a wider range of inputs than the general case. Where clauses work the same way: since where clauses always must be proven by the caller, it is okay to remove them in an impl and permit a wider range of use cases for your API.</p>
 <pre><pre class="playground"><code class="language-rust">
 <span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -278,15 +278,6 @@ impl Sink for SimpleSink {
 <p>At the time of writing, return position impl Trait is not allowed in traits. The guide text written here is only for the purpose of illustrating how we would document this feature if it were allowed.</p>
 </div>
 <h1 id="reference-level-explanation"><a class="header" href="#reference-level-explanation">Reference-level explanation</a></h1>
-<blockquote>
-<p>This is the technical portion of the RFC. Explain the design in sufficient detail that:</p>
-<ul>
-<li>Its interaction with other features is clear.</li>
-<li>It is reasonably clear how the feature would be implemented.</li>
-<li>Corner cases are dissected by example.</li>
-</ul>
-<p>The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.</p>
-</blockquote>
 <h2 id="trait-implementations"><a class="header" href="#trait-implementations">Trait implementations</a></h2>
 <p>The following text should be added after <a href="https://doc.rust-lang.org/nightly/reference/items/implementations.html#trait-implementations">this paragraph</a> from the Rust reference:</p>
 <blockquote>
@@ -354,12 +345,25 @@ impl Sink for SimpleSink {
 <p>This enables refining all features in the table above.</p>
 <h2 id="preventing-future-ambiguity"><a class="header" href="#preventing-future-ambiguity">Preventing future ambiguity</a></h2>
 <p>This RFC establishes a policy that anytime the signature of an associated item in a trait implementation is <em>allowed to differ</em> from the signature in the trait, the information in that signature should be usable by code that uses the implementation.</p>
-<p>This RFC specifically does not specify that new language features involving traits <em>should</em> allow refined impls wherever possible. The language could choose not to accept more specific implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.</p>
+<p>This RFC specifically does not specify that new language features involving traits <em>should</em> allow refined impls wherever possible. The language could choose not to accept refined implementation signatures for that feature. This should be decided on a case-by-case basis for each feature.</p>
 <h2 id="interaction-with-other-features"><a class="header" href="#interaction-with-other-features">Interaction with other features</a></h2>
 <h3 id="implied-bounds"><a class="header" href="#implied-bounds">Implied bounds</a></h3>
 <p>When <a href="https://rust-lang.github.io/rfcs/2089-implied-bounds.html">implied bounds</a> is stabilized, the rules for valid refinements will be modified according to the italicized text above.</p>
 <h3 id="specialization"><a class="header" href="#specialization">Specialization</a></h3>
 <p><a href="https://rust-lang.github.io/rfcs/1210-impl-specialization.html">Specialization</a> allows trait impls to overlap. Whenever two trait impls overlap, one must take precedence according to the rules laid out in the specialization RFC. Each item in the impl taking precedence must be a valid refinement of the corresponding item in the overlapping impl.</p>
+<h3 id="generic-associated-types"><a class="header" href="#generic-associated-types">Generic associated types</a></h3>
+<p>These features mostly don't interact. However, it's worth noting that currently generic associated types <a href="https://github.com/rust-lang/rust/issues/87479">require extra bounds</a> on the trait definition if it is likely they will be needed by implementations. This feature would allow implementations that don't need those bounds to elide them and remove that requirement on their types' interface.</p>
+<h3 id="const-polymorphism"><a class="header" href="#const-polymorphism"><code>const</code> polymorphism</a></h3>
+<p>We may want to allow implementations to add <code>const</code> to their methods. This raises the question of whether we want <em>provided</em> methods of the trait to also become <code>const</code>. For example:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Iterator for Foo {
+    const fn next(&amp;mut self) -&gt; ...
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Should the <code>nth</code> method also be considered <code>const fn</code>?</p>
 <h1 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h1>
 <blockquote>
 <p>Why should we <em>not</em> do this?</p>
@@ -374,13 +378,6 @@ impl Sink for SimpleSink {
 <p>It is possible for a user to form an impression of a trait API by seeing its use in one type, then be surprised to find that that usage does not generalize to all implementations of the trait.</p>
 <p>It's rarely obvious, however, that a <em>trait</em> API is being used at a call site as opposed to an inherent API (which can be completely different from one type to the next). The one place it is obvious is in generic functions, which will typically only have access to the original trait API.</p>
 <h1 id="rationale-and-alternatives"><a class="header" href="#rationale-and-alternatives">Rationale and alternatives</a></h1>
-<blockquote>
-<ul>
-<li>Why is this design the best in the space of possible designs?</li>
-<li>What other designs have been considered and what is the rationale for not choosing them?</li>
-<li>What is the impact of not doing this?</li>
-</ul>
-</blockquote>
 <p>This RFC attempts to be minimal in terms of its scope while accomplishing its stated goal to improve the consistency of Rust. It aims to do so in a way that makes Rust easier to learn and easier to use.</p>
 <h2 id="do-nothing-1"><a class="header" href="#do-nothing-1">Do nothing</a></h2>
 <p>Doing nothing preserves the status quo, which as shown in the <a href="#motivation">Motivation</a> section, is confusing and inconsistent. Allowing users to write function signatures that aren't actually visible to calling code violates the principle of least surprise. It would be better to begin a transition out of this state sooner than later to make future edition migrations less disruptive.</p>
@@ -391,32 +388,11 @@ impl Sink for SimpleSink {
 <p>We could allow <code>#[refine]</code> on individual aspects of a function signature like the return type, where clauses, or argument types. This would allow users to scope refinement more narrowly and make sure that they aren't refining other aspects of that function signature. However, it seems unlikely that API refinement would be such a footgun that such narrowly scoping is needed.</p>
 <p>Going in the other direction, we could allow <code>#[refine]</code> on the impl itself. This would remove repetition in cases where an impl refines many items at once. It seems unlikely that this would be desired frequently enough to justify it.</p>
 <h1 id="prior-art"><a class="header" href="#prior-art">Prior art</a></h1>
-<blockquote>
-<p>Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:</p>
-<ul>
-<li>For language, library, cargo, tools, and compiler proposals: Does this feature exist in other programming languages and what experience have their community had?</li>
-<li>For community proposals: Is this done by some other community and what were their experiences with it?</li>
-<li>For other teams: What lessons can we learn from what other communities have done here?</li>
-<li>Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.</li>
-</ul>
-<p>This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.</p>
-<p>Note that while precedent set by other languages is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that rust sometimes intentionally diverges from common language features.</p>
-</blockquote>
 <h3 id="java-covariant-return-types"><a class="header" href="#java-covariant-return-types">Java covariant return types</a></h3>
 <p>If you override a method in Java, the return type can be any subtype of the original type. When invoking the method on that type, you see the subtype.</p>
 <h3 id="auto-traits"><a class="header" href="#auto-traits">Auto traits</a></h3>
 <p>One piece of related prior art here is the <a href="https://rust-lang.github.io/rfcs/1522-conservative-impl-trait.html#oibit-transparency">leakage of auto traits</a> for return position <code>impl Trait</code>. Today it is possible for library authors to stabilize the auto traits of their return types without realizing it. Unlike in this proposal, there is no syntax corresponding to the stabilized API surface.</p>
 <h1 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved questions</a></h1>
-<blockquote>
-<ul>
-<li>What parts of the design do you expect to resolve through the RFC process before this gets merged?</li>
-<li>What parts of the design do you expect to resolve through the implementation of this feature before stabilization?</li>
-<li>What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?</li>
-</ul>
-</blockquote>
 <h2 id="do-we-need-a-soft-transition"><a class="header" href="#do-we-need-a-soft-transition">Do we need a soft transition?</a></h2>
 <p>In &quot;Transitioning away from the current behavior&quot; we describe two possible paths: immediate stabilization of any API the compiler accepts that happens to look refined today, and doing a soft transition.</p>
 <p>While a soft transition is the more conservative approach, it also isn't obvious that it's necessary.</p>
@@ -427,22 +403,6 @@ Please also take into consideration that rust sometimes intentionally diverges f
 <p>Alternatively, we may even want to require annotations for more subtle features, like lifetimes, while not requiring them for &quot;louder&quot; things like <code>impl Trait</code> in return position.</p>
 <p>This question would also benefit from the analysis described in the previous section.</p>
 <h1 id="future-possibilities"><a class="header" href="#future-possibilities">Future possibilities</a></h1>
-<blockquote>
-<p>Think about what the natural extension and evolution of your proposal would
-be and how it would affect the language and project as a whole in a holistic
-way. Try to use this section as a tool to more fully consider all possible
-interactions with the project and language in your proposal.
-Also consider how this all fits into the roadmap for the project
-and of the relevant sub-team.</p>
-<p>This is also a good place to &quot;dump ideas&quot;, if they are out of scope for the
-RFC you are writing but otherwise related.</p>
-<p>If you have tried and cannot think of any future possibilities,
-you may simply state that you cannot think of anything.</p>
-<p>Note that having something written down in the future-possibilities section
-is not a reason to accept the current or a future RFC; such notes should be
-in the section on motivation or rationale in this or subsequent RFCs.
-The section merely provides additional information.</p>
-</blockquote>
 <h2 id="return-position-impl-trait-in-traits"><a class="header" href="#return-position-impl-trait-in-traits">Return position <code>impl Trait</code> in traits</a></h2>
 <p>One motivating use case for refined impls is return position impl trait in traits, which is not yet an accepted Rust feature. You can find more details about this feature in an <a href="https://github.com/rust-lang/rfcs/pull/3193">earlier RFC</a>. Its use is demonstrated in an <a href="#guide-level-explanation">example</a> at the beginning of this RFC.</p>
 <p>This RFC is intended to stand alone, but it also works well with that proposal.</p>
