@@ -53,7 +53,7 @@ Key:
 ## How Can I Get Involved?
 
 * Check for 'help wanted' issues on this repository!
-* If you would like to help with development, please contact the [owner](./charter.md#membership) to find out if there are things that need doing.
+* If you would like to help with development, please contact the [owner](./CHARTER.md#membership) to find out if there are things that need doing.
 * If you would like to help with the design, check the list of active [design discussions](./design-discussions) first.
 * If you have questions about the design, you can file an issue, but be sure to check the [FAQ](./FAQ.md) or the [design discussions](./design-discussions) first to see if there is already something that covers your topic.
 * If you are using the feature and would like to provide feedback about your experiences, please [open a "experience report" issue][experience-report].
