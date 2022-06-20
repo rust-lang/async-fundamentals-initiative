@@ -25,6 +25,7 @@
       - [Taking ownership of the receiver](./evaluation/scenarios/dyn/taking-ownership.md)
       - [Async drop](./evaluation/scenarios/dyn/async-drop.md)
       - [Embedded async drop](./evaluation/scenarios/dyn/embedded-async-drop.md)
+    - [Reference scenarios](./evaluation/scenarios/async-fn-in-traits.md)
   - [Challenges](./evaluation/challenges.md)
     - [Bounding futures](./evaluation/challenges/bounding_futures.md)
     - [Naming futures](./evaluation/challenges/naming_futures.md)
