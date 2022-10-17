@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>2022 Sep - async fn fundamentals initiative</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item "><a href="../index.html">👋 Welcome</a></li><li class="chapter-item "><a href="../updates.html">✏️ Updates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../updates/2021-oct.html">2021-Oct</a></li></ol></li><li class="chapter-item "><a href="../CHARTER.html">📜 Charter</a></li><li class="chapter-item expanded "><a href="../stakeholders.html">👪 Stakeholders</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../stakeholders/2021-nov.html">2021 Nov</a></li><li class="chapter-item expanded "><a href="../stakeholders/2022-sep.html" class="active">2022 Sep</a></li></ol></li><li class="chapter-item "><a href="../roadmap.html">🛣 Roadmap</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait.html">💬 Static async trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../roadmap/static_async_trait_mvp.html">MVP: Static async fn in traits</a></li></ol></li><li class="chapter-item "><a href="../roadmap/impl_trait_in_traits.html">💬 impl Trait in traits</a></li><li class="chapter-item "><a href="../roadmap/dyn_async_trait.html">💬 Dyn async trait</a></li><li class="chapter-item "><a href="../roadmap/dyn_trait.html">💤 Dyn trait</a></li><li class="chapter-item "><a href="../roadmap/async_drop.html">💤 Async drop</a></li><li class="chapter-item "><a href="../roadmap/async_closures.html">💤 Async closures</a></li></ol></li><li class="chapter-item "><a href="../evaluation.html">🔬 Evaluation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/executor-styles.html">Executor styles</a></li><li class="chapter-item "><a href="../evaluation/scenarios.html">Reference scenarios</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/background-logging.html">Background logging</a></li><li class="chapter-item "><a href="../evaluation/scenarios/implementing-async-read.html">Implementing AsyncRead</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn.html">Dyn</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/scenarios/dyn/embedded-consume.html">Embedded system consuming general purpose libraries</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/inner-loop.html">Performance-sensitive inner loop with dynamic dispatch</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/taking-ownership.html">Taking ownership of the receiver</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/async-drop.html">Async drop</a></li><li class="chapter-item "><a href="../evaluation/scenarios/dyn/embedded-async-drop.html">Embedded async drop</a></li></ol></li><li class="chapter-item "><a href="../evaluation/scenarios/async-fn-in-traits.html">Reference scenarios</a></li></ol></li><li class="chapter-item "><a href="../evaluation/challenges.html">Challenges</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/challenges/bounding_futures.html">Bounding futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/naming_futures.html">Naming futures</a></li><li class="chapter-item "><a href="../evaluation/challenges/dyn_traits.html">Dyn traits</a></li><li class="chapter-item "><a href="../evaluation/challenges/bounding_async_drop.html">Bounding async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/guaranteeing_async_drop.html">Guaranteeing async drop</a></li><li class="chapter-item "><a href="../evaluation/challenges/implicit_await_with_async_drop.html">Implicit await with async drop</a></li></ol></li><li class="chapter-item "><a href="../evaluation/design.html">Design documents</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/implied_send.html">Implied Send</a></li><li class="chapter-item "><a href="../evaluation/design/trait_multiplication.html">Trait multiplication</a></li><li class="chapter-item "><a href="../evaluation/design/inline_async_fn.html">Inline async fn</a></li><li class="chapter-item "><a href="../evaluation/design/custom_dyn_impls.html">Custom dyn impls</a></li><li class="chapter-item "><a href="../evaluation/design/auto_traits_consider_async_drop.html">Auto traits consider AsyncDrop</a></li><li class="chapter-item "><a href="../evaluation/design/simple_names.html">Simple names</a></li><li class="chapter-item "><a href="../evaluation/design/bound_items.html">Bound items</a></li><li class="chapter-item "><a href="../evaluation/design/with_clauses.html">With clauses</a></li><li class="chapter-item "><a href="../evaluation/design/dynx.html">Dynx trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../evaluation/design/dynx/creation.html">Creation</a></li><li class="chapter-item "><a href="../evaluation/design/dynx/auto_trait.html">With auto traits</a></li><li class="chapter-item "><a href="../evaluation/design/dynx/sealed_traits.html">Sealed traits</a></li></ol></li></ol></li></ol></li><li class="chapter-item "><a href="../explainer.html">📚 Explainer</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_traits.html">Async fn in traits</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait.html">Async fn in dyn trait</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/how_it_feels.html">How it feels to use</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/avoiding_allocation.html">Using dyn without allocation</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/how_it_works.html">How it works</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/hardcoding_box.html">Hardcoding box</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/generalizing_from_box_to_dynx.html">Generalizing from box to dynx</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/identity_shim_functions.html">Identity shim functions</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/nested_impl_trait.html">Nested impl Trait</a></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/unresolved.html">Unresolved questions</a></li></ol></li><li class="chapter-item "><a href="../explainer/async_fn_in_dyn_trait/future_possibilities.html">Future possibilities</a></li></ol></li><li class="chapter-item "><a href="../explainer/user_facing_summary.html">Appendix: Summary of user-facing extensions</a></li><li class="chapter-item "><a href="../explainer/implementation_plan.html">Appendix: Implementation plan</a></li><li class="chapter-item "><a href="../explainer/inline_async_iter_adapter.html">Appendix: Inline async iter adapter</a></li></ol></li><li class="chapter-item "><a href="../RFC.html">✨ RFC</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../RFC/static_async_fn_in_traits.html">Static async fn in traits</a></li><li class="chapter-item "><a href="../RFC/refined_impls.html">Refined trait impls</a></li></ol></li><li class="chapter-item "><a href="../FAQ.html">😕 FAQ</a></li><li class="chapter-item "><a href="../archive.html">Archive</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../archive/2021-phase_1.html">2021: Phase 1</a></li><li class="chapter-item "><a href="../archive/2021-phase_1_narrative.html">2021: Phase 1 narrative</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">async fn fundamentals initiative</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/rust-lang/async-fundamentals-initiative" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/rust-lang/async-fundamentals-initiative/edit/master/./stakeholders/2022-sep.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="async-stakeholders-sep-2022-notes"><a class="header" href="#async-stakeholders-sep-2022-notes">Async Stakeholders Sep 2022: Notes</a></h1>
+<blockquote>
+<ul>
+<li><strong>Date:</strong> Sep 13, 2022</li>
+<li><strong>Participants:</strong>
+<ul>
+<li>Tyler Mandry</li>
+<li>Niko Matsakis</li>
+<li>Marie Janssen</li>
+<li>Alice Ryhl</li>
+<li>Russell Cohen</li>
+<li>Dario Nieuwenhuis</li>
+<li>Eric Holk</li>
+<li>Fabien Gaud</li>
+<li>Zelda Hessler</li>
+<li>Hippolyte Barraud</li>
+<li>Yoshua Wuyts</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="agenda"><a class="header" href="#agenda">Agenda</a></h2>
+<p>Our discussion will be based on this doc:
+<a href="https://hackmd.io/9AH8Zr9ESMmur0n6Nix96w?view">Async fn in trait: A user's guide from the future</a></p>
+<p>Factual questions about the doc will be answered first.</p>
+<h3 id="function-return-syntax"><a class="header" href="#function-return-syntax">Function return syntax</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn fetch_and_process_in_task&lt;F&gt;(
+    f: F,
+)
+where
+    F: Fetch,
+    F: Send + 'static, // 👈 Added so `F` can be sent to new task
+    F::fetch(..): Send // 👈 Added, this syntax is new!
+<span class="boring">}
+</span></code></pre></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn fetch_and_process_in_task(
+    f: impl Fetch&lt;fetch(..): Send&gt; + Send + 'static,
+)
+<span class="boring">}
+</span></code></pre></pre>
+<ul>
+<li>Is it confusing?</li>
+<li>Is it easy to explain to new Rust devs?</li>
+<li>Is it ergonomic enough to use?</li>
+</ul>
+<h3 id="boxingnew"><a class="header" href="#boxingnew"><code>Boxing::new</code></a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut f = HttpFetch { .. };
+fetch_and_process_dyn(Boxing::new(&amp;mut f));
+<span class="boring">}
+</span></code></pre></pre>
+<ul>
+<li>Is it confusing?</li>
+<li>Is it easy to explain to new Rust devs?</li>
+<li>Is it ergonomic enough to use?</li>
+<li>Would you rather have implicit boxing? How strong is your preference for or against that?</li>
+<li>How likely do you think it is that you will use an adapter <em>besides</em> <code>Boxing</code> to use async traits via dyn?
+<ul>
+<li>If so, what strategy would you want?</li>
+</ul>
+</li>
+</ul>
+<h3 id="work-stealing"><a class="header" href="#work-stealing">Work stealing</a></h3>
+<p>Lots of the new syntax introduced is to support work stealing executors that require their tasks to be <code>Send</code>.</p>
+<ul>
+<li>For executors that use work stealing, why?</li>
+<li>Do we have benchmarks or data on this?</li>
+</ul>
+<h3 id="other-possible-topics"><a class="header" href="#other-possible-topics">Other possible topics</a></h3>
+<ul>
+<li>Other impressions about the doc</li>
+<li>dyner</li>
+<li>Mixing <code>async fn</code> with its desugaring</li>
+<li>Refinement</li>
+</ul>
+<h3 id="open-ended"><a class="header" href="#open-ended">Open ended</a></h3>
+<ul>
+<li>What about async Rust has been giving you the most trouble lately?</li>
+</ul>
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<h3 id="function-return-syntax-1"><a class="header" href="#function-return-syntax-1">Function return syntax</a></h3>
+<p>Confusing? Easy to explain? Thoughts on ergonomics?</p>
+<p>Confusion about what <code>F::fetch(..)</code> refers to -- does it refer to the type before/after the await? Expectation was that it would be the type after the await, not before!</p>
+<p>Is this one new syntax, or is it two? Can you write <code>F::fetch</code> by itself, or is <code>F::fetch(..)</code> the only accepted syntax.</p>
+<p>Would have to rule out cases where associated types had the same name as the method, or else limit it to async functions.</p>
+<p>We did support that, and could go forward, modulo shadowing. Explaining the idea of a syntax where you can name the zero-sized type for functions did require explaining the zero-sized function types, which was just hard to talk about.</p>
+<p>In this we are saying that: <code>F</code> is a function that returns something which is send. Could you also specify that it returns <code>T</code> and then say that <code>T</code> is <code>Send</code>?</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn foo&lt;T&gt;()
+where
+    F: Fetch&lt;for&lt;'a&gt; fetch(&amp;'a mut Self) = T&gt;,
+    T: Send,
+
+
+fn foo&lt;T&gt;()
+where
+    for&lt;'a&gt; {
+        exists&lt;T&gt; {
+            F: Fetch&lt;fetch(&amp;'a mut Self) = T&gt;,
+            T: Send
+        }
+    }
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="how-common-is-thread-per-core-setups-how-often-will-people-interact-with-send"><a class="header" href="#how-common-is-thread-per-core-setups-how-often-will-people-interact-with-send">How common is thread-per-core setups? How often will people interact with Send?</a></h3>
+<p>Some customers for AWS SDK are trying to build TPC and don't want to have the need for send bounds. Unclear how much this is a theoretical concern.</p>
+<p>In Embedded, Send is pretty much never needed, because you rarely have more than one core. It's quite annoying because some libraries require Send. You structure your program in a way that things are not Send because you don't need it (e.g., using RefCell). I think it'd be better if the ecosystem didn't assume Send by default.</p>
+<p>Question ultimately is are we getting a lot of value out of work stealing.</p>
+<p>The fact that Send and Sync is required in many places is a problem and it doesn't seem like people necessarily benefit from it.</p>
+<p>In async-std we didn't really consider the option of not having work-stealing, but now that glommio came along people are talking about it.</p>
+<p>In Fuchsia it's very common to have a future that is not send and not sync. Most components are run single threaded. Common answer to &quot;oh this doesn't work because it's asking you to use Send&quot; is &quot;don't do that&quot;.</p>
+<p>Browser environments are another place where Send/Sync <em>mostly</em> don't make sense, since you usually run on the main thread.</p>
+<p>We definitely shouldn't have implement <code>where Send</code> bound on all the futures -- but it's important to consider the ergonomics of <code>where Send</code> bounds, especially as many people are using runtimes that require Send. For them it's important that they're ergonomic, even if maybe they didn't need it. We could talk about whether runtimes should stop requiring send and propose some kind of non-work-stealing alternative, but we do have to make sure they're ergonomic to use.</p>
+<p>It's hard to tell if the proposed where Send bound will be an ergonomics problem or not -- if there were a lot of functions, probably.</p>
+<p>The syntax was intended also to solve <code>-&gt; impl Trait</code> for existing things.</p>
+<p>This issue is tracking our customer's desire to use alternate async runtimes, including those that run on a single thread: https://github.com/awslabs/aws-sdk-rust/issues/52
+We currently use tokio by default so our futures are almost all defined as send and sync</p>
+<h3 id="lifetimes-of-manual-desugaring-yosh"><a class="header" href="#lifetimes-of-manual-desugaring-yosh">Lifetimes of manual desugaring (yosh)</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Fetch for HttpFetch {
+    #[refine]
+    fn fetch(
+        &amp;mut self,
+        request: ResourceId
+    ) -&gt; Box&lt;dyn Future&lt;Output = Result&lt;ResourceData&gt;&gt; {
+        Box::pin(async move {
+            // `&amp;mut self` would need to be live here somehow, is that supported?
+        })
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>you'd need <code>Box&lt;dyn Future&lt;&gt; + '_&gt;</code>, but apart from that?</p>
+<p>But the <code>'_</code> is not required. If you can write it without <code>self</code>, for example.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn foo&lt;T&gt;()
+where
+    F: Fetch&lt;for&lt;'a&gt; fetch(&amp;'a mut Self) = T&gt;,
+    T: Send,
+<span class="boring">}
+</span></code></pre></pre>
+<p>This generic code says that <code>T</code> is independent from <code>'a</code>, albeit in a subtle way.</p>
+<p>Would allow you to have implementations that are independent</p>
+<h3 id="mentioning-the-return-type-of-fn-alice"><a class="header" href="#mentioning-the-return-type-of-fn-alice">Mentioning the return type of fn (alice)</a></h3>
+<p>Can we do this now?</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn my_async_fn() -&gt; i32 { .. }
+
+type MyFut = my_async_fn(..);
+<span class="boring">}
+</span></code></pre></pre>
+<p>All other left-hand-sides of where bounds are usable in all places where types go.</p>
+<p>nikomatsakis: Yes, that's my intent, anyway. I'd like the return type syntax to just work for everything.</p>
+<p>If there were generic arguments and the type were dependent on them, you couldn't do it, so you'd need something like this...</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn my_async_fn(x: impl Display) -&gt; i32 { .. }
+
+type MyFut&lt;T: Display&gt; = my_async_fn(T);
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="boxing"><a class="header" href="#boxing">Boxing</a></h3>
+<p>Summary is: in order to use <code>dyn</code> if there are async functions (or RPITIT), you have to wrap your object in a <code>Boxing::new</code>, which will cause it to allocate the future returned by <code>Box</code>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn foo() {
+    let mut x = something;
+    bar(Boxing::new(&amp;x))
+}
+
+fn bar(x: &amp;dyn AsyncIterator)
+<span class="boring">}
+</span></code></pre></pre>
+<p>This is one of the things we changed.</p>
+<p>Would be good to show some of the alternatives. Like, would <code>Boxing</code> work for other things? Can you plugin other things here? I like that this keeps future allocation explicit, but seems like it will be used commonly, might get heavy if every time you create a <code>dyn</code> you need the <code>Boxing</code>. I worry that it might be heavy.</p>
+<p>In an internal project we use <a href="https://github.com/microsoft/stackfuture">StackFuture</a> that allocates futures on the stack. Makes a big array of u8s and casts the future into that. You get inline storage up to a certain size. Could I write an adapter like that?</p>
+<p>This is sort of confusing to me. I see</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn caller() {
+    let mut f = HttpFetch { .. };
+    fetch_and_process_dyn(&amp;mut f); // 👈 ERROR!
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>and I see the error that this wants to be boxed, but I'm like, &quot;Why, it's confusing?&quot; I would look at it and say &quot;I don't need to box the thing, I want to output something that needs to be boxed&quot;, but even that, it feels weird that I have to do it myself, I wish you could say it somewhere else? (from the chat: Hear hear!)</p>
+<p>You want to a way for fn to say &quot;give me something that will box?&quot; Answer: it feels to me like <code>impl Into&lt;&gt;</code> where you're saying, give me something that's convertible.</p>
+<p>We tried to make it so that you don't care, as the one who takes the <code>dyn</code>, whether it will box or not.</p>
+<p>What I really heard was &quot;it would be nice if I didn't have to say give me Boxing here&quot;.</p>
+<p>Yeah it'd be nice if you could give people the &quot;option&quot; to do boxing without having to say it as explicitly. But then you'd have the issue where libraries have to interoperate.</p>
+<p>My thought when I see Boxing is...I agree that it seems dangerous to implicitly box, but this Boxing thing seems weird. I don't know if there's a better solution, I don't see one, but it seems weird to me. It makes sense to me, but it seems hard to teach.</p>
+<p>nikomatsakis: another idea would be have a warning by default that people can opt to silence on their project if they don't care.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn caller() {
+    let mut f = HttpFetch { .. };
+    fetch_and_process_dyn(&amp;mut f); // 👈 ERROR!
+    fetch_and_process_dyn(Boxing::new(&amp;mut f)); // Works
+    fetch_and_process_dyn(&amp;mut InlineAdapter::new(f)); // Works, but doesn't box later, instead uses stack allocate
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>^ why is that Boxing::new(..) instead of &amp;mut Boxing::new(..)? -- not entirely sure</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn caller() {
+    let mut f = HttpFetch { .. };
+    fetch_and_process_dyn(&amp;mut f); // 👈 works, but lints
+    fetch_and_process_dyn(&amp;mut InlineAdapter::new(f)); // works, but doesn't box later, instead uses stack allocate, and never lints
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Yosh: what about the inverse: inline by default, opt-in to boxing?</p>
+<p>Problem is that inlining doesn't always work. Each future needs to be pre-allocated, there may be infinite calls to <code>&amp;self</code> methods which means the pre-allocated size is potentially unbounded.</p>
+<p>Eric: it feels like boxing is being made at a weird place in the program. At the point where it is converted from static to dynamic, but you really want to make that decision at the call site-- isn't that the place you want to be in control over where it gets stored? I get that this is hard, and that's why were moving towards this boxing thing.</p>
+<p>I suspect there's no right answer, but at least some of the time, you want to be able to write code that works equally well in multiple contexts.</p>
+<p>You could inline the <code>&amp;mut</code> and box the <code>&amp;</code>.</p>
+<p>Other downside: takes up a lot of stack space. (Edit: only the max of all the futures you call.)</p>
+<p>What is the language level requirement for something to be convertible to dyn?</p>
+<p>Basically: you'd have to have an impl where each method returns a &quot;single pointer&quot;, or really something that implements what is required for box* creation.</p>
+<p>Interesting language idea: e.g. could we have a way to return a Vec for cases that are not ...</p>
+<p>It would work for anything that returns <code>-&gt; impl Trait</code>, so maybe <code>-&gt; Vec&lt;T&gt;</code>, but yes <code>-&gt; impl Sequence&lt;T&gt;</code>.</p>
+<p>This is recurring problem in no-std contexts, because returning vecs is a painful thing.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>//
+
+trait GetElements {
+    fn elements(&amp;self) -&gt; Vec&lt;Element&gt;;
+}
+
+// but this generalized form is potentially no-std compatible
+
+trait GetElements {
+    fn elements(&amp;self) -&gt; impl Sequence&lt;Element&gt;;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Alternatives, reasons to avoid boxing? Maybe you want to cache the same box over and over again?</p>
+<p>Needed it in microsoft beacuse allocation was really expensive in this particular context, it happened to be a very bad allocator. But this was a pretty niche scenario, probably not something your typical async programmer runs into all the time.</p>
+<p>Common enough perhaps that it shouldn't be disregarded.</p>
+<p>Scenario needs to be <em>supported</em> but it will be quite unusual.</p>
+<p>Depends on the environment. e.g., drivers for the linux kernel? They probably share a lot of similarities.</p>
+<p>Audio path for bluetooth is a similar use case.</p>
+<p>Android binder currently allocates for every binder (IPC) call, but they're supposed to be low latency.</p>
+<p>How widespread are the coercions etc?</p>
+<p>In one case, scsi driver, have a vector of dyn, and stack future is inlining the target to a big future.</p>
+<p>Ah, ok, so it's more the case of: hard-coding on the dyn how much space the future requires.</p>
+<p>Don't know that we have to solve it now.</p>
+<p>stack-future came out of: see problem, bring in calvalry, doing detailed work. How can we make it so we don't need Rust experts to solve that sort of problem of tweaking the sizes? Users can figure it out through diagnostics?</p>
+<p>I think it has to be PGO.</p>
+<p>Discoverability?</p>
+<p>I'd like it to be a tool, but it's kind of science fiction at this time.</p>
+<h2 id="what-about-async-has-been-giving-most-trouble-lately"><a class="header" href="#what-about-async-has-been-giving-most-trouble-lately">what about async has been giving most trouble lately?</a></h2>
+<p>AWS SDK would like to support other runtimes but often things are inextricably linked together. Very difficult to take async-std runtime without also using surf, which has its own HTTP types, vs tokio, which uses hyper. You end up with these confusing errors where there are competing things with the same name but slight differences. You runtime into the core abstraction stuff. Biggest change if things for reading bytes asynchronously could solidify around a single thing.</p>
+<p>Read trait sufficient or more? Answer: reading from a body is the most important thing. Users have to do that very often.</p>
+<p>Libraries often want the ability to spawn tasks or set timers?</p>
+<p>Yep! That's a common thing. One of the ways we're trying to enable people to swap out runtimes. We've abstracted around how we ask executor &quot;has this time passed&quot;, we have &quot;async sleep impl&quot;, but because of all the other stuff, it's not possible. Anytime you're doing some kind of I/O or clock thing, you need some abstraction for how the executor likes to deal with the system. It's kind of meaningless to have abstractions at that level. So even though we're splitting it, it's kind of a false split.</p>
+<p>How common is that as a request? Most common request.</p>
+<p>Dealing with polling, lifetime across closures. Sometimes you pass a lifetime in, and you know the closure will run here, and not need the lifetime past that, but there's no way to explain that to Rust. Could maybe drop the closure? (nikomatsakis: I'd love to see an example.)</p>
+<p>An issue I've seen a few times that arises when porting blocking code to async: no way to write async closures that borrow things from the caller. For example....</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn transaction(
+    &amp;mut self,
+    f: impl FnOnce(&amp;mut Foo),
+);
+<span class="boring">}
+</span></code></pre></pre>
+<p>if I have to port this to async, no way to specify it. It would have to be higher-ranked and lots of strange borrow checker errors. I've never been able to get it to work. There are some wild-hacks, the higher-ranked closure hack, but it only works in narrow cases.</p>
+<p>Comes up on the tokio questions forum from time to time. There's a hack where you can make a helper trait, but the type inferences fails if there's a closure, basically requires that you can put the lifetimes in all the right places and I don't know how to do it.</p>
+<p>Example where this is very painful:</p>
+<p>blocking: https://github.com/rust-embedded/embedded-hal/blob/master/src/spi/blocking.rs#L199</p>
+<p>async: https://github.com/rust-embedded/embedded-hal/blob/master/embedded-hal-async/src/spi.rs#L57</p>
+<p>Ultimately gave up and used a raw pointer.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn transaction(
+    &amp;mut self,
+    f: impl FnOnce(&amp;mut Foo) -&gt; impl Future&lt;Output = ()&gt; + '_
+);
+<span class="boring">}
+</span></code></pre></pre>
+<p>Yosh: Oli and I were messing around today with what async closuress could potentially look like using keyword generics:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async&lt;A&gt; trait Fn&lt;Args&gt; {
+    type Output;
+    async&lt;A&gt; fn call(&amp;self, args: Args) -&gt; Self::Output;
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>which would allow</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn transaction(
+    &amp;mut self,
+    f: impl async FnOnce(&amp;mut Foo) // or something
+);
+<span class="boring">}
+</span></code></pre></pre>
+<p>There's this hack you can do:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait MyAsyncFn&lt;'a, Arg, Out&gt;: FnOnce(Arg) -&gt; Self::Fut {
+    type Fut: Future&lt;Output = Out&gt;;
+}
+
+ + an impl block
+<span class="boring">}
+</span></code></pre></pre>
+<p>^ I tried that but then type inference breaks when calling a function taking <code>impl MyAsyncFn</code>, you have to use named functions or manually write the types of args+return in the closure (I think...?) ~Dario</p>
+<p>The fact that Waker must be Sync is not great if runtimes are not send/sync by default</p>
+<p>https://github.com/rust-lang/rust/issues/66481</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../stakeholders/2021-nov.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../roadmap.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../stakeholders/2021-nov.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../roadmap.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
