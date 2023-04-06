@@ -1,4 +1,4 @@
-# Tower Service Rework 
+# Tower AFIT Case Study 
 
 This case study presents how Tower would update it's core traits to improve 
 ergonomics and useability with the aid of `async_fn_in_trait` (AFIT). 
@@ -10,12 +10,20 @@ networking clients and servers. The core use case of Tower is to enable users
 to compose "stacks" of middleware in an easy and reusable way. To achieve this
 currently Tower provide a [`Service`] and a [`Layer`] trait. The core
 component is the `Service` trait as this is where all the async functionality
-lives, as layers are not async.
+lives. `Layer`s on the other hand are service constructors and allow users to
+compose middleware stacks. Since, `Layer` does not do any async work it is out
+of scope of this document for now.
 
 Currently, the `Service` trait requires users to name their futures which does
 not allow them to easily use `async fn` without boxing. In addition, borrowing
 state within handlers is unergonomic due using associated types for the return
-future type. 
+future type. This is because to allow the returned future to have a lifetime
+would require adding lifetime generic associated types (GATs) which force an
+already verbose trait into an extremely verbose trait that is unergonomic for
+users to implement. This thus requires all returned futures to be `'static`
+which means that it must own all of its data. While this works right now its an
+extra step that could be avoided by using `async fn`'s ability to produce
+non-static futures in an ergonomic way.
 
 The current `Service` trait looks something like this simplified version which
 omits `poll_ready`, `Response/Error` handling:
@@ -47,7 +55,7 @@ happens in [`ServiceBuilder`].
 ## Moving forward
 
 One of the goals of moving to AFIT is to make using Tower easier and less error
-prone. The current working idea that we have is to have a trait like:
+prone. The current working idea that we have is to have a trait like: 
 
 ```rust
 trait Service<Request> {
@@ -62,6 +70,15 @@ well known issues like dynamic dispatch and send bounds. In addition, we have
 not looked at using `async-trait` because it forces `Send` bounds on our core 
 trait which is an anti-goal for Tower as we would like to support both `Send`
 and `!Send` services.
+
+One of the biggest wins we have experienced moving to AFIT has been how
+ergonomic borrowing is within traits. For example, we have updated our retry
+middleware to use AFIT. The implementation goes from two 100+ loc files to one
+15 line implementation that is simpler to understand and verify. This large
+change is due to not having to hand roll futures (which could be an artifact of
+when tower was created) and the ability to immutably borrow the service via
+`&self` rather than having to `Clone` the struct items. This is enabled by the
+ergonomic borrows that AFIT provides.
 
 ### Dynamic dispatch and Send 
 
@@ -151,3 +168,8 @@ rather than at the core trait level.
 - We have not yet implemented the full stacking implementation that we currently
 have with Tower. This means we have yet to potentailly run into any inference
 issues that could happen when using the `Layer` trait from Tower.
+
+## References
+
+- https://github.com/LucioFranco/tower-playground/tree/lucio/sendable-box
+- https://github.com/tower-rs/tower
