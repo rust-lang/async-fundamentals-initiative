@@ -39,6 +39,11 @@ Due to `Service::call` requiring `&mut self` some middleware require their inner
 as it makes layering services quite complex due to the nested inference that
 happens in [`ServiceBuilder`].
 
+[Tower]: https://github.com/tower-rs/tower
+[`Service`]: https://docs.rs/tower/latest/tower/trait.Service.html
+[`ServiceBuilder`]: https://docs.rs/tower/latest/tower/struct.ServiceBuilder.html
+[`Layer`]: https://docs.rs/tower/latest/tower/trait.Layer.html
+
 ## Moving forward
 
 One of the goals of moving to AFIT is to make using Tower easier and less error
