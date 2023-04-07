@@ -11,15 +11,15 @@ to compose "stacks" of middleware in an easy and reusable way. To achieve this
 currently Tower provide a [`Service`] and a [`Layer`] trait. The core
 component is the `Service` trait as this is where all the async functionality
 lives. `Layer`s on the other hand are service constructors and allow users to
-compose middleware stacks. Since, `Layer` does not do any async work it is out
-of scope of this document for now.
+compose middleware stacks. Since, `Layer` does not do any async work it's trait
+design is out of scope of this document for now.
 
 Currently, the `Service` trait requires users to name their futures which does
 not allow them to easily use `async fn` without boxing. In addition, borrowing
 state within handlers is unergonomic due using associated types for the return
 future type. This is because to allow the returned future to have a lifetime
-would require adding lifetime generic associated types (GATs) which force an
-already verbose trait into an extremely verbose trait that is unergonomic for
+it would require adding a lifetime generic associated type (GAT) which would force
+an already verbose trait into an extremely verbose trait that is unergonomic for
 users to implement. This thus requires all returned futures to be `'static`
 which means that it must own all of its data. While this works right now its an
 extra step that could be avoided by using `async fn`'s ability to produce
@@ -39,13 +39,13 @@ trait Service<Request> {
 
 Middleware are `Service`'s that wrap another `S: Service` such that it will
 internally call the inner service and wrap its behavior. This allows middleware
-to modify the input type, wrap the output future and thus modify the output
-type.
+to modify the input type, wrap the output future and modify the output type.
 
 Due to `Service::call` requiring `&mut self` some middleware require their inner
 `Service` to implement `Clone`. Unfortunetly, this bound has caused many issues
 as it makes layering services quite complex due to the nested inference that
-happens in [`ServiceBuilder`].
+happens in [`ServiceBuilder`]. This has caused many massive and almost famous
+error messages produced from Tower.
 
 [Tower]: https://github.com/tower-rs/tower
 [`Service`]: https://docs.rs/tower/latest/tower/trait.Service.html
@@ -91,7 +91,7 @@ while still leveraging Tower's composability.
 An example client:
 
 ```rust
-struct Client {
+pub struct Client {
     svc: BoxService<Request, Response, Error>,
 }
 ```
@@ -161,7 +161,17 @@ would like the core trait to be used in `Send` and `!Send` contexts. This means
 we require that the way we express sendness is bounded at the users call site
 rather than at the core trait level.
 
+Another note, because `async fn` tend to eagerly capture items this new approach
+requires that the `Requset` also be `Send`. This differs from how tower
+currently works because to bound a returned future by `Send` does not require
+that the input request type is `Send` as well since it does not lazily evaluate
+it. That said, in practice, if you end up using something like [`tower::buffer`]
+the `Request` type already needs to be `Send` to be able to send it over a
+channel. This is likely a non-issue anyways since current consumer code tends to
+use buffer to go from a `impl Service` to `impl Service + Clone`.
+
 [branch]: https://github.com/compiler-errors/rust/tree/rtn
+[`tower::buffer`]: https://docs.rs/tower/latest/tower/buffer/index.html
 
 ## Future areas of exploration
 
