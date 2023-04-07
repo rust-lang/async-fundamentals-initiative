@@ -59,7 +59,7 @@ prone. The current working idea that we have is to have a trait like:
 
 ```rust
 trait Service<Request> {
-    type Output;
+    type Response;
 
     async fn call(&self, request: Request) -> Self::Response;
 }
