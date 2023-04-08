@@ -50,6 +50,7 @@
   - [Case studies](./evaluation/case-studies.md)
     - [Builder + Provider API](./evaluation/case-studies/builder-provider-api.md)
     - [Socket Handler Refactor](./evaluation/case-studies/socket-handler.md)
+    - [Tower](./evaluation/case-studies/tower.md)
 - [📚 Explainer](./explainer.md)
   - [Async fn in traits](./explainer/async_fn_in_traits.md)
   - [Async fn in dyn trait](./explainer/async_fn_in_dyn_trait.md)
