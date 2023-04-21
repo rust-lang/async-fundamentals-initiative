@@ -30,3 +30,6 @@ level = 0
 "/design-discussions/async_closures.html" = "/roadmap/async_closures.html"
 "/explainer/phase_1.html" = "/archive/2021-phase_1.html"
 "/explainer/phase_1_narrative.html" = "/archive/2021-phase_1_narrative.html"
+
+# Clean up yml headers from e.g. HackMD docs.
+[preprocessor.yml-header]
