@@ -3,6 +3,9 @@ tags: draft-rfc
 title: Return position `impl Trait` in traits
 ---
 
+[![hackmd-github-sync-badge](https://hackmd.io/h9Cr4dfKR1KXC6P1lgM2cQ/badge)](https://hackmd.io/h9Cr4dfKR1KXC6P1lgM2cQ)
+
+
 - Feature Name: return_position_impl_trait_in_traits
 - Start Date: 2021-11-16
 - RFC PR: [rust-lang/rfcs#3193](https://github.com/rust-lang/rfcs/pull/0000)
@@ -112,15 +115,21 @@ trait NewIntoIterator {
 trait NewIntoIterator {
     type Item;
 
-    type $<T...>: Iterator<Item = Self::Item>;
+    type $: Iterator<Item = Self::Item>;
 
-    fn into_iter<T...>(self) -> <Self as NewIntoIterator>::$<T...>;
+    fn into_iter(self) -> <Self as NewIntoIterator>::$;
+}
+```
+
+```rust
+trait SomeTrait {
+    fn method<P0, ..., Pm>()
 }
 ```
 
 ## Equivalent desugaring for trait impls
 
-Each `-> impl Trait` notation appearing in a trait impl fn return type is desugared to the same anonymous associated type `$` defined in the trait along with a function that returns it. The value of this associated type `$` is an `impl Trait`. 
+Each `impl Trait` notation appearing in a trait impl fn return type is desugared to the same anonymous associated type `$` defined in the trait along with a function that returns it. The value of this associated type `$` is an `impl Trait`.
 
 ```rust
 impl NewIntoIterator for Vec<u32> {
@@ -144,80 +153,25 @@ impl NewIntoIterator for Vec<u32> {
 }
 ```
 
-## Validity constraint on impls
-
-Given a trait method where `impl Trait` appears in return position and an impl...
-
-```rust
-trait Trait {
-    fn method() -> impl TA + TB + ...;
-}
-
-impl Trait for MyType {
-    fn method() -> impl IA + IB + ... {}
-}
-```
-
-...where `TA`, `TB`, `IA`, and `IB` are any bounds that can be written in this position, the following conditions must hold:
-
-* The return type named in the corresponding impl method must implement all bounds `TA + TB + ...` specified in the trait.
-* Either the impl method must have `#[refine]`,[^refine] OR
-    * The impl must use `impl Trait` syntax to name the corresponding type, and
-    * The return type in the trait must implement all bounds `IA + IB + ...` specified in the impl. (Taken with the first outer bullet point, we can say that the bounds in the trait and the bounds in the impl imply each other.)
-
-[^refine]: Added in [RFC 3245: Refined trait implementations](https://rust-lang.github.io/rfcs/3245-refined-impls.html).
-
-Additionally, using `-> impl Trait` notation in an impl is only legal if the trait also uses that notation.
-
-```rust
-trait NewIntoIterator {
-    type Item;
-    fn into_iter(self) -> impl Iterator<Item = Self::Item>;
-}
-
-// OK:
-impl NewIntoIterator for Vec<u32> {
-    type Item = u32;
-    fn into_iter(self) -> impl Iterator<Item = u32> {
-        self.into_iter()
-    }
-}
-
-// Not OK:
-impl NewIntoIterator for Vec<u32> {
-    type Item = u32;
-    fn into_iter(self) -> vec::IntoIter<u32> {
-        self.into_iter()
-    }
-}
-```
-
-**Rationale:** Maximizing forwards compatibility. We may wish at some point to permit impls and traits to diverge but there is no reason to do it at this time.
-
-### Interaction with `async fn` in trait
-
-This RFC modifies the “Static async fn in traits” RFC so that async fn in traits may be satisfied by implementations that return `impl Future<Output = ...>` as long as the return-position impl trait type matches the async fn's desugared impl trait with the same rules as above.
-
-```rust
-trait Trait {
-  async fn async_fn();
-  
-  async fn async_fn_refined();
-}
-
-impl Trait for MyType {
-  fn async_fn() -> impl Future<Output = ()> + '_ { .. }
-  
-  #[refine]
-  fn async_fn_refined() -> BoxFuture<'_, ()> { .. }
-}
-```
 
 ## Generic parameter capture and GATs
 
-As with `-> impl Trait` in other kinds of functions, the hidden type for `-> impl Trait` in a trait may reference any of the type or const parameters declared on the impl or the method; it may also reference any lifetime parameters that explicitly appear in the trait bounds ([details](https://rust-lang.github.io/impl-trait-initiative/explainer/rpit_capture.html)). We say that a generic parameter is *captured* if it may appear in the hidden type.
+Given a trait method with a return type like `-> impl A + ... + Z` and an implementation of that trait, the hidden type for that implementation is allowed to reference:
 
-When desugaring, captured parameters from the method are reflected as generic parameters on the `$` associated type. Furthermore, the `$` associated type brings whatever where clauses are declared on the method into scope, excepting those which reference parameters that are not captured. This transformation is precisely the same as the one which is applied to other forms of `-> impl Trait`, except that it applies to an associated type and not a top-level type alias.
+* Concrete types, constant expressions, and `'static`
+* `Self`
+* Generics on the impl
+* Certain generics on the method
+    * Explicit type parameters
+    * Argument-position `impl Trait` types
+    * Explicit const parameters
+    * Lifetime parameters that appear anywhere in `A + ... + Z`, including elided lifetimes
+
+We say that a generic parameter is *captured* if it may appear in the hidden type. These rules are the same as those for `-> impl Trait` in inherent impls.
+
+When desugaring, captured parameters from the method are reflected as generic parameters on the `$` associated type. Furthermore, the `$` associated type brings whatever where clauses are declared on the method into scope, excepting those which reference parameters that are not captured.
+
+This transformation is precisely the same as the one which is applied to other forms of `-> impl Trait`, except that it applies to an associated type and not a top-level type alias. 
 
 Example:
 
@@ -243,6 +197,117 @@ trait RefIterator for Vec<u32> {
         Self: 'a; // Implied bound from fn
 
     fn iter<'a>(&'a self) -> Self::$<'a>;
+}
+```
+
+## Validity constraint on impls
+
+Given a trait method where `impl Trait` appears in return position,
+
+```rust
+trait Trait {
+    fn method() -> impl T_0 + ... + T_m;
+}
+```
+
+where `T_0 + ... + T_m` are bounds, for any impl of that trait to be valid, the following conditions must hold:
+
+* The return type named in the corresponding impl method must implement all bounds `T_0 + ... + T_m` specified in the trait.
+* Either the impl method must have `#[refine]`,[^refine] OR
+    * The impl must use `impl Trait` syntax to name the corresponding type, and
+    * The return type in the trait must implement all bounds `I_0 + ... + I_n` specified in the impl return type. (Taken with the first outer bullet point, we can say that the bounds in the trait and the bounds in the impl imply each other.)
+
+[^refine]: Added in [RFC 3245: Refined trait implementations](https://rust-lang.github.io/rfcs/3245-refined-impls.html).
+
+Additionally, using `-> impl Trait` notation in an impl is only legal if the trait also uses that notation.
+
+```rust
+trait NewIntoIterator {
+    type Item;
+    fn into_iter(self) -> impl Iterator<Item = Self::Item>;
+}
+
+// OK:
+impl NewIntoIterator for Vec<u32> {
+    type Item = u32;
+    fn into_iter(self) -> impl Iterator<Item = u32> {
+        self.into_iter()
+    }
+}
+
+// OK:
+impl NewIntoIterator for Vec<u32> {
+    type Item = u32;
+    #[refine]
+    fn into_iter(self) -> impl Iterator<Item = u32> + DoubleEndedIterator {
+        self.into_iter()
+    }
+}
+
+// OK:
+impl NewIntoIterator for Vec<u32> {
+    type Item = u32;
+    #[refine]
+    fn into_iter(self) -> std::vec::IntoIter<u32> {
+        self.into_iter()
+    }
+}
+
+// Not OK:
+impl NewIntoIterator for Vec<u32> {
+    type Item = u32;
+    fn into_iter(self) -> std::vec::IntoIter<u32> {
+        self.into_iter()
+    }
+}
+```
+
+### Interaction with `async fn` in trait
+
+This RFC modifies the “Static async fn in traits” RFC so that async fn in traits may be satisfied by implementations that return `impl Future<Output = ...>` as long as the return-position impl trait type matches the async fn's desugared impl trait with the same rules as above.
+
+```rust
+trait Trait {
+  async fn async_fn();
+  
+  async fn async_fn_refined();
+}
+
+impl Trait for MyType {
+  fn async_fn() -> impl Future<Output = ()> + '_ { .. }
+  
+  #[refine]
+  fn async_fn_refined() -> BoxFuture<'_, ()> { .. }
+}
+```
+
+## Nested impl traits
+
+Similarly to return-position impl trait in free functions, return position impl trait in traits may be nested in associated types bounds.
+
+Example:
+
+```rust
+trait Nested {
+    fn deref(&self) -> impl Deref<Target = impl Display> + '_;
+}
+
+// This desugars into:
+
+trait Nested {
+    type $1<'a>: Deref<Target = Self::$2> + 'a;
+    
+    type $2: Display;
+    
+    fn deref(&self) -> Self::$1<'_>;
+}
+```
+
+But following the same rules as the allowed positions for return-position impl trait, they are not allowed to be nested in trait generics, such as:
+
+``` rust
+trait Nested {
+    fn deref(&self) -> impl AsRef<impl Sized>; // ❌
 }
 ```
 
@@ -302,51 +367,28 @@ The `NewIntoIterator` trait used as an example in this RFC, however, doesn't sup
 
 The [future possibilities](#future-possibilities) section discusses a planned extension to support naming the type returned by an impl trait, which could work to overcome this limitation for clients.
 
-## Impls cannot add new methods to the resulting types
-
-Similarly to the previous point, [@Gankra also pointed out][gankra] that impls which employ `-> impl Trait` are not able to add methods or implement traits on the resulting types. With `IntoIterator`, one has the option of adding inherent (or trait) methods to the resulting type:
-
-```rust
-struct MyIterator {
-    ...
-}
-
-impl IntoIterator for MyType {
-    type IntoIter = MyIterator;
-    ...
-}
-
-impl MyIterator {
-    fn extra_method(&self) {
-
-    }
-}
-```
-
-Using `-> impl Trait` tends to make that not work. One way to address this would be to permit impls to specify the return types of `-> impl Trait` as concrete types.
-
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-## Does auto trait leakage still occur for `-> impl Trait` in traits?
+### Does auto trait leakage still occur for `-> impl Trait` in traits?
 
 Yes, so long as the compiler has enough type information to figure out which impl you are using. In other words, given a trait function `SomeTrait::foo`, if you invoke a function `<T as SomeTrait>::foo()` where the self type is some generic parameter `T`, then the compiler doesn't really know what impl is being used, so no auto trait leakage can occur. But if you were to invoke `<u32 as SomeTrait>::foo()`, then the compiler could resolve to a specific impl, and hence a specific [impl trait type alias][tait], and auto trait leakage would occur as normal.
 
 [tait]: https://rust-lang.github.io/impl-trait-initiative/explainer/tait.html
 
-## Can traits migrate from a named associated type to `impl Trait`?
+### Can traits migrate from a named associated type to `impl Trait`?
 
 Not compatibly, no, because they would no longer have a named associated type.
 
-## Can traits migrate from `impl Trait` to a named associated type?
+### Can traits migrate from `impl Trait` to a named associated type?
 
 Generally yes, but all impls would have to be rewritten.
 
-## Would there be any way to make it possible to migrate from `impl Trait` to a named associated type compatibly?
+### Would there be any way to make it possible to migrate from `impl Trait` to a named associated type compatibly?
 
 Potentially! There have been proposals to allow the values of associated types that appear in function return types to be inferred from the function declaration. So the trait has `fn method(&self) -> Self::Iter` and the impl has `fn method(&self) -> impl Iterator`, then the impl would also be inferred to have `type Iter = impl Iterator` (and the return type rewritten to reference it). This may be a good idea, but it is not proposed as part of this RFC.
 
-## What about using a named associated type?
+### What about using a named associated type?
 
 One alternative under consideration was to use a named associated type instead of the anonymous `$` type. The name could be derived by converting "snake case" methods to "camel case", for example. This has the advantage that users of the trait can refer to the return type by name.
 
@@ -359,7 +401,9 @@ There is a need to introduce a mechanism for naming the return type for function
 
 As a backwards compatibility note, named associated types could likely be introduced later, although there is always the possibility of users having introduced associated types with the same name.
 
-## Can we make 
+### Impl trait in associated type
+
+TODO
 
 # Prior art
 [prior-art]: #prior-art
