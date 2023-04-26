@@ -7,18 +7,10 @@ title: Return position `impl Trait` in traits
 
 
 - Feature Name: return_position_impl_trait_in_traits
-- Start Date: 2021-11-16
+- Start Date: 2023-04-27
 - RFC PR: [rust-lang/rfcs#3193](https://github.com/rust-lang/rfcs/pull/0000)
 - Rust Issue: [rust-lang/rust#0000](https://github.com/rust-lang/rust/issues/0000)
 - Initiative: [impl trait initiative](https://github.com/rust-lang/impl-trait-initiative)
-
-# TODO
-
-* [x] Relax dyn restriction for `where Self: Sized` methods
-* [x] Describe interaction with `#[refine]`
-* [x] Modify `async fn` in traits to allow `-> impl Future` in impls (must match exact desugaring without `#[refine]`)
-* [ ] Flesh out motivation in contrast to associated types and ITIAT
-* [ ] Mention why you'd use RPITIT so you don't have to name associated types with `dyn` (in the "why not named associated type" section / future possibilities section)
 
 # Summary
 [summary]: #summary
@@ -29,7 +21,7 @@ title: Return position `impl Trait` in traits
 # Motivation
 [motivation]: #motivation
 
-The `impl Trait` syntax is currently accepted in a variety of places within the Rust language to mean "some type that implements `Trait`" (for an overview, see the [explainer] from the impl trait initiative). For function arguments, `impl Trait` is [equivalent to a generic parameter][apit] and it is accepted in all kinds of functions (free functions, inherent impls, traits, and trait impls). In return position, `impl Trait` [corresponds to an opaque type whose value is inferred][rpit]. In that role, it is currently accepted only in free functions and inherent impls. This RFC extends the support to cover traits and trait impls, just like argument position.
+The `impl Trait` syntax is currently accepted in a variety of places within the Rust language to mean "some type that implements `Trait`" (for an overview, see the [explainer] from the impl trait initiative). For function arguments, `impl Trait` is [equivalent to a generic parameter][apit] and it is accepted in all kinds of functions (free functions, inherent impls, traits, and trait impls). In return position, `impl Trait` [corresponds to an opaque type whose value is inferred][rpit]. In that role, it is currently accepted only in free functions and inherent impls. This RFC extends the support for return position `impl Trait` in functions in traits and trait impls.
 
 [explainer]: https://rust-lang.github.io/impl-trait-initiative/explainer.html
 [apit]: https://rust-lang.github.io/impl-trait-initiative/explainer/apit.html
@@ -37,7 +29,7 @@ The `impl Trait` syntax is currently accepted in a variety of places within the 
 
 ## Example use case
 
-The use case for `-> impl Trait` in trait fns is similar to its use in other contexts: traits often wish to return "some type" without specifying the exact type. As a simple example that we will use through the RFC, consider the `NewIntoIterator` trait, which is a variant of the existing `IntoIterator` that uses `impl Iterator` as the return type:
+The use case for `-> impl Trait` in trait functions is similar to its use in other contexts: traits often wish to return "some type" without specifying the exact type. As a simple example that we will use through the RFC, consider the `NewIntoIterator` trait, which is a variant of the existing `IntoIterator` that uses `impl Iterator` as the return type:
 
 ```rust
 trait NewIntoIterator {
@@ -51,7 +43,9 @@ trait NewIntoIterator {
 
 *This section assumes familiarity with the [basic semantics of impl trait in return position][rpit].*
 
-When you use `impl Trait` as the return type for a function within a trait definition or trait impl, the intent is the same: impls that implement this trait return "some type that implements `Trait`", and users of the trait can only rely on that. However, the desugaring to achieve that effect looks somewhat different than other cases of impl trait in return position. This is because we cannot desugar to a type alias in the surrounding module; we need to desugar to an associated type (effectively, a type alias in the trait).
+When you use `impl Trait` as the return type for a function within a trait definition or trait impl, the intent is the same: impls that implement this trait return "some type that implements `Trait`", and users of the trait can only rely on that.
+
+<!--However, the desugaring to achieve that effect looks somewhat different than other cases of impl trait in return position. This is because we cannot desugar to a type alias in the surrounding module; we need to desugar to an associated type (effectively, a type alias in the trait).-->
 
 Consider the following trait:
 
@@ -70,11 +64,9 @@ trait IntoIntIterator { // desugared
 }
 ```
 
-(In general, this associated type may be generic; it would contain whatever generic parameters are captured per the generic capture rules given previously.)
+When using `-> impl Trait`, however, there is no associated type that users can name.
 
-This associated type is introduced by the compiler and cannot be named by users.
-
-The impl for a trait like `IntoIntIterator` must also use `impl Trait` in return position:
+By default, the impl for a trait like `IntoIntIterator` must also use `impl Trait` in return position.
 
 ```rust
 impl IntoIntIterator for Vec<u32> {
@@ -84,23 +76,32 @@ impl IntoIntIterator for Vec<u32> {
 }
 ```
 
-This is equivalent to the following "desugared" impl (except that the associated type is anonymous):
+It can, however, give a more specific type with `#[refine]`:[^refine]
 
 ```rust
 impl IntoIntIterator for Vec<u32> {
-    type IntoIntIter = impl Iterator<Item = u32>;
-    fn into_int_iter(self) -> Self::IntoIntIter {
+    #[refine]
+    fn into_int_iter(self) -> impl Iterator<Item = u32> + ExactSizeIterator {
+        self.into_iter()
+    }
+    
+    // ..or even..
+
+    #[refine]
+    fn into_int_iter(self) -> std::vec::IntoIter<u32> {
         self.into_iter()
     }
 }
 ```
+
+Users of this impl are then able to rely on the refined return type, as long as the compiler can prove this impl specifically is being used. Conversely, in this example, code that is generic over the trait can only rely on the fact that the return type implements `Iterator<Item = u32>`.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 ## Equivalent desugaring for traits
 
-Each `-> impl Trait` notation appearing in a trait fn return type is desugared to an anonymous associated type; the name of this type is a fresh name that cannot be typed by Rust programmers. In this RFC, we will use the name `$` when illustrating desugarings and the like.
+Each `-> impl Trait` notation appearing in a trait fn return type is effectively desugared to an anonymous associated type. In this RFC, we will use the placeholder name `$` when illustrating desugarings and the like.
 
 As a simple example, consider the following (more complex examples follow):
 
@@ -217,7 +218,7 @@ where `T_0 + ... + T_m` are bounds, for any impl of that trait to be valid, the 
     * The impl must use `impl Trait` syntax to name the corresponding type, and
     * The return type in the trait must implement all bounds `I_0 + ... + I_n` specified in the impl return type. (Taken with the first outer bullet point, we can say that the bounds in the trait and the bounds in the impl imply each other.)
 
-[^refine]: Added in [RFC 3245: Refined trait implementations](https://rust-lang.github.io/rfcs/3245-refined-impls.html).
+[^refine]: `#[refine]` was added in [RFC 3245: Refined trait implementations](https://rust-lang.github.io/rfcs/3245-refined-impls.html). This feature is not yet stable.
 
 Additionally, using `-> impl Trait` notation in an impl is only legal if the trait also uses that notation.
 
@@ -396,14 +397,42 @@ We decided against this proposal:
 
 * Introducing a name by converting to camel-case feels surprising and inelegant.
 * Return position impl Trait in other kinds of functions doesn't introduce any sort of name for the return type, so it is not analogous.
+* We would like to allow `-> impl Trait` methods to work with dynamic dispatch (see [Future possibilities][future-possibilities]). `dyn` types typically require naming all associated types of a trait. That would not be desirable for this feature, and these associated types would therefore not be consistent with other named associated types.
 
 There is a need to introduce a mechanism for naming the return type for functions that use `-> impl Trait`; we plan to introduce a second RFC addressing this need uniformly across all kinds of functions.
 
 As a backwards compatibility note, named associated types could likely be introduced later, although there is always the possibility of users having introduced associated types with the same name.
 
-### Impl trait in associated type
+### What about using an explicit associated type?
 
-TODO
+Giving users the ability to write an explicit `type Foo = impl Bar;` is already covered as part of the `type_alias_impl_trait` feature, which is not yet stable at the time of writing, and which represents an extension to the Rust language both inside and outside of traits. This RFC is about making trait methods consistent with normal free functions and inherent methods.
+
+There are different situations where you would want to use an explicit associated type:
+
+1. The type is central to the trait and deserves to be named.
+1. You want to give users the ability to use concrete types without `#[refine]`.
+1. You want to give generic users of your trait the ability specify a particular type, instead of just bounding it.
+1. You want to give users the ability to easily name and bound the type without using (to-be-RFC'd) special syntax to name the type.
+1. You want the trait to work with dynamic dispatch today.
+1. In the future, you want the associated type to be specified as part of `dyn Trait`, instead of using dynamic dispatch itself.
+
+Using our hypothetical `NewIntoIterator` example, most of these are not met for the `IntoIter` type:
+
+1. While the `Item` type is pretty central to users of the trait, the specific iterator type `IntoIter` is usually not.
+1. The concrete type of an impl may or may not be useful, but usually what's important is the specific extra bounds like `ExactSizeIterator` that a user can use. Using `#[refine]` to explicitly choose to expose this (or a fully concrete type) is not overly burdensome.
+1. Rarely does a function taking `impl IntoIterator` specify a particular iterator type; it would be rare to see a function like this, for example:
+   ```rust
+   fn iterate_over_anything_as_long_as_it_is_vec<T>(
+       vec: impl IntoIterator<IntoIter = std::vec::IntoIter<T>, Item = T>
+   )
+   ```
+1. Bounding the iterator by adding extra bounds like `DoubleEndedIterator` is useful, but not the common case for `IntoIterator`. It therefore shouldn't be overly burdensome to use a (reasonably ergonomic) special syntax in the cases where it's needed.
+1. Using `IntoIterator` with dynamic dispatch would be surprising; more common would be to call `.into_iter()` using static dispatch and then pass the resulting iterator to a function that uses dynamic dispatch.
+1. If we did use `IntoIterator` with dynamic dispatch, the resulting iterator being dynamically dispatched would make the most sense.
+
+Therefore, if we were writing `IntoIterator` today, it would probably use `-> impl Trait` in return position instead of having an explicit `IntoIter` type.
+
+The same is not true for `Iterator::Item`: because `Item` is so central to what an `Iterator` is, and because it rarely makes sense to use an opaque type for the item, it would remain an explicit associated type.
 
 # Prior art
 [prior-art]: #prior-art
@@ -418,8 +447,29 @@ There are a number of crates that do desugaring like this manually or with proce
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-We expect to introduce a mechanism for naming the result of `-> impl Trait` return types in a follow-up RFC (see the draft [named function types](https://rust-lang.github.io/impl-trait-initiative/RFCs/named-function-types.html) rfc for the current thinking).
+### Naming return types
 
-Similarly, we expect to be introducing language extensions to address the inability to use `-> impl Trait` types with dynamic dispatch. These mechanisms are needed for async fn as well. A good writeup of the challenges can be found on the "challenges" page of the [async fundamentals initiative](https://rust-lang.github.io/async-fundamentals-initiative/evaluation/challenges/dyn_traits.html).
+We expect to introduce a mechanism for naming the result of `-> impl Trait` return types in a follow-up RFC.
 
-Finally, it would be possible to introduce a mechanism that allows users to give a name to the associated type that is returned by impl trait. One proposed mechanism is to support an inference mechanism, so that one if you have a function `fn foo() -> Self::Foo` that returns an associated type, the impl only needs to implement the function, and the compiler infers the value of `Foo` from the return type. Another options would be to extend the impl trait syntax generally to let uses give a name to the type alias or parameter that is introduced.
+### Dynamic dispatch
+
+Similarly, we expect to introduce language extensions to address the inability to use `-> impl Trait` types with dynamic dispatch. These mechanisms are needed for async fn as well. A good writeup of the challenges can be found on the "challenges" page of the [async fundamentals initiative](https://rust-lang.github.io/async-fundamentals-initiative/evaluation/challenges/dyn_traits.html).
+
+### Migration to associated type
+
+It would be possible to introduce a mechanism that allows users to migrate from an `impl Trait` to a named associated type.
+
+Existing users of the trait won't specify an associated type bound for the new associated type, nor will existing implementers of the trait specify the type. This can be fixed with [associated type defaults](https://github.com/rust-lang/rfcs/blob/master/text/2532-associated-type-defaults.md). So given a trait like `NewIntoIterator`, we could choose to introduce an associated type for the iterator like so:
+
+```rust
+// Now old again!
+trait NewIntoIterator {
+    type Item;
+    type IntoIter = impl Iterator<Item = Self::Item>;
+    fn into_iter(self) -> Self::IntoIter;
+}
+```
+
+The only problem remaining is with `#[refine]`. If an existing implementation refined its return value of an RPITIT method, we would need the existing `#[refine]` attribute to stand in for an overriding of the associated type default.
+
+Whatever rules we decide to make this work, they will interact with some ongoing discussions of proposals for `#[defines]` or `#[defined_by]` attributes on `type_alias_impl_trait`. We therefore leave the details of this to a future RFC.
