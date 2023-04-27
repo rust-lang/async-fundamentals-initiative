@@ -16,12 +16,15 @@ title: Return position `impl Trait` in traits
 [summary]: #summary
 
 * Permit `impl Trait` in fn return position within traits and trait impls.
-* This desugars to an anonymous associated type.
+* Allow `async fn` in traits and trait impls to be used interchangeably with its equivalent `impl Trait` desugaring.
+* Allow trait impls to `#[refine]` an `impl Trait` return type with added bounds or a concrete type.[^refine]
 
 # Motivation
 [motivation]: #motivation
 
-The `impl Trait` syntax is currently accepted in a variety of places within the Rust language to mean "some type that implements `Trait`" (for an overview, see the [explainer] from the impl trait initiative). For function arguments, `impl Trait` is [equivalent to a generic parameter][apit] and it is accepted in all kinds of functions (free functions, inherent impls, traits, and trait impls). In return position, `impl Trait` [corresponds to an opaque type whose value is inferred][rpit]. In that role, it is currently accepted only in free functions and inherent impls. This RFC extends the support for return position `impl Trait` in functions in traits and trait impls.
+The `impl Trait` syntax is currently accepted in a variety of places within the Rust language to mean "some type that implements `Trait`" (for an overview, see the [explainer] from the impl trait initiative). For function arguments, `impl Trait` is [equivalent to a generic parameter][apit] and it is accepted in all kinds of functions (free functions, inherent impls, traits, and trait impls).
+
+In return position, `impl Trait` [corresponds to an opaque type whose value is inferred][rpit]. In that role, it is currently accepted only in free functions and inherent impls. This RFC extends the support for return position `impl Trait` in functions in traits and trait impls.
 
 [explainer]: https://rust-lang.github.io/impl-trait-initiative/explainer.html
 [apit]: https://rust-lang.github.io/impl-trait-initiative/explainer/apit.html
@@ -95,6 +98,37 @@ impl IntoIntIterator for Vec<u32> {
 ```
 
 Users of this impl are then able to rely on the refined return type, as long as the compiler can prove this impl specifically is being used. Conversely, in this example, code that is generic over the trait can only rely on the fact that the return type implements `Iterator<Item = u32>`.
+
+### async fn desugaring
+
+`async fn` always desugars to a regular function returning `-> impl Future`. When used in a trait, the `async fn` syntax can be used interchangeably with the equivalent desugaring in the trait and trait impl:
+
+```rust
+trait UsesAsyncFn {
+    // Equivalent to:
+    // fn do_something(&self) -> impl Future<Output = ()> + '_;
+    async fn do_something(&self);
+}
+
+// OK!
+impl UsesAsyncFn for MyType {
+    fn do_something(&self) -> impl Future<Output = ()> + '_ {
+        async {}
+    }
+}
+```
+```rust
+trait UsesDesugaredFn {
+    // Equivalent to:
+    // async fn do_something(&self);
+    fn do_something(&self) -> impl Future<Output = ()> + '_;
+}
+
+// Also OK!
+impl UsesDesugaredFn for MyType {
+    async fn do_something(&self) {}
+}
+```
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -282,6 +316,8 @@ impl Trait for MyType {
 }
 ```
 
+Similarly, the equivalent `-> impl Future` signature in a trait can be satisfied by using `async fn` in an impl of that trait.
+
 ## Nested impl traits
 
 Similarly to return-position impl trait in free functions, return position impl trait in traits may be nested in associated types bounds.
@@ -352,7 +388,7 @@ without breaking semver compatibility for your trait. The [future possibilities]
 
 ## Clients of the trait cannot name the resulting associated type, limiting extensibility
 
-[As @Gankra highlighted in a comment on this RFC][gankra], the traditional `IntoIterator` trait permits clients of the trait to name the resulting iterator type and apply additional bounds:
+[As @Gankra highlighted in a comment on a previous RFC][gankra], the traditional `IntoIterator` trait permits clients of the trait to name the resulting iterator type and apply additional bounds:
 
 [gankra]: https://github.com/rust-lang/rfcs/pull/3193#issuecomment-965505149
 
