@@ -54,6 +54,7 @@
     - [Microsoft AFIT](./evaluation/case-studies/microsoft.md)
     - [Use of AFIT in Embassy](./evaluation/case-studies/embassy.md)
 - [📚 Explainer](./explainer.md)
+  - [User guide from the future](./explainer/user_guide_future.md)
   - [Async fn in traits](./explainer/async_fn_in_traits.md)
   - [Async fn in dyn trait](./explainer/async_fn_in_dyn_trait.md)
     - [How it feels to use](./explainer/async_fn_in_dyn_trait/how_it_feels.md)
