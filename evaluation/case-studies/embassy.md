@@ -1,4 +1,4 @@
-# Use of AFIT in Embaassy
+# Use of AFIT in Embassy
 
 *The following are rough notes on the usage of Async Function in Traits from the [Embassy][] runtime. They are derived from a conversation between dirbaio and nikomatsakis.*
 
@@ -25,7 +25,8 @@ most of these are "abstract over hardware", and when you build a firmware for so
 
 the few instances I've wished for dyn is:
 * with embedded-io it does sometimes happen. For example, running the same terminal ui over a physical serial port and over telnet at the same time. Without dyn that code gets monomorphized two times, which is somewhat wasteful.
-* this trait https://github.com/embassy-rs/embassy/blob/master/embassy-usb/src/lib.rs#L89 . That one MUST use dyn because you want to register multiple handlers that might be different types. Sometimes it'd have been handy to be able to do async things within these callbacks. Workaround is to fire off a notification to some other async task, it's not been that bad.
+* this trait https://github.com/embassy-rs/embassy/blob/master/embassy-usb/src/lib.rs#L89 . That one MUST use dyn because you want to register multiple handlers that might be different types. Sometimes it'd hav
+een handy to be able to do async things within these callbacks. Workaround is to fire off a notification to some other async task, it's not been that bad.
     * niko: how is this used?
     * handlers are added [here](https://github.com/embassy-rs/embassy/blob/master/embassy-usb/src/builder.rs#L262), passed into UsbDevice [here](https://github.com/embassy-rs/embassy/blob/master/embassy-usb/src/lib.rs#L225), and then called when handling some bus-related stuff, for example [here](https://github.com/embassy-rs/embassy/blob/master/embassy-usb/src/lib.rs#L714-L715).
     * the tldr of what it's used for is you might have a "composite" usb device, which can have multiple "classes" at the same time (say, an Ethernet adapter and a serial port). Each class gets its own "endpoints" for data, so each launches its own independent async tasks reading/writing to these endpoints. 
