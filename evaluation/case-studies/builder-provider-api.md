@@ -101,7 +101,7 @@ struct DefaultCredentialsChain {
 impl DefaultCredentialsChain {
     fn with_custom_credential_source(self, provider: impl ProvideCredentials) {
         // Coerce `impl ProvideCredentials` to `Box<dyn ProvideCredentialsDyn>`
-        Self { provider: Box::new(credentials_source), ..self }
+        Self { credentials_source: Box::new(provider), ..self }
     }
 }
 ```
@@ -125,7 +125,7 @@ impl DefaultCredentialsChain {
         provider: impl ProvideCredentials<provide_credentials(): Send>
     ) {
         // Coerce `impl ProvideCredentials` to `Box<dyn ProvideCredentialsDyn>`
-        Self { provider: Box::new(credentials_source), ..self }
+        Self { credentials_source: Box::new(provider), ..self }
     }
 }
 ```
