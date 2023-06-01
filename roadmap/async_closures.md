@@ -10,7 +10,7 @@
 
 The fundamental problem async closures are meant to solve is that **normal closures can't return a value that borrows from the closure itself** (or, by extension, anything it captures). This is a big problem in async because the execution of all async code is encapsulated in a future returned by our function. Since that asynchronous code often needs to operate on captured values, it must in turn borrow from the closure.
 
-This blog post describes the problem in more detail: https://smallcultfollowing.com/babysteps/blog/2023/03/29/thoughts-on-async-closures/.
+This blog post describes the problem in more detail: <https://smallcultfollowing.com/babysteps/blog/2023/03/29/thoughts-on-async-closures/>.
 
 One of the assertions made by this post is that async functions need their own traits, analogous to `Fn` and friends:
 
@@ -41,7 +41,7 @@ This trait is similar to what `AsyncFnMut` above desugars to, except without say
 
 The `LendingFnMut` trait is from a follow up post that explains how we can actually extend the *existing* `Fn` traits to support "lending functions" that can do exactly what we want. It takes advantage of the fact that existing Fn trait bounds must use a special `Fn(A, B) -> C` syntax that always specifies their output type.
 
-https://smallcultfollowing.com/babysteps/blog/2023/05/09/giving-lending-and-async-closures/
+<https://smallcultfollowing.com/babysteps/blog/2023/05/09/giving-lending-and-async-closures/>
 
 Other notes:
 
