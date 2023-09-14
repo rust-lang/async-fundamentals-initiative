@@ -8,7 +8,7 @@ particular.
 
 This project manages and interacts with low level hardware resources.
 Performance and resource efficiency is key. Async Rust has proven useful not
-just because of it enables scalability and efficient use of resources, but also
+just because it enables scalability and efficient use of resources, but also
 because features such as cancel-on-drop semantics simplify the interaction
 between components.
 
