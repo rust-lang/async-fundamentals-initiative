@@ -37,7 +37,7 @@ impl AsyncIterator for YieldingRangeIterator {
 
 If you want to use `YieldingRangeIterator` in a context without `Box`, you can do that by wrapping it in an *adapter* type. This adapter type will implement an alternative memory allocation strategy, such as using pre-allocated stack storage.
 
-For the most part, there is no need to implement your own adapter type, beacuse the `dyner` crate (to be published by rust-lang) includes a number of useful ones. For example, to pre-allocate the `next` future on the stack, which is useful both for performance or no-std scenarios, you could use an "inline" adapter type, like the `InlineAsyncIterator` type provided by the `dyner` crate:
+For the most part, there is no need to implement your own adapter type, because the `dyner` crate (to be published by rust-lang) includes a number of useful ones. For example, to pre-allocate the `next` future on the stack, which is useful both for performance or no-std scenarios, you could use an "inline" adapter type, like the `InlineAsyncIterator` type provided by the `dyner` crate:
 
 ```rust
 use dyner::InlineAsyncIterator;
