@@ -15,19 +15,23 @@ This initiative is part of the overall [async vision roadmap](https://rust-lang.
 
 | Milestone | State | Key participants |
 | --- | --- | --- |
-| Author [evaluation doc] for [static async trait] | 🦀 | [tmandry]
-| Author [evaluation doc] for [dyn async trait]  | 🦀 | [tmandry]
-| Author [evaluation doc] for [async drop] | 🦀 | [tmandry]
-| Author [evaluation doc] for [impl Trait in traits]  | 💤 |
-| [Stabilize] [type alias impl trait] | 💤  |
-| [Stabilize] [generic associated types]  | 💤 |
-| Author RFC for async fn in traits  | 💤 |
-| Author [evaluation doc] for [async closures]  | 💤 |
-| Author RFC for async fn in traits  | 💤 |
-| [Feature complete] for async fn in traits | 💤 |
-| [Feature complete] for [impl Trait in traits] | 💤 |
+| Author [evaluation doc] for [static async trait] | done 🎉 | [tmandry]
+| Author [evaluation doc] for [dyn async trait]  | [done 🎉](https://rust-lang.github.io/async-fundamentals-initiative/evaluation/challenges/dyn_traits.html) | [tmandry]
+| Author [evaluation doc] for [async drop] | 💤 |
+| Author [evaluation doc] for [impl Trait in traits]  | done | [tmandry]
+| [Stabilize] [type alias impl trait] | in-progress | [oli-obk]
+| [Stabilize] [generic associated types] | [done 🎉](https://github.com/rust-lang/rust/pull/96709) | [jackh726]
+| Author RFC for async fn in traits  | [done 🎉](https://github.com/rust-lang/rfcs/pull/3185) |
+| Author [evaluation doc] for [async closures]  | [blog](https://smallcultfollowing.com/babysteps/blog/2023/03/29/thoughts-on-async-closures/) [posts](https://smallcultfollowing.com/babysteps/blog/2023/05/09/giving-lending-and-async-closures/) authored, doc pending | [nikomatsakis] |
+| Author RFC for impl trait in traits  | [done](https://github.com/rust-lang/rfcs/pull/3425) |
+| [Feature complete] for async fn in traits | done 🎉 | [compiler-errors] |
+| [Feature complete] for [impl Trait in traits] | done 🎉 | [compiler-errors] |
 | [Feature complete] for [async drop] | 💤 |
 | [Feature complete] for [async closures] | 💤 |
+| [Stabilize] async fn in traits | [proposed](https://github.com/rust-lang/rust/pull/115822) | [compiler-errors] |
+| [Stabilize] impl trait in traits | [proposed](https://github.com/rust-lang/rust/pull/115822) | [compiler-errors] |
+| [Stabilize] async drop | 💤 |
+| [Stabilize] async closures | 💤 |
 
 ## Design discussions
 
@@ -42,6 +46,7 @@ In the table of contents, you will find the overall status:
 [oli-obk]: https://github.com/oli-obk/
 [jackh726]: https://github.com/jackh726/
 [tmandry]: https://github.com/tmandry/
+[compiler-errors]: https://github.com/compiler-errors/
 [async drop]: ./design-discussions/async_drop.md
 [async closures]: ./design-discussions/async_closures.md
 [impl Trait in traits]: ./design-discussions/impl_trait_in_traits.md
