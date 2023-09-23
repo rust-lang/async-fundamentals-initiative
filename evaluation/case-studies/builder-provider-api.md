@@ -108,7 +108,7 @@ impl DefaultCredentialsChain {
 
 This extra trait is an implementation detail that is not in the public-facing, API so it can be migrated away when support for AFIDT is introduced.
 
-A full builder pattern example is implemented here: https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=8daf7b2d5236e581f78d2c09310d09ac
+A full builder pattern example is implemented here: <https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=8daf7b2d5236e581f78d2c09310d09ac>
 
 ## Send bounds
 
@@ -116,7 +116,7 @@ One limitation with the proposed async version of `ProvideCredentials` is the la
 
 To fix this, we could use a return type bound[^2] on the `with_custom_credential_source` builder method:
 
-[^2]: https://smallcultfollowing.com/babysteps/blog/2023/02/13/return-type-notation-send-bounds-part-2/
+[^2]: <https://smallcultfollowing.com/babysteps/blog/2023/02/13/return-type-notation-send-bounds-part-2/>
 
 ```rust
 impl DefaultCredentialsChain {
@@ -157,9 +157,9 @@ impl<T: async(Send) ProvideCredentials> ProvideCredentialsDyn for T {
 ## Usages
 
 The SDK uses this same idiom several times:
-* `ProvideCredentials`: https://docs.rs/aws-credential-types/0.54.1/aws_credential_types/provider/trait.ProvideCredentials.html
-* `AsyncSleep`: https://docs.rs/aws-smithy-async/0.54.3/aws_smithy_async/rt/sleep/trait.AsyncSleep.html
-* `ProvideRegion`: https://docs.rs/aws-config/0.54.1/aws_config/meta/region/trait.ProvideRegion.html
+* `ProvideCredentials`: <https://docs.rs/aws-credential-types/0.54.1/aws_credential_types/provider/trait.ProvideCredentials.html>
+* `AsyncSleep`: <https://docs.rs/aws-smithy-async/0.54.3/aws_smithy_async/rt/sleep/trait.AsyncSleep.html>
+* `ProvideRegion`: <https://docs.rs/aws-config/0.54.1/aws_config/meta/region/trait.ProvideRegion.html>
 
 ## Future improvements
 
